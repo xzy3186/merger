@@ -1,0 +1,84 @@
+BigRIPSTSScannor:
+  InputFileName: julyTesting/syncTest0007.root
+  TreeName: tree
+  TSBranchName: ts
+#  FirstEntry: 0
+#  LastEntry: 1000
+
+BetaTSScannor:
+  InputFileName: julyTesting/extTS_DD.root
+  TreeName: PixTree
+  PixieBranchName: PixTreeEvent
+  MinHighGainDynEnergy: 0
+  MaxHighGainDynEnergy: 65535
+  MinLowGainDynEnergy: 0
+  MaxLowGainDynEnergy: 10000
+#  FirstEntry: 0
+#  LastEntry: 1000
+
+ImplantTSScannor:
+  InputFileName: julyTesting/extTS_DD.root
+  TreeName: PixTree
+  PixieBranchName: PixTreeEvent
+  MinLowGainDynEnergy: 10000
+  MaxLowGainDynEnergy: 65535
+#  FirstEntry: 0
+#  LastEntry: 1000
+
+
+#PspmtEventBuilder:
+#  EventWidth: 250 # x4 ns
+#  HighGainNode:
+#    MapId:
+#      - 52 # dynode
+#      - 48 # xa
+#      - 49 # xb
+#      - 50 # ya
+#      - 51 # yb
+#    HighThreshold: 99999
+#    LowThreshold: 5
+#    VDType: SIB064_1018
+#    #VDType: SIB064_0926
+#    CalibFunctionX:
+#      expr: "[0]+x*[1]+y*[2]" #x: posx, y: dynode enregy
+#      par:
+#        - 0.0
+#        - 1.0
+#        - 0.0
+#    CalibFunctionY:
+#      expr: "[0]+x*[1]+y*[2]" #x: posy, y: dynode enregy
+#      par:
+#        - 0.0
+#        - 1.0
+#        - 0.0
+#    #CalculatePixel:
+#    #  NPixel:
+#    #  CrystalOffset:
+#    #  CrystalSize:
+#  LowGainNode:
+#    MapId:
+#      - 36 # dynode
+#      - 32 # xa
+#      - 33 # xb
+#      - 34 # ya
+#      - 35 # yb
+#    HighThreshold: 99999
+#    LowThreshold: 5
+#    VDType: SIB064_1018
+#    #VDType: SIB064_0926
+#    CalibFunctionX:
+#      expr: "[0]+x*[1]+y*[2]" #x: posx, y: dynode enregy
+#      par:
+#        - 0.0
+#        - 1.0
+#        - 0.0
+#    CalibFunctionY:
+#      expr: "[0]+x*[1]+y*[2]" #x: posy, y: dynode enregy
+#      par:
+#        - 0.0
+#        - 1.0
+#        - 0.0
+#    #CalculatePixel:
+#    #  NPixel:
+#    #  CrystalOffset:
+#    #  CrystalSize:
