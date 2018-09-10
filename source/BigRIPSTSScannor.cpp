@@ -5,9 +5,9 @@ const std::string BigRIPSTSScannor::kMsgPrefix("[BigRIPSTSScannor]:");
 
 void BigRIPSTSScannor::SetReader()
 {
-    TSScannorBase::SetReader();
-    std::string br_name = yaml_reader_->GetString("TSBranchName");
-    time_stamp_ = new TTreeReaderValue<ULong64_t>(*tree_reader_,br_name.c_str());
+    TSScannorBase<TreeData>::SetReader();
+    std::string br_name = yaml_reader_->GetString("BranchName");
+    tree_data_ = new TTreeReaderValue<TreeData>(*tree_reader_,br_name.c_str());
     std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
     return;
 }

@@ -5,9 +5,9 @@ const std::string BetaTSScannor::kMsgPrefix("[BetaTSScannor]:");
 
 void BetaTSScannor::SetReader()
 {
-    TSScannorBase::SetReader();
+    TSScannorBase<PixTreeEvent>::SetReader();
     std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    pixie_tree_data_ = new TTreeReaderValue<PixTreeEvent>(*tree_reader_,br_name.c_str());
+    tree_data_ = new TTreeReaderValue<PixTreeEvent>(*tree_reader_,br_name.c_str());
     std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
 
     high_gain_min_ = yaml_reader_->GetDouble("MinHighGainDynEnergy");
@@ -21,7 +21,8 @@ void BetaTSScannor::SetReader()
 
 Bool_t BetaTSScannor::IsInGate() const
 {
-    std::vector<processor_struct::PSPMT> pspmt_vec = pixie_tree_data_->Get()->pspmt_vec_;
+    //std::vector<processor_struct::PSPMT> pspmt_vec = tree_data_->Get()->pspmt_vec_;
+    auto pspmt_vec = tree_data_->Get()->pspmt_vec_;
     if(pspmt_vec.empty())
         return false;
     Double_t low_gain = pspmt_vec.at(0).dy_l;

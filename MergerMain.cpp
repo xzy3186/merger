@@ -1,10 +1,12 @@
 #include <iostream>
-#include "TreeDataStructures.h"
+#include "OutputTreeData.hpp"
 #include "TreeDataLinkDef.h"
 #include "YamlParameter.h"
 #include "BetaTSScannor.hpp"
 #include "BigRIPSTSScannor.hpp"
 #include "ImplantTSScannor.hpp"
+#include "ProcessorRootStruc.hpp"
+#include "BigRIPSTreeData.h"
 
 /** prints usage **/
 void usage(char *argv0)
@@ -13,7 +15,6 @@ void usage(char *argv0)
       << argv0 << " -i [input_file_name] -c [configuration_file_name]"
       << " -o [output_file_name]" << std::endl;
 }
-
 
 int main(int argc, char **argv) 
 {

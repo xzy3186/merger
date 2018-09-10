@@ -5,6 +5,8 @@
 //#pragma link off all functions;
 
 #pragma link C++ class TreeData+;
+#pragma link C++ class OutputTreeData<PixTreeEvent,TreeData>+;
+#pragma link C++ class OutputTreeData<PixTreeEvent,OutputTreeData<PixTreeEvent,TreeData>>+;
 
 #endif
 

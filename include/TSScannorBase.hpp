@@ -8,9 +8,9 @@
 #include <TTreeReaderValue.h>
 #include "YamlReader.hpp"
 #include "RemainTime.h"
-#include "ProcessorRootStruc.hpp"
 
 /** Base class for scanning timestamp from tree **/
+template <class T>
 class TSScannorBase 
 {
 public:
@@ -22,20 +22,104 @@ public:
     void Configure(const std::string &yaml_node_name);
     virtual void SetReader(); // virtual function to define TTreeReaderValue
     void Scan(); // scan through events from first_entry_ to last_entry_ of the tree
-    const std::map<ULong64_t,ULong64_t> &GetMap(){ return entry_ts_map_;}
+    const std::map<ULong64_t,ULong64_t> &GetMap(){ return ts_entry_map_;}
+    T* GetEntry(ULong64_t i_entry)
+    {
+        tree_reader_->SetEntry(i_entry);
+        return tree_data_->Get();
+    };
+    ULong64_t GetCurrentEntry(){ return tree_reader_->GetCurrentEntry(); }
 
 protected:
     TFile *tree_file_; // Input tree TFile
     TTreeReader *tree_reader_; // TTreeReader
     YamlReader *yaml_reader_; // config reader
-    std::map<ULong64_t,ULong64_t> entry_ts_map_; // map of key=index, value=timestamp
+    std::map<ULong64_t,ULong64_t> ts_entry_map_; // map of key=timestamp, value=index
     RemainTime *remain_time_; // estimates remaining time
     ULong64_t first_entry_; // the index of the first entry to scan
     ULong64_t last_entry_; // the index of the last entry to scan
     ULong64_t print_freq_; // frequency to print scan progress
 
-    virtual ULong64_t GetTS() const {return 0;}
+    virtual ULong64_t GetTS() const = 0;
     virtual Bool_t IsInGate() const {return true;}
+    TTreeReaderValue<T> *tree_data_;
 };
+
+template <class T> const std::string TSScannorBase<T>::kMsgPrefix("[TSScannorBase]:");
+
+template <class T> TSScannorBase<T>::TSScannorBase()
+{
+    tree_file_ = nullptr;
+    tree_reader_ = nullptr;
+    yaml_reader_ = nullptr;
+}
+
+template <class T> TSScannorBase<T>::~TSScannorBase()
+{
+    tree_file_->Close();
+    if(tree_file_)
+        delete tree_file_;
+    if(tree_reader_)
+        delete tree_reader_;
+    if(yaml_reader_)
+        delete yaml_reader_;
+}
+
+template <class T> void TSScannorBase<T>::Configure(const std::string &yaml_node_name)
+{
+    /** loads configuration from yaml **/
+    if(yaml_reader_)
+        delete yaml_reader_;
+    yaml_reader_ = new YamlReader(yaml_node_name);
+    std::string input_file_name = yaml_reader_->GetString("InputFileName");
+    std::string tree_name = yaml_reader_->GetString("TreeName");
+
+    /** opens input root file **/
+    tree_file_ = new TFile(input_file_name.c_str());
+    std::cout << kMsgPrefix << "file open \"" << input_file_name << "\"" << std::endl;
+
+    /** creates TTreeReader **/
+    tree_reader_ = new TTreeReader(tree_name.c_str(),tree_file_);
+
+    /** scan entries range **/
+    first_entry_ = yaml_reader_->GetULong64("FirstEntry",false,0);
+    last_entry_ = yaml_reader_->GetULong64("LastEntry",false,tree_reader_->GetEntries(true));
+    tree_reader_->SetEntriesRange(first_entry_, last_entry_);
+
+    /** frequency of printing scan progress default = 10000 **/
+    print_freq_ = yaml_reader_->GetULong64("PrintFrequency",false,10000);
+    return;
+}
+
+template <class T> void TSScannorBase<T>::SetReader()
+{
+    if(!yaml_reader_){
+        std::cout << kMsgPrefix << "SetReader() called before Configure()." << std::endl;
+        return;
+    }
+}
+
+template <class T> void TSScannorBase<T>::Scan()
+{
+    ULong64_t total_entry = last_entry_ - first_entry_;
+    RemainTime remain_time(total_entry);
+
+    while ( tree_reader_->Next() )
+    {
+        /** If the event is in the gate, emplace <timestamp, index> to the map **/
+        if ( IsInGate() ){
+            ts_entry_map_.emplace(GetTS(), tree_reader_->GetCurrentEntry());
+        }
+        /** displays progress **/
+        ULong64_t i_entry = tree_reader_->GetCurrentEntry() - first_entry_;
+        if ( !(tree_reader_->GetCurrentEntry()%print_freq_) && i_entry){
+            tm *remain = remain_time.remain(i_entry);
+            std::cout << kMsgPrefix << tree_reader_->GetCurrentEntry() << "/" << last_entry_ << " ";
+            std::cout << 100.*(double)i_entry/(double)(total_entry) << "\% scanned. Remaining " << remain->tm_hour << "h ";
+            std::cout << remain->tm_min << "m " << remain->tm_sec << "s" << std::endl;
+        }
+    }
+    return;
+}
 
 #endif /* VANDLE_MERGER_TSSCANNORBASE_HPP_ */

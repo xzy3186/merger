@@ -19,7 +19,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(/home/ryokoyam/opt/yaml-cpp/include)
 include_directories(${PAASS_DIR_PATH}/Analysis/Utkscan/processors/include)
 link_directories(${PAASS_DIR_PATH}/lib)
-ROOT_GENERATE_DICTIONARY(G__MergerData include/TreeDataStructures.h LINKDEF include/TreeDataLinkDef.h)
+ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp LINKDEF include/TreeDataLinkDef.h)
 
 #---Create a shared library with geneated dictionary
 add_library(MergerData SHARED G__MergerData.cxx)

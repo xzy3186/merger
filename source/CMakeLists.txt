@@ -5,7 +5,6 @@ add_library(MergerLib SHARED
   RemainTime.cpp
   YamlParameter.cpp
   YamlReader.cpp
-  TSScannorBase.cpp
   BetaTSScannor.cpp
   BigRIPSTSScannor.cpp
   ImplantTSScannor.cpp

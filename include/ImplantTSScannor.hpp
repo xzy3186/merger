@@ -3,11 +3,11 @@
 #ifndef VANDLE_MERGER_IMPLANTTSSCANNOR_HPP_
 #define VANDLE_MERGER_IMPLANTTSSCANNOR_HPP_
 
-#include "ProcessorRootStruc.hpp"
 #include "TSScannorBase.hpp"
+#include "ProcessorRootStruc.hpp"
 
 /** timestamp scannor class for implant events **/
-class ImplantTSScannor : public TSScannorBase
+class ImplantTSScannor : public TSScannorBase<PixTreeEvent>
 {
 public:
     const static std::string kMsgPrefix;
@@ -20,9 +20,8 @@ protected:
     Double_t low_gain_min_;
     Double_t low_gain_max_;
 
-    ULong64_t GetTS() const {return pixie_tree_data_->Get()->externalTS;}
+    ULong64_t GetTS() const {return tree_data_->Get()->externalTS;}
     Bool_t IsInGate() const; // gate conditions
-    TTreeReaderValue<PixTreeEvent> *pixie_tree_data_;
 };
 
 #endif /* VANDLE_MERGER_IMPLANTTSSCANNOR_HPP_ */

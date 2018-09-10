@@ -1,7 +1,7 @@
 BigRIPSTSScannor:
   InputFileName: julyTesting/syncTest0007.root
   TreeName: tree
-  TSBranchName: ts
+  BranchName: bigrips
 #  FirstEntry: 0
 #  LastEntry: 1000
 

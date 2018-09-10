@@ -4,9 +4,10 @@
 #define VANDLE_MERGER_BIGRIPSTSSCANNOR_HPP_
 
 #include "TSScannorBase.hpp"
+#include "BigRIPSTreeData.h"
 
 /** timestamp scannor class for BigRIPS events **/
-class BigRIPSTSScannor : public TSScannorBase
+class BigRIPSTSScannor : public TSScannorBase<TreeData>
 {
 public:
     const static std::string kMsgPrefix;
@@ -15,8 +16,7 @@ public:
     void SetReader();
 
 protected:
-    ULong64_t GetTS() const {return *time_stamp_->Get();}
-    TTreeReaderValue<ULong64_t> *time_stamp_;
+    ULong64_t GetTS() const {return tree_data_->Get()->ts;}
 };
 
 #endif /* VANDLE_MERGER_BIGRIPSTSSCANNOR_HPP_ */
