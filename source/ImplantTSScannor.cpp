@@ -28,3 +28,15 @@ Bool_t ImplantTSScannor::IsInGate() const
         return false;
 }
 
+const std::string MergedImplantTSScannor::kMsgPrefix("[MergedImplantTSScannor]:");
+
+void MergedImplantTSScannor::SetReader()
+{
+    TSScannorBase<OutputTreeData<PixTreeEvent, TreeData>>::SetReader();
+    std::string br_name = yaml_reader_->GetString("PixieBranchName");
+    tree_data_ = new TTreeReaderValue<OutputTreeData<PixTreeEvent, TreeData>>(*tree_reader_,br_name.c_str());
+    std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
+
+    return;
+}
+

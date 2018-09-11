@@ -16,7 +16,12 @@ public:
     void SetReader();
 
 protected:
-    ULong64_t GetTS() const {return tree_data_->Get()->ts;}
+    ULong64_t GetTS() const
+    {
+        if(!tree_data_) throw kMsgPrefix + "In GetTS(), tree_data_ is null";
+        if(!tree_data_->Get()) throw kMsgPrefix + "In GetTS(), tree_data_->Get() returned null";
+        return tree_data_->Get()->ts;
+    }
 };
 
 #endif /* VANDLE_MERGER_BIGRIPSTSSCANNOR_HPP_ */

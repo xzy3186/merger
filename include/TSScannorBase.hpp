@@ -22,13 +22,19 @@ public:
     void Configure(const std::string &yaml_node_name);
     virtual void SetReader(); // virtual function to define TTreeReaderValue
     void Scan(); // scan through events from first_entry_ to last_entry_ of the tree
-    const std::map<ULong64_t,ULong64_t> &GetMap(){ return ts_entry_map_;}
-    T* GetEntry(ULong64_t i_entry)
+    std::map<ULong64_t,ULong64_t> GetMap(){ return ts_entry_map_;}
+    T* GetEntry(const ULong64_t &i_entry)
     {
+        if(!tree_data_) throw kMsgPrefix + "GetEntry(), tree_data_ is null.";
+        tree_reader_->Restart();
         tree_reader_->SetEntry(i_entry);
+        if(!tree_data_->Get()) throw kMsgPrefix + "GetEntry(), tree_data_->Get() returned null.";
         return tree_data_->Get();
     };
-    ULong64_t GetCurrentEntry(){ return tree_reader_->GetCurrentEntry(); }
+    ULong64_t GetCurrentEntry(){
+        if(!tree_data_) throw kMsgPrefix + "GetCurrentEntry(), tree_data_ is null.";
+        return tree_reader_->GetCurrentEntry();
+    }
 
 protected:
     TFile *tree_file_; // Input tree TFile
@@ -68,17 +74,27 @@ template <class T> TSScannorBase<T>::~TSScannorBase()
 template <class T> void TSScannorBase<T>::Configure(const std::string &yaml_node_name)
 {
     /** loads configuration from yaml **/
-    if(yaml_reader_)
+    if(yaml_reader_){
         delete yaml_reader_;
+        yaml_reader_ = nullptr;
+    }
     yaml_reader_ = new YamlReader(yaml_node_name);
     std::string input_file_name = yaml_reader_->GetString("InputFileName");
     std::string tree_name = yaml_reader_->GetString("TreeName");
 
     /** opens input root file **/
+    if(tree_file_){
+        delete tree_file_;
+        tree_file_ = nullptr;
+    }
     tree_file_ = new TFile(input_file_name.c_str());
     std::cout << kMsgPrefix << "file open \"" << input_file_name << "\"" << std::endl;
 
     /** creates TTreeReader **/
+    if(tree_reader_){
+        delete tree_reader_;
+        tree_reader_ = nullptr;
+    }
     tree_reader_ = new TTreeReader(tree_name.c_str(),tree_file_);
 
     /** scan entries range **/
@@ -101,14 +117,17 @@ template <class T> void TSScannorBase<T>::SetReader()
 
 template <class T> void TSScannorBase<T>::Scan()
 {
-    ULong64_t total_entry = last_entry_ - first_entry_;
+    if(!tree_reader_)
+        throw kMsgPrefix + "Scan() called but tree_reader_ is null.";
+        
+    const ULong64_t total_entry = last_entry_ - first_entry_;
     RemainTime remain_time(total_entry);
 
     while ( tree_reader_->Next() )
     {
         /** If the event is in the gate, emplace <timestamp, index> to the map **/
         if ( IsInGate() ){
-            ts_entry_map_.emplace(GetTS(), tree_reader_->GetCurrentEntry());
+            ts_entry_map_.emplace(std::make_pair(GetTS(), tree_reader_->GetCurrentEntry()));
         }
         /** displays progress **/
         ULong64_t i_entry = tree_reader_->GetCurrentEntry() - first_entry_;

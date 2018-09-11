@@ -1,5 +1,6 @@
-#ifndef YAMLPARAMETER_H
-#define YAMLPARAMETER_H
+
+#ifndef VANDLE_MERGER_YAMLPARAMETER_H
+#define VANDLE_MERGER_YAMLPARAMETER_H
 
 #include "yaml-cpp/yaml.h"
 
@@ -35,5 +36,4 @@ public:
   }
 };
 
-
-#endif
+#endif /** VANDLE_MERGER_YAMLPARAMETER_H **/
