@@ -33,7 +33,7 @@ protected:
     Double_t time_window_low_; // lower limit of the time window to merge events (T1-T2)
     Double_t time_window_up_; // upper limit of the time window to merge events (T1-T2)
     ULong64_t print_freq_; // frequency to print scan progress
-    TOUT p_object_; // output class object
+    TOUT output_object_; // output class object
 
     /** timestamp scannors of input trees **/
     TSScannorBase<TIN1> *input_scannor_1_; 
@@ -113,7 +113,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
     std::string class_name = yaml_reader_->GetString("ClassName");
     Int_t buffsize = yaml_reader_->GetULong64("BuffSize",false,32000);
     Int_t splitlevel = yaml_reader_->GetULong64("SplitLevel",false,99);
-    tree_->Branch(branch_name.c_str(),class_name.c_str(),&p_object_,buffsize,splitlevel);
+    tree_->Branch(branch_name.c_str(),class_name.c_str(),&output_object_,buffsize,splitlevel);
 
     /** time window **/
     time_window_low_ = yaml_reader_->GetDouble("TimeWindowLow");
@@ -140,18 +140,17 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
     for ( auto entry :  map1 )
     {
         /** loop over input2 events whithin T1-up < T2 < T1+low **/
-        //std::cout << kMsgPrefix << "entry: first = " << entry.first << " entry: second = " << entry.second << std::endl;
         auto it = map2.lower_bound(entry.first - time_window_up_);
         auto last = map2.upper_bound(entry.first + time_window_low_);
-        if( it == map2.end() )
+        if( it == map2.end() ) // Skip if there is no correlated event.
             continue;
         TOUT o_obj(*input_scannor_1_->GetEntry(entry.second));
         while ( it != last )
         {
-           //std::cout << kMsgPrefix << "entry: first = " << (*it).first << " entry: second = " << (*it).second << std::endl;
            o_obj.output_vec_.emplace_back(*input_scannor_2_->GetEntry((*it).second));
            ++it; 
         }
+        output_object_ = o_obj;
         tree_->Fill();
         /** displays progress **/
         if ( !(i_entry%print_freq_) && i_entry){

@@ -5,6 +5,7 @@
 
 #include "TSScannorBase.hpp"
 #include "ProcessorRootStruc.hpp"
+#include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
 
 /** timestamp scannor class for implant events **/
