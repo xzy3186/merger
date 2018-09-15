@@ -19,6 +19,19 @@
 class TreeData {
 public:
     TreeData( ){};
+    TreeData(const TreeData &tree_data){
+        tof=tree_data.tof;
+        zet=tree_data.zet;
+        aoq=tree_data.aoq;
+        f5x=tree_data.f5x;
+        f11x=tree_data.f11x;
+        f11y=tree_data.f11y;
+        f11dt=tree_data.f11dt;
+        beta=tree_data.beta;
+        ts=tree_data.ts;
+        EventId=tree_data.EventId;
+	RunId=tree_data.RunId;
+    }
     virtual ~TreeData(){};
     
     Long64_t    ts; 	 // Calibrated time
