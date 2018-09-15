@@ -6,19 +6,21 @@ project(merger)
 #   - ROOT built with classic configure/make use the provided $ROOTSYS/etc/cmake/FindROOT.cmake
 #   - ROOT built with CMake. Add in CMAKE_PREFIX_PATH the installation prefix for ROOT
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-set(PAASS_DIR_PATH "/home/ryokoyam/vandle/ur18/paass" CACHE STRING "path to paass directory" )
+set(PAASS_DIR_PATH "/home/vandle18/opt/paass/install" CACHE STRING "path to paass directory" )
+set(YAML_CPP_PATH "/home/vandle18/opt/yaml-cpp" CACHE STRING "path to yaml-cpp")
 
 #---Locate the ROOT package and defines a number of variables (e.g. ROOT_INCLUDE_DIRS)
 find_package(ROOT REQUIRED COMPONENTS RIO Net)
-find_package(yaml-cpp)
+#find_package(yaml-cpp)
 
 #---Define useful ROOT functions and macros (e.g. ROOT_GENERATE_DICTIONARY)
 include(${ROOT_USE_FILE})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories(/home/ryokoyam/opt/yaml-cpp/include)
+include_directories(${YAML_CPP_PATH}/include)
 include_directories(${PAASS_DIR_PATH}/Analysis/Utkscan/processors/include)
 link_directories(${PAASS_DIR_PATH}/lib)
+link_directories(${YAML_CPP_PATH}/lib)
 ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp LINKDEF include/TreeDataLinkDef.h)
 
 #---Create a shared library with geneated dictionary

@@ -119,7 +119,7 @@ int main(int argc, char **argv)
         }
 
 	/** destroys YamlParameter instance **/
-        YamlParameter::Destroy();
+        //YamlParameter::Destroy();
 
     }
     catch (std::string msg) {

@@ -32,6 +32,7 @@ protected:
     RemainTime *remain_time_; // estimates remaining time
     Double_t time_window_low_; // lower limit of the time window to merge events (T1-T2)
     Double_t time_window_up_; // upper limit of the time window to merge events (T1-T2)
+    Double_t ts_scale_; // timestamp scale
     ULong64_t print_freq_; // frequency to print scan progress
     TOUT output_object_; // output class object
 
@@ -118,6 +119,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
     /** time window **/
     time_window_low_ = yaml_reader_->GetDouble("TimeWindowLow");
     time_window_up_ = yaml_reader_->GetDouble("TimeWindowUp");
+    ts_scale_ = yaml_reader_->GetDouble("TimeStampScale",false,1);
 
     /** frequency of printing scan progress default = 10000 **/
     print_freq_ = yaml_reader_->GetULong64("PrintFrequency",false,10000);
@@ -140,14 +142,15 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
     for ( auto entry :  map1 )
     {
         /** loop over input2 events whithin T1-up < T2 < T1+low **/
-        auto it = map2.lower_bound(entry.first - time_window_up_);
-        auto last = map2.upper_bound(entry.first + time_window_low_);
+        auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
+        auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
+        //std::cout << (double)(*it).first << "/" << (*it).second << "  " << (double)(*last).first << "/" << (*last).second << "  " << entry.first*ts_scale_ << "/" << entry.second*ts_scale_ << std::endl;
         if( it == map2.end() ) // Skip if there is no correlated event.
             continue;
         TOUT o_obj(*input_scannor_1_->GetEntry(entry.second));
         while ( it != last )
         {
-           o_obj.output_vec_.emplace_back(*input_scannor_2_->GetEntry((*it).second));
+           o_obj.output_vec_.emplace_back(*input_scannor_2_->GetEntry(it->second));
            ++it; 
         }
         output_object_ = o_obj;

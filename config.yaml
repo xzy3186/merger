@@ -1,18 +1,18 @@
 BigRIPSTSScannor:
-  InputFileName: julyTesting/syncTest0007.root
+  InputFileName: jul18vandle/syncTest0012.root
   TreeName: tree
   BranchName: bigrips
 #  FirstEntry: 0
-#  LastEntry: 1000
+#  LastEntry: 10000
 
 ImplantTSScannor:
-  InputFileName: julyTesting/extTS_DD.root
+  InputFileName: pixie_rootfiles/extTS_DD.root
   TreeName: PixTree
   PixieBranchName: PixTreeEvent
-  MinLowGainDynEnergy: 10000
+  MinLowGainDynEnergy: 1000
   MaxLowGainDynEnergy: 65535
 #  FirstEntry: 0
-#  LastEntry: 1000
+#  LastEntry: 10000
 
 BigRIPSImplantMerger:
   OutputFileName: mergedImp.root
@@ -21,6 +21,7 @@ BigRIPSImplantMerger:
   ClassName: OutputTreeData<PixTreeEvent, TreeData>
   TimeWindowLow: 1000
   TimeWindowUp: 1000
+  TimeStampScale: 40
 
 MergedImplantTSScannor:
   InputFileName: mergedImp.root
@@ -30,13 +31,13 @@ MergedImplantTSScannor:
 #  LastEntry: 1000
 
 BetaTSScannor:
-  InputFileName: julyTesting/extTS_DD.root
+  InputFileName: pixie_rootfiles/extTS_DD.root
   TreeName: PixTree
   PixieBranchName: PixTreeEvent
   MinHighGainDynEnergy: 0
   MaxHighGainDynEnergy: 65535
-  MinLowGainDynEnergy: 0
-  MaxLowGainDynEnergy: 10000
+  MinLowGainDynEnergy: 100
+  MaxLowGainDynEnergy: 1000
 #  FirstEntry: 0
 #  LastEntry: 1000
 
@@ -45,5 +46,6 @@ ImplantBetaMerger:
   TreeName: mergedBeta
   BranchName: mergedBeta
   ClassName: OutputTreeData<PixTreeEvent,OutputTreeData<PixTreeEvent, TreeData>>
-  TimeWindowLow: 1000
-  TimeWindowUp: 1000
+  PrintFrequency: 10
+  TimeWindowLow: 100000000
+  TimeWindowUp: 100000000
