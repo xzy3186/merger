@@ -18,7 +18,7 @@ include(${ROOT_USE_FILE})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${YAML_CPP_PATH}/include)
-include_directories(${PAASS_DIR_PATH}/Analysis/Utkscan/processors/include)
+include_directories(${PAASS_DIR_PATH}/include)
 link_directories(${PAASS_DIR_PATH}/lib)
 link_directories(${YAML_CPP_PATH}/lib)
 ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp LINKDEF include/TreeDataLinkDef.h)

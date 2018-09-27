@@ -16,7 +16,7 @@
 #include <string>
 #include <TTree.h>
 
-class TreeData {
+class TreeData : {
 public:
     TreeData( ){};
     TreeData(const TreeData &tree_data){
@@ -61,6 +61,7 @@ public:
 	RunId=0;
     }
 };
+
 
 #endif
 
