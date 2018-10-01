@@ -57,7 +57,7 @@ TreeMerger<TOUT,TIN1,TIN2>::TreeMerger()
 }
 
 template <class TOUT, class TIN1, class TIN2>
-TreeMerger<TOUT,TIN1,TIN2>::TreeMerger(TSScannorBase<TIN1> *input1, TSScannorBase<TIN2> *input2)
+TreeMerger<TOUT,TIN1,TIN2>::TreeMerger(TSScannorBase<TIN1> *input1, TSScannorBase<TIN2> *input2) : output_object_(*input1->GetEntry(0),TClonesArray(input2->GetEntry(0)->ClassName()))
 {
     tree_file_ = nullptr;
     yaml_reader_ = nullptr;
@@ -138,23 +138,39 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
     const ULong64_t total_entry = map1.size();
     RemainTime remain_time(total_entry); // set total number of entries to estimate remaining time.
     ULong64_t i_entry = 0;
+
+    const std::string class_name = input_scannor_2_->GetEntry(0)->ClassName();
+    //TClonesArray clones_array(class_name.c_str());
+    output_object_.output_array_.BypassStreamer();
  
     for ( auto entry :  map1 )
     {
         /** loop over input2 events whithin T1-up < T2 < T1+low **/
         auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
         auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
-        //std::cout << (double)(*it).first << "/" << (*it).second << "  " << (double)(*last).first << "/" << (*last).second << "  " << entry.first*ts_scale_ << "/" << entry.second*ts_scale_ << std::endl;
         if( it == map2.end() ) // Skip if there is no correlated event.
             continue;
-        TOUT o_obj(*input_scannor_1_->GetEntry(entry.second));
+
+        //TOUT o_obj(*input_scannor_1_->GetEntry(entry.second), class_name.c_str());
+        //clones_array.Clear();
+        output_object_ = TOUT(*input_scannor_1_->GetEntry(entry.second), TClonesArray(class_name.c_str()));
+        int idx = 0;
         while ( it != last )
         {
-           o_obj.output_vec_.emplace_back(*input_scannor_2_->GetEntry(it->second));
+           //if( idx >= clones_array.GetEntriesFast() )
+           //    clones_array.Expand(idx+1);
+           //*clones_array.ConstructedAt(idx) = *input_scannor_2_->GetEntry(it->second);
+           new(output_object_.output_array_[idx]) TIN2(*input_scannor_2_->GetEntry(it->second));
+           //new(clones_array[idx]) TIN2(*input_scannor_2_->GetEntry(it->second));
            ++it; 
+           ++idx;
         }
-        output_object_ = o_obj;
+        //clones_array.Compress();
+        //o_obj.output_array_ = clones_array;
+        //output_object_ = TOUT(*input_scannor_1_->GetEntry(entry.second), clones_array);
+        output_object_.output_array_.Compress();
         tree_->Fill();
+        output_object_.output_array_.Clear();
         /** displays progress **/
         if ( !(i_entry%print_freq_) && i_entry){
             tm *remain = remain_time.remain(i_entry);

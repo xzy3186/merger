@@ -3,21 +3,23 @@
 
 #include <vector>
 #include <TObject.h>
+#include <TClonesArray.h>
 #include "ProcessorRootStruc.hpp"
 
 template <class T, class U>
 class OutputTreeData : public T
 {
 public:
-    std::vector<U> output_vec_;
+    TClonesArray output_array_;
 
     OutputTreeData(){}
-    OutputTreeData( const T &input_event ):T(input_event){}
+    OutputTreeData( const T &input_event, const TClonesArray &clones_array ) : T(input_event), output_array_(clones_array){}
+    OutputTreeData( const OutputTreeData &obj ) : T(obj), output_array_(obj.output_array_){}
     virtual ~OutputTreeData(){}
 
     void Clear()
     {
-        output_vec_.clear();
+        output_array_.Clear();
         T::Clear();
     }
     ClassDef(OutputTreeData,1)

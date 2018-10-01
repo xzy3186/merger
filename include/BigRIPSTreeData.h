@@ -15,8 +15,9 @@
 #define BIGRIPSTREEDATA_H_
 #include <string>
 #include <TTree.h>
+#include <TObject.h>
 
-class TreeData : {
+class TreeData : public TObject {
 public:
     TreeData( ){};
     TreeData(const TreeData &tree_data){
@@ -60,8 +61,9 @@ public:
         EventId=0;
 	RunId=0;
     }
-};
 
+    ClassDef(TreeData,0)
+};
 
 #endif
 
