@@ -8,6 +8,7 @@
 #pragma link C++ class OutputTreeData<PixTreeEvent, TreeData>+;
 #pragma link C++ class OutputTreeData<PixTreeEvent, OutputTreeData<PixTreeEvent,TreeData>>+;
 #pragma link C++ class OutputTreeData<AidaTreeData, TreeData>+;
+#pragma link C++ class AnamergerPidSelector+;
 
 #endif
 

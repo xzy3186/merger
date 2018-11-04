@@ -17,10 +17,13 @@ find_package(ROOT REQUIRED COMPONENTS RIO Net)
 include(${ROOT_USE_FILE})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/anamerger/include)
 include_directories(${YAML_CPP_PATH}/include)
 include_directories(${PAASS_DIR_PATH}/include)
 link_directories(${PAASS_DIR_PATH}/lib)
 link_directories(${YAML_CPP_PATH}/lib)
+link_directories(${PWD}/anaerger/source)
+link_directories(${ROOTSYS}/lib)
 ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp LINKDEF include/TreeDataLinkDef.h)
 
 #---Create a shared library with geneated dictionary
@@ -30,7 +33,13 @@ target_link_libraries(MergerData ${ROOT_LIBRARIES})
 
 #---Create  a main program using the library
 add_subdirectory(source)
+add_subdirectory(anamerger)
 add_executable(merger MergerMain.cpp)
+add_executable(merger_pid MergerImpPid.cpp)
+add_executable(merger_beta MergerImpBeta.cpp)
+add_executable(anamerger_pid anamerger/source/AnamergerPidMain.cpp)
 target_link_libraries(merger ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib)
-#target_link_libraries(pspmtana PspmtAnalyzer ${ROOT_LIBRARIES} PspmtPositionData yaml-cpp)
+target_link_libraries(merger_pid ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib)
+target_link_libraries(merger_beta ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib)
+target_link_libraries(anamerger_pid ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib AnamergerLib)
 

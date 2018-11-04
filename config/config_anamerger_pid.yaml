@@ -1,0 +1,10 @@
+AnamergerMain:
+    TreeName: mergedImp
+    MergerListName: mergerList.txt
+    NumWorkers: 4
+    #NumEntries: 10000
+    #FirstEntry: 0
+
+AnamergerPidSelector:
+    ReferenceCutFile: referenceCuts.txt
+    OutputFileName: anamerger_output.root
