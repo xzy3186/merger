@@ -31,17 +31,18 @@ void AnamergerPidSelector::Begin(TTree* merged_data)
 
 void AnamergerPidSelector::SlaveBegin(TTree* merged_data)
 {
+
   YamlReader yaml_reader("AnamergerPidSelector"); 
   {
     const std::string cut_file_name = yaml_reader.GetString("ReferenceCutFile");
     LoadCUTG(cut_file_name);
   }
-  /*
+/*  
   {
     const std::string yso_map_name = yaml_reader.GetString("YSOMap")
     fYSOMap = new YSOMap(ANAMERGER_PATH + "yso_map.txt");
   }
-  */
+ */ 
 
   hist_array_ = new TObjArray();
 
@@ -53,10 +54,6 @@ void AnamergerPidSelector::SlaveBegin(TTree* merged_data)
      GetOutputList()->Add(obj);
   }
 
-  {
-    const std::string output_file_name = yaml_reader.GetString("OutputFileName");
-    output_file_ = new TFile(output_file_name.c_str(),"recreate");
-  }
   if (gProofServ) {
     const TString msg = TString::Format("SlaveBegin() of Ord = %s called. %d histograms are initialized.",
                                          gProofServ->GetOrdinal(),GetOutputList()->GetEntries());
@@ -65,12 +62,13 @@ void AnamergerPidSelector::SlaveBegin(TTree* merged_data)
   else {
     std::cout << "SalveBegin() called. " << GetOutputList()->GetEntries() << " histograms are initialized." << std::endl;
   }
+
   return;
 }
 
 void AnamergerPidSelector::Init(TTree* merged_data)
 {    
-  tree_reader_.SetTree( merged_data );
+  //tree_reader_.SetTree( merged_data );
   return;
 }
 
@@ -80,6 +78,9 @@ Bool_t AnamergerPidSelector::Process(Long64_t entry){
   tree_reader_.SetLocalEntry(entry);
   {
     OutputTreeData<PixTreeEvent,TreeData> *imp = merged_event_.Get();
+
+    for(auto vandle : imp->vandle_vec_)
+      ((TH1F*)GetOutputList()->FindObject("tof_tot"))->Fill(vandle.tof);
     for(auto isotope : vectorIsotopes){
       if(imp->output_vec_.size()!=1)
         continue;
@@ -97,14 +98,20 @@ Bool_t AnamergerPidSelector::Process(Long64_t entry){
 
 void AnamergerPidSelector::Terminate(){
 
+  YamlReader yaml_reader("AnamergerPidSelector"); 
+  {
+    const std::string output_file_name = yaml_reader.GetString("OutputFileName");
+    output_file_ = new TFile(output_file_name.c_str(),"recreate");
+  }
   // write the histograms
   TIter next(GetOutputList());
   while( TObject* obj = next() ){
     obj->Write();
+    std::cout << "object: " << obj->GetName() << " has been written." << std::endl;
   }
 
   output_file_->Close();
-  hist_array_->Clear();
+  //hist_array_->Clear();
   
   return ;
 }
@@ -120,11 +127,14 @@ int AnamergerPidSelector::LoadCUTG(const std::string &icutname)
     while(!fcut.eof()){
       std::string isoname;
       fcut >> isoname;
+      if(!isoname.length())
+        break;
       Double_t ellipse_a, ellipse_b, ellipse_x0, ellipse_y0;
       fcut >> ellipse_a;
       fcut >> ellipse_b;
       fcut >> ellipse_x0;
       fcut >> ellipse_y0;
+      std::cout << "Adding " << isoname << " as an isotope." << std::endl;
       vectorIsotopes.push_back( hIsotope(isoname, ellipse_a, ellipse_b, ellipse_x0, ellipse_y0, GetOutputList()) );
     }
     fcut.close();

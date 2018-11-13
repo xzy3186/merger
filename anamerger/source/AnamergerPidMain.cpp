@@ -3,6 +3,7 @@
 #include <string>
 #include "TChain.h"
 #include "TProof.h"
+#include "TROOT.h"
 #include "YamlParameter.h"
 #include "YamlReader.hpp"
 #include "AnamergerPidSelector.h"
@@ -19,7 +20,7 @@ int main(int argc, char **argv)
   std::string output_file_name;
 
   /** parsing commandline arguments **/
-  if(argc!=3){
+  if(argc<3){
     usage(argv[0]);
     return 1;
   }
@@ -41,7 +42,9 @@ int main(int argc, char **argv)
         break;
     }
   }
-   
+
+  //gROOT->SetBatch(true); 
+
   try {
     /** creates YamlParameter instance **/
     YamlParameter::Create(config_file_name);
@@ -51,7 +54,7 @@ int main(int argc, char **argv)
     const std::string num_workers = yaml_reader_->GetString("NumWorkers");
 
     const std::string proof_arg = "workers=" + num_workers;
-    TProof *pr = new TProof("lite://",proof_arg.c_str());
+    TProof *pr = TProof::Open("localhost",proof_arg.c_str());
 
     TChain *chain = new TChain(tree_name.c_str());
     std::ifstream mergerListFiles( merger_list_name.c_str() );
@@ -70,11 +73,15 @@ int main(int argc, char **argv)
     const unsigned long long first_entry = yaml_reader_->GetULong64("FirstEntry",false,0);
 
     //chain->SetProof();
+    //std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
 
-    AnamergerPidSelector *selector = new AnamergerPidSelector();
+    AnamergerPidSelector *selector = new AnamergerPidSelector(chain);
+
+    std::cout << "Start Processing..." << std::endl;
     chain->Process(selector,"",n_entries, first_entry);
+    //pr->Process(tree_name.c_str(),selector,"",n_entries, first_entry);
 
-    //pr->Close();
+    pr->Close();
 
     /** destroys YamlParameter instance **/
       YamlParameter::Destroy();

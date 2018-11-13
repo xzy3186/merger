@@ -1,10 +1,10 @@
 AnamergerMain:
     TreeName: mergedImp
-    MergerListName: mergerList.txt
+    MergerListName: "/home/vandle18/merger/dev/work/mergerList.txt"
     NumWorkers: 4
     #NumEntries: 10000
     #FirstEntry: 0
 
 AnamergerPidSelector:
-    ReferenceCutFile: referenceCuts.txt
-    OutputFileName: anamerger_output.root
+    ReferenceCutFile: "/home/vandle18/merger/dev/work/referenceCuts.txt"
+    OutputFileName: "/home/vandle18/merger/dev/work/anamerger_output.root"

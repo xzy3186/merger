@@ -61,7 +61,7 @@ protected:
   TFile * output_file_;
   //YSOMap *yso_map_;
 
-  ClassDef(AnamergerPidSelector,0)
+  ClassDef(AnamergerPidSelector,1)
 };
 
 #endif

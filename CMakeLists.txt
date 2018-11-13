@@ -24,7 +24,7 @@ link_directories(${PAASS_DIR_PATH}/lib)
 link_directories(${YAML_CPP_PATH}/lib)
 link_directories(${PWD}/anaerger/source)
 link_directories(${ROOTSYS}/lib)
-ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp LINKDEF include/TreeDataLinkDef.h)
+ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp ${PAASS_DIR_PATH}/include/ProcessorRootStruc.hpp LINKDEF include/TreeDataLinkDef.h)
 
 #---Create a shared library with geneated dictionary
 add_library(MergerData SHARED G__MergerData.cxx)
