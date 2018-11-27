@@ -26,7 +26,7 @@ protected:
     {
         if(!tree_data_) throw kMsgPrefix + "in GetTS(), three_data is null";
         if(!tree_data_->Get()) throw kMsgPrefix + "in GetTS(), three_data->Get() returned null";
-        return tree_data_->Get()->externalTS;
+        return tree_data_->Get()->externalTS1;
     }
 
     Bool_t IsInGate() const; // gate conditions
@@ -43,7 +43,7 @@ public:
 
 protected:
 
-    ULong64_t GetTS() const {return tree_data_->Get()->externalTS;}
+    ULong64_t GetTS() const {return tree_data_->Get()->externalTS1;}
 };
 
 #endif /* VANDLE_MERGER_IMPLANTTSSCANNOR_HPP_ */
