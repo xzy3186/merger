@@ -79,15 +79,33 @@ Bool_t AnamergerPidSelector::Process(Long64_t entry){
   {
     OutputTreeData<PixTreeEvent,TreeData> *imp = merged_event_.Get();
 
-    for(auto vandle : imp->vandle_vec_)
-      ((TH1F*)GetOutputList()->FindObject("tof_tot"))->Fill(vandle.tof);
     for(auto isotope : vectorIsotopes){
+      // PID gate
       if(imp->output_vec_.size()!=1)
         continue;
       if(isotope.IsInside(imp->output_vec_.at(0).aoq, imp->output_vec_.at(0).zet)){
-        for(auto vandle : imp->vandle_vec_){
-          const std::string hname = "tof_"+isotope.isotopeName;
-          ((TH1F*)GetOutputList()->FindObject(hname.c_str()))->Fill(vandle.tof);
+        // PSPMT dynode L
+        bool is_implant = false;
+        for(auto pspmt : imp->pspmt_vec_){
+          const std::string hname = "pspmt_dy_l_"+isotope.isotopeName;
+          ((TH1F*)GetOutputList()->FindObject(hname.c_str()))->Fill(pspmt.dy_l);
+          if(pspmt.dy_l>10&&pspmt.dy_l<16000)
+            is_implant = true;
+        }
+        { // count YSO implantation
+          const std::string hname = "implant_"+isotope.isotopeName;
+          ((TH1F*)GetOutputList()->FindObject(hname.c_str()))->Fill(0);
+          if(is_implant)
+            ((TH1F*)GetOutputList()->FindObject(hname.c_str()))->Fill(1);
+        }
+        { // isomer gamma with clovers
+          for(auto clover : imp->clover_vec_){
+            if(imp->pspmt_vec_.size()==1){
+              const Double_t tdiff = clover.Time - imp->pspmt_vec_.at(0).dyL_time;
+              const std::string hname = "isomer_clover_"+isotope.isotopeName;
+              ((TH2F*)GetOutputList()->FindObject(hname.c_str()))->Fill(clover.Energy,tdiff);
+            }
+          }
         }
       }
     }

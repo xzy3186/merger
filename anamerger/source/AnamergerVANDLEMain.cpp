@@ -6,7 +6,7 @@
 #include "TROOT.h"
 #include "YamlParameter.h"
 #include "YamlReader.hpp"
-#include "AnamergerPidSelector.h"
+#include "AnamergerVANDLESelector.h"
 
 void usage(char const *arg)
 {
@@ -72,10 +72,10 @@ int main(int argc, char **argv)
     const unsigned long long n_entries = yaml_reader_->GetULong64("NumEntries",false,chain->GetEntries());
     const unsigned long long first_entry = yaml_reader_->GetULong64("FirstEntry",false,0);
 
-    chain->SetProof();
-    std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
+    //chain->SetProof();
+    //std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
 
-    AnamergerPidSelector *selector = new AnamergerPidSelector(chain);
+    AnamergerVANDLESelector *selector = new AnamergerVANDLESelector(chain);
 
     std::cout << "Start Processing..." << std::endl;
     chain->Process(selector,"",n_entries, first_entry);

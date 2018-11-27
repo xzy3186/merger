@@ -49,3 +49,12 @@ ImplantBetaMerger:
   PrintFrequency: 10
   TimeWindowLow: 100000000
   TimeWindowUp: 100000000
+
+BetaImplantMerger:
+  OutputFileName: mergedImpBeta.root
+  TreeName: mergedImpBeta
+  BranchName: mergedImpBeta
+  ClassName: OutputTreeData<OutputTreeData<PixTreeEvent, TreeData>,PixTreeEvent>
+  PrintFrequency: 10
+  TimeWindowLow: 100000000
+  TimeWindowUp: 100000000

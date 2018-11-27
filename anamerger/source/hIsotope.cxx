@@ -69,26 +69,68 @@ void hIsotope::initializeHistos(TList* outputList)
     hist_array_ = new TObjArray();
     // histogram definition
     {
-      std::string histName = "tof_"+isotopeName;
-      TH1F* h = new TH1F(histName.c_str(),"tof vandle",10000,-1000,1000);
-      h->SetXTitle("tof");
+      std::string histName = "pspmt_dy_l_"+isotopeName;
+      TH1F* h = new TH1F(histName.c_str(),"PSPMT dinode L",10000,0,10000);
+      h->SetXTitle("pspmt dynode L energy");
       h->SetYTitle("counts");
       hist_array_->Add(h); //ET histograms
+    }
+    {
+      std::string histName = "implant_"+isotopeName;
+      TH1F* h = new TH1F(histName.c_str(),"Implantation",10,-0.5,9.5);
+      h->SetXTitle("0 = total, 1 = YSO");
+      h->SetYTitle("counts");
+      hist_array_->Add(h); //ET histograms
+    }
+    {
+      std::string histName = "isomer_clover_"+isotopeName;
+      TH2F* h = new TH2F(histName.c_str(),"Isomer spectrum",2000,-0.5,1999.5,1000,-1000,5000);
+      h->SetXTitle("clover energy");
+      h->SetYTitle("Tg - Ti");
+      hist_array_->Add(h); //ET histograms
+    }
+    {
+       std::string histName = "vandle_corTof_"+isotopeName;
+       TH1F* h = new TH1F(histName.c_str(),"Corrected TOF",1000,20,520);
+       h->SetXTitle("TOF (ns)");
+       h->SetYTitle("counts / 0.5ns");
+       hist_array_->Add(h); //ET histograms
+    }
+    {
+       std::string histName = "vandle_qdcPos_"+isotopeName;
+       TH1F* h = new TH1F(histName.c_str(),"QDC Position",1000,-1.0,1.0);
+       h->SetXTitle("Position (a.u.)");
+       h->SetYTitle("counts");
+       hist_array_->Add(h); //ET histograms
+    }
+    {
+       std::string histName = "vandle_tdiff_"+isotopeName;
+       TH1F* h = new TH1F(histName.c_str(),"Time difference",1000,-50,50);
+       h->SetXTitle("Time difference (a.u.)");
+       h->SetYTitle("counts");
+       hist_array_->Add(h); //ET histograms
+    }
+    {
+       std::string histName = "vandle_vMulti_"+isotopeName;
+       TH1F* h = new TH1F(histName.c_str(),"Multiplicity",10,0,10);
+       h->SetXTitle("Multiplicity");
+       h->SetYTitle("counts");
+       hist_array_->Add(h); //ET histograms
     }
 
     TIter next(hist_array_);
     while( TObject* obj = next() ){ 
-      outputList->Add(obj);
+       outputList->Add(obj);
     }
-   
-  return;
+
+    return;
 }
 
 bool hIsotope::IsInside(Double_t x, Double_t y) const
 {
-  if(myCutG){
-    return myCutG->IsInside(x,y);
-  }else{
-    return (ellipseA*pow(x-ellipseX0,2)+ellipseB*pow(y-ellipseY0,2)<1);
-  }
+   if(myCutG){
+      return myCutG->IsInside(x,y);
+   }else{
+      return (ellipseA*pow(x-ellipseX0,2)+ellipseB*pow(y-ellipseY0,2)<1);
+   }
 }

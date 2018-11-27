@@ -7,4 +7,8 @@ AnamergerMain:
 
 AnamergerPidSelector:
     ReferenceCutFile: "/home/vandle18/merger/dev/work/referenceCuts.txt"
-    OutputFileName: "/home/vandle18/merger/dev/work/anamerger_output.root"
+    OutputFileName: "/home/vandle18/merger/dev/work/anamerger_pid_output.root"
+
+AnamergerVANDLESelector:
+    ReferenceCutFile: "/home/vandle18/merger/dev/work/referenceCuts.txt"
+    OutputFileName: "/home/vandle18/merger/dev/work/anamerger_vandle_output.root"
