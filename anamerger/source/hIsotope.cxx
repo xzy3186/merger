@@ -83,6 +83,13 @@ void hIsotope::initializeHistos(TList* outputList)
       hist_array_->Add(h); //ET histograms
     }
     {
+      std::string histName = "XYprofile_"+isotopeName;
+      TH2F* h = new TH2F(histName.c_str(),"XY profile",200,0,0.6,200,-0.1,0.5);
+      h->SetXTitle("X (a.u.)");
+      h->SetYTitle("Y (a.u.)");
+      hist_array_->Add(h); //ET histograms
+    }
+    {
       std::string histName = "isomer_clover_"+isotopeName;
       TH2F* h = new TH2F(histName.c_str(),"Isomer spectrum",2000,-0.5,1999.5,1000,-1000,5000);
       h->SetXTitle("clover energy");

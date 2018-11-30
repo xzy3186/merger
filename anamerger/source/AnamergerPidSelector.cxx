@@ -92,6 +92,12 @@ Bool_t AnamergerPidSelector::Process(Long64_t entry){
           if(pspmt.dy_l>10&&pspmt.dy_l<16000)
             is_implant = true;
         }
+        if(is_implant){
+          const std::string hname = "XYprofile_"+isotope.isotopeName;
+          for(auto pspmt : imp->pspmt_vec_){
+              ((TH2F*)GetOutputList()->FindObject(hname.c_str()))->Fill(pspmt.xposL,pspmt.yposL);
+          }
+        }
         { // count YSO implantation
           const std::string hname = "implant_"+isotope.isotopeName;
           ((TH1F*)GetOutputList()->FindObject(hname.c_str()))->Fill(0);
