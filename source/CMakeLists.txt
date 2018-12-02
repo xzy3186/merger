@@ -1,5 +1,6 @@
 
-ROOT_GENERATE_DICTIONARY(G__TreeData ../include/BigRIPSTreeData.h LINKDEF ../include/TreeDataLinkDef.h)
+ROOT_GENERATE_DICTIONARY(G__TreeData ../include/BigRIPSTreeData.h
+   ../tree_dump2/DumpTreeData.h OutputTreeData.hpp LINKDEF ../include/TreeDataLinkDef.h)
 
 add_library(MergerLib SHARED
   RemainTime.cpp

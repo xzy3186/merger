@@ -9,7 +9,7 @@ ImplantTSScannor:
   InputFileName: pixie_rootfiles/extTS_DD.root
   TreeName: PixTree
   PixieBranchName: PixTreeEvent
-  MinLowGainDynEnergy: 1000
+  MinLowGainDynEnergy: 2000
   MaxLowGainDynEnergy: 65535
 #  FirstEntry: 0
 #  LastEntry: 10000
@@ -34,10 +34,10 @@ BetaTSScannor:
   InputFileName: pixie_rootfiles/extTS_DD.root
   TreeName: PixTree
   PixieBranchName: PixTreeEvent
-  MinHighGainDynEnergy: 0
-  MaxHighGainDynEnergy: 65535
-  MinLowGainDynEnergy: 100
-  MaxLowGainDynEnergy: 1000
+  MinHighGainDynEnergy: 10
+  MaxHighGainDynEnergy: 30000
+  MinLowGainDynEnergy: -2000
+  MaxLowGainDynEnergy: 2000
 #  FirstEntry: 0
 #  LastEntry: 1000
 
@@ -47,8 +47,8 @@ ImplantBetaMerger:
   BranchName: mergedBeta
   ClassName: OutputTreeData<PixTreeEvent,OutputTreeData<PixTreeEvent, TreeData>>
   PrintFrequency: 10
-  TimeWindowLow: 100000000
-  TimeWindowUp: 100000000
+  TimeWindowLow: 1000000000
+  TimeWindowUp: 1000000000
 
 BetaImplantMerger:
   OutputFileName: mergedImpBeta.root
@@ -56,5 +56,5 @@ BetaImplantMerger:
   BranchName: mergedImpBeta
   ClassName: OutputTreeData<OutputTreeData<PixTreeEvent, TreeData>,PixTreeEvent>
   PrintFrequency: 10
-  TimeWindowLow: 100000000
-  TimeWindowUp: 100000000
+  TimeWindowLow: 1000000000
+  TimeWindowUp: 1000000000

@@ -14,6 +14,12 @@
 #pragma link C++ class TTreeReaderValue<OutputTreeData<OutputTreeData<PixTreeEvent,TreeData>, PixTreeEvent>>+;
 #pragma link C++ class AnamergerPidSelector+;
 #pragma link C++ class AnamergerVANDLESelector+;
+#pragma link C++ class OutputTreeData<DumpTreeData, TreeData>+;
+#pragma link C++ class OutputTreeData<DumpTreeData, OutputTreeData<DumpTreeData,TreeData>>+;
+#pragma link C++ class OutputTreeData<OutputTreeData<DumpTreeData,TreeData>, DumpTreeData>+;
+#pragma link C++ class TTreeReaderValue<OutputTreeData<DumpTreeData, TreeData>>+;
+#pragma link C++ class TTreeReaderValue<OutputTreeData<DumpTreeData, OutputTreeData<DumpTreeData,TreeData>>>+;
+#pragma link C++ class TTreeReaderValue<OutputTreeData<OutputTreeData<DumpTreeData,TreeData>, DumpTreeData>>+;
 
 #endif
 

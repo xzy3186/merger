@@ -9,6 +9,7 @@
 #include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
 #include "TreeMerger.hpp"
+#include "BetaTreeMerger.hpp"
 
 /** prints usage **/
 void usage(char *argv0)
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: Beta map size: " << beta_ts_scannor.GetMap().size() << std::endl;
 
     	    /** runs merger **/
-            TreeMerger<OutputTreeData<OutputTreeData<PixTreeEvent, TreeData>, PixTreeEvent>, OutputTreeData<PixTreeEvent, TreeData>, PixTreeEvent> beta_imp_merger(&mimp_ts_scannor,&beta_ts_scannor);
+            BetaTreeMerger<OutputTreeData<OutputTreeData<PixTreeEvent, TreeData>, PixTreeEvent>, OutputTreeData<PixTreeEvent, TreeData>, PixTreeEvent> beta_imp_merger(&mimp_ts_scannor,&beta_ts_scannor);
             beta_imp_merger.Configure("BetaImplantMerger");
             beta_imp_merger.Merge();
             beta_imp_merger.Write();

@@ -24,6 +24,7 @@ public:
     void Configure(const std::string &yaml_node_name); // loads configuration from yaml
     void Merge(); // merge events from input2 to input1
     void Write(); // writes tree to the file
+    virtual bool IsInGate(const TIN1 &in1, const TIN2 &in2);
 
 protected:
     TFile *tree_file_; // Output tree TFile
@@ -139,29 +140,35 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
     RemainTime remain_time(total_entry); // set total number of entries to estimate remaining time.
     ULong64_t i_entry = 0;
  
+    //input_scannor_1_->Restart();
     for ( auto entry :  map1 )
     {
-        /** loop over input2 events whithin T1-up < T2 < T1+low **/
-        auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
-        auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
-        //std::cout << (double)(*it).first << "/" << (*it).second << "  " << (double)(*last).first << "/" << (*last).second << "  " << entry.first*ts_scale_ << "/" << entry.second*ts_scale_ << std::endl;
-        if( it == map2.end() ) // Skip if there is no correlated event.
-            continue;
-        TOUT o_obj(*input_scannor_1_->GetEntry(entry.second));
-        while ( it != last )
-        {
-           o_obj.output_vec_.emplace_back(*input_scannor_2_->GetEntry(it->second));
-           ++it; 
-        }
-        output_object_ = o_obj;
-        tree_->Fill();
         /** displays progress **/
         if ( !(i_entry%print_freq_) && i_entry){
             tm *remain = remain_time.remain(i_entry);
             std::cout << kMsgPrefix << i_entry << "/" << total_entry << " ";
-            std::cout << 100.*(double)i_entry/(double)(total_entry) << "\% scanned. Remaining " << remain->tm_hour << "h ";
+            std::cout << 100.*(double)i_entry/(double)(total_entry) << "\% merged. Remaining " << remain->tm_hour << "h ";
             std::cout << remain->tm_min << "m " << remain->tm_sec << "s" << std::endl;
         }
+        //input_scannor_2_->Restart();
+        /** loop over input2 events whithin T1-up < T2 < T1+low **/
+        //auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
+        //auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
+        auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
+        auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
+        if( it == map2.end() ) // Skip if there is no correlated event.
+            continue;
+        //TIN1* in1 = input_scannor_1_->GetEntry(entry.second);
+        //TOUT o_obj(*in1);
+        TOUT o_obj(entry.second);
+        while ( it != last )
+        {
+            if(IsInGate(entry.second,it->second))
+                o_obj.output_vec_.emplace_back(it->second);
+            ++it; 
+        }
+        output_object_ = o_obj;
+        tree_->Fill();
         ++i_entry;
     }
 
@@ -180,6 +187,12 @@ void TreeMerger<TOUT,TIN1,TIN2>::Write()
     }
     tree_file_->Write();
     return;
+}
+
+template <class TOUT, class TIN1, class TIN2>
+bool TreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
+{
+    return true;
 }
 
 #endif /* VANDLE_MERGER_TREEMERGER_HPP_ */

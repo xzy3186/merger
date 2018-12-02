@@ -22,11 +22,12 @@ public:
     void Configure(const std::string &yaml_node_name);
     virtual void SetReader(); // virtual function to define TTreeReaderValue
     void Scan(); // scan through events from first_entry_ to last_entry_ of the tree
-    std::map<ULong64_t,ULong64_t> GetMap(){ return ts_entry_map_;}
+    //std::map<ULong64_t,ULong64_t> GetMap(){ return ts_entry_map_;}
+    std::map<ULong64_t,T> GetMap(){ return ts_entry_map_;}
+    void Restart(){ tree_reader_->Restart(); }
     T* GetEntry(const ULong64_t &i_entry)
     {
         if(!tree_data_) throw kMsgPrefix + "GetEntry(), tree_data_ is null.";
-        tree_reader_->Restart();
         tree_reader_->SetEntry(i_entry);
         if(!tree_data_->Get()) throw kMsgPrefix + "GetEntry(), tree_data_->Get() returned null.";
         return tree_data_->Get();
@@ -40,7 +41,8 @@ protected:
     TFile *tree_file_; // Input tree TFile
     TTreeReader *tree_reader_; // TTreeReader
     YamlReader *yaml_reader_; // config reader
-    std::map<ULong64_t,ULong64_t> ts_entry_map_; // map of key=timestamp, value=index
+    //std::map<ULong64_t,ULong64_t> ts_entry_map_; // map of key=timestamp, value=index
+    std::map<ULong64_t,T> ts_entry_map_; // map of key=timestamp, value=index
     RemainTime *remain_time_; // estimates remaining time
     ULong64_t first_entry_; // the index of the first entry to scan
     ULong64_t last_entry_; // the index of the last entry to scan
@@ -127,7 +129,8 @@ template <class T> void TSScannorBase<T>::Scan()
     {
         /** If the event is in the gate, emplace <timestamp, index> to the map **/
         if ( IsInGate() ){
-            ts_entry_map_.emplace(std::make_pair(GetTS(), tree_reader_->GetCurrentEntry()));
+            //ts_entry_map_.emplace(std::make_pair(GetTS(), tree_reader_->GetCurrentEntry()));
+            ts_entry_map_.emplace(std::make_pair(GetTS(), *tree_data_->Get()));
         }
         /** displays progress **/
         ULong64_t i_entry = tree_reader_->GetCurrentEntry() - first_entry_;
