@@ -1,0 +1,10 @@
+TraceAnalyzer:
+    ChannelList:
+      - Channel:
+          TreeName: "dynode_high"
+          SubtypeName: "dynode_high"
+          TagName: "ignored"
+      - Channel:
+          TreeName: "dynode_low"
+          SubtypeName: "dynode_low"
+          TagName: "ignored"

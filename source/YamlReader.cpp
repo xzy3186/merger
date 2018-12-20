@@ -23,6 +23,25 @@ YamlReader::YamlReader(const std::string &yaml_node_name)
     }
 }
 
+YAML::Node YamlReader::GetNode(const std::string &attr) const
+{
+    try {
+       if( !yaml_[attr] ) {
+          throw kMsgPrefix + "No node named \"" + attr + "\" found in the config file.";
+       }
+       std::cout << kMsgPrefix << "Loaded " << attr << std::endl;
+    }
+    catch (YAML::Exception& e) {
+      std::cout << kMsgPrefix << "exception " << e.what() << std::endl;
+      throw;
+    }
+    catch (std::string msg){
+      std::cout << msg << std::endl;
+      throw;
+    }
+    return yaml_[attr];
+}
+
 std::string YamlReader::GetString(const std::string &attr, const bool &throw_error, const std::string &default_str) const
 {
     try {

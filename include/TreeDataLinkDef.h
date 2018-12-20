@@ -4,8 +4,20 @@
 //#pragma link off all classes;
 //#pragma link off all functions;
 
+//#pragma link C++ class processor_struct::CLOVERS+;
+//#pragma link C++ class std::vector<processor_struct::CLOVERS>+;
+//#pragma link C++ class processor_struct::DOUBLEBETA+;
+//#pragma link C++ class std::vector<processor_struct::DOUBLEBETA>+;
+//#pragma link C++ class processor_struct::GAMMASCINT+;
+//#pragma link C++ class std::vector<processor_struct::GAMMASCINT>+;
+//#pragma link C++ class processor_struct::LOGIC+;
+//#pragma link C++ class std::vector<processor_struct::LOGIC>+;
+//#pragma link C++ class processor_struct::LOGIC+;
+//#pragma link C++ class std::vector<processor_struct::LOGIC>+;
+
+//#pragma link C++ class PixTreeEvent+;
+
 #pragma link C++ class TreeData+;
-#pragma link C++ class PixTreeEvent+;
 #pragma link C++ class OutputTreeData<PixTreeEvent, TreeData>+;
 #pragma link C++ class OutputTreeData<PixTreeEvent, OutputTreeData<PixTreeEvent,TreeData>>+;
 #pragma link C++ class OutputTreeData<OutputTreeData<PixTreeEvent,TreeData>, PixTreeEvent>+;
