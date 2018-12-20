@@ -17,11 +17,11 @@ int TraceAnalyzer::Configure(const std::string &yaml_node_name){
       struc.tag_ = tag_name;
       channel_vec_.emplace_back(struc);
    }
-   for(auto channel : channel_vec_){
+   for(auto &channel : channel_vec_){
       channel.data_ = new TraceAnalyzerData();
       channel.tree_->Branch("trace_data","TraceAnalyzerData",channel.data_);
-      std::cout << channel.data_ << std::endl;
    }
+
    return 0;
 }
 
@@ -30,27 +30,26 @@ int TraceAnalyzer::Begin(){
 }
 
 int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt){
-   for(auto channel: channel_vec_){
-      if(pspmt.subtype.CompareTo(channel.subtype_.c_str())
-         && pspmt.tag.CompareTo(channel.tag_.c_str())){
+   for(auto &channel: channel_vec_){
+      if(!pspmt.subtype.CompareTo(channel.subtype_.c_str())
+         && !pspmt.tag.CompareTo(channel.tag_.c_str())){
             channel.data_->Clear();
-            std::cout << channel.data_ << std::endl;
-            //channel.data_.pspmt_ = pspmt;
-            //if(pspmt.trace.size()>100){
-            //   /* subtract baseline */
-            //   const Int_t kNBins = 20;
-            //   Double_t baseline = 0;
-            //   for(int i=0; i<kNBins; ++i){
-            //      baseline += pspmt.trace.at(i);
-            //   }
-            //   baseline = baseline/(double)kNBins;
-            //   /* QDC */
-            //   Double_t qdc = 0;
-            //   for(int i=55; i<70; ++i){
-            //      qdc += pspmt.trace.at(i);
-            //   }
-            //   channel.data_.trace_energy_ = qdc;
-            //}
+            channel.data_->pspmt_ = pspmt;
+            if(pspmt.trace.size()>100){
+               /* subtract baseline */
+               const Int_t kNBins = 20;
+               Double_t baseline = 0;
+               for(int i=0; i<kNBins; ++i){
+                  baseline += pspmt.trace.at(i);
+               }
+               baseline = baseline/(double)kNBins;
+               /* QDC */
+               Double_t qdc = 0;
+               for(int i=55; i<70; ++i){
+                  qdc += pspmt.trace.at(i) - baseline;
+               }
+               channel.data_->trace_energy_ = qdc;
+            }
             channel.tree_->Fill();
          }
    }
@@ -58,7 +57,7 @@ int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt){
 }
 
 int TraceAnalyzer::Terminate(){
-   for(auto channel: channel_vec_){
+   for(auto &channel: channel_vec_){
       channel.tree_->Write();
    }
 }

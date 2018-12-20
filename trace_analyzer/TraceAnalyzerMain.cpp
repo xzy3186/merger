@@ -52,6 +52,7 @@ int main(int argc, char **argv){
       }
    }//end loop through the mergedData TTree
 
+   trace_analyzer.Terminate();
    //trace_tree_->Write();
    output_file_.Close();
    file.Close();

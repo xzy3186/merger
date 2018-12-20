@@ -3,8 +3,8 @@ TraceAnalyzer:
       - Channel:
           TreeName: "dynode_high"
           SubtypeName: "dynode_high"
-          TagName: "ignored"
+          TagName: "ignore"
       - Channel:
           TreeName: "dynode_low"
           SubtypeName: "dynode_low"
-          TagName: "ignored"
+          TagName: "ignore"
