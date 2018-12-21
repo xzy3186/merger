@@ -9,6 +9,7 @@
 struct parameter_struc{
    TTree *tree_ = nullptr;
    TraceAnalyzerData *data_ = nullptr;
+   std::vector<TraceAnalyzerData> data_vec_;
    std::string subtype_ = "";
    std::string tag_ = "";
 };
@@ -27,10 +28,14 @@ public:
    virtual int Begin();
    virtual int Process(const processor_struct::PSPMT &pspmt);
    virtual int Terminate();
+   virtual void ClearVec();
+
+   const std::vector<parameter_struc> &GetChannelVec() const{
+      return channel_vec_;
+   }
 
 protected:
    std::vector<parameter_struc> channel_vec_;
 };
 
-const std::string TraceAnalyzer::kMsgPrefix("[TraceAnalyzer:]");
 #endif

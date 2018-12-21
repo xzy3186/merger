@@ -1,7 +1,8 @@
 include(${ROOT_USE_FILE})
 
-ROOT_GENERATE_DICTIONARY(G__TraceAnalyzerData TraceAnalyzerData.hpp LINKDEF TraceAnalyzerDataLinkDef.hpp)
+ROOT_GENERATE_DICTIONARY(G__TraceAnalyzerData TraceAnalyzerData.hpp PspmtAnalyzerData.hpp LINKDEF TraceAnalyzerDataLinkDef.hpp)
 add_library(TraceAnalyzerLib SHARED
+PspmtAnalyzer.cpp
 TraceAnalyzer.cpp
 G__TraceAnalyzerData.cxx
 )

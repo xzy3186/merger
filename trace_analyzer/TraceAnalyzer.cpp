@@ -5,7 +5,7 @@ int TraceAnalyzer::Configure(const std::string &yaml_node_name){
    YamlReader yaml_reader(yaml_node_name);
    YAML::Node channel_list = yaml_reader.GetNode("ChannelList");
 
-   for(auto channel : channel_list){
+   for(const auto &channel : channel_list){
       std::cout << kMsgPrefix << channel << std::endl;
       YAML::Node node = channel["Channel"];
       const std::string tree_name = node["TreeName"].as<std::string>();
@@ -44,12 +44,13 @@ int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt){
                }
                baseline = baseline/(double)kNBins;
                /* QDC */
-               Double_t qdc = 0;
+               Double_t qdc = -999;
                for(int i=55; i<70; ++i){
                   qdc += pspmt.trace.at(i) - baseline;
                }
                channel.data_->trace_energy_ = qdc;
             }
+            channel.data_vec_.emplace_back(*(channel.data_));
             channel.tree_->Fill();
          }
    }
@@ -60,4 +61,9 @@ int TraceAnalyzer::Terminate(){
    for(auto &channel: channel_vec_){
       channel.tree_->Write();
    }
+}
+
+void TraceAnalyzer::ClearVec(){
+   for(auto &channel: channel_vec_)
+      channel.data_vec_.clear();
 }

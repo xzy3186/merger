@@ -5,6 +5,49 @@ TraceAnalyzer:
           SubtypeName: "dynode_high"
           TagName: "ignore"
       - Channel:
+          TreeName: "xa_high"
+          SubtypeName: "anode_high"
+          TagName: "xa"
+      - Channel:
+          TreeName: "xb_high"
+          SubtypeName: "anode_high"
+          TagName: "xb"
+      - Channel:
+          TreeName: "ya_high"
+          SubtypeName: "anode_high"
+          TagName: "ya"
+      - Channel:
+          TreeName: "yb_high"
+          SubtypeName: "anode_high"
+          TagName: "yb"
+      - Channel:
           TreeName: "dynode_low"
           SubtypeName: "dynode_low"
           TagName: "ignore"
+      - Channel:
+          TreeName: "xa_low"
+          SubtypeName: "anode_low"
+          TagName: "xa"
+      - Channel:
+          TreeName: "xb_low"
+          SubtypeName: "anode_low"
+          TagName: "xb"
+      - Channel:
+          TreeName: "ya_low"
+          SubtypeName: "anode_low"
+          TagName: "ya"
+      - Channel:
+          TreeName: "yb_low"
+          SubtypeName: "anode_low"
+          TagName: "yb"
+      - Channel:
+          TreeName: "desi_top"
+          SubtypeName: "desi"
+          TagName: "top"
+      - Channel:
+          TreeName: "desi_bottom"
+          SubtypeName: "desi"
+          TagName: "bottom"
+
+PspmtAnalyzer:
+    TreeName: "pspmt"
