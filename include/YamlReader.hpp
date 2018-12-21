@@ -3,7 +3,7 @@
 #define VANDLE_MERGER_YAMLREADER_HPP_
 
 #include <iostream>
-#include "YamlParameter.h"
+#include "YamlParameter.hpp"
 
 class YamlReader
 {
