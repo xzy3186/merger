@@ -71,8 +71,10 @@ target_link_libraries(merger_pid ${ROOT_LIBRARIES} yaml-cpp MergerLib
 target_link_libraries(trace_analyzer_main ${ROOT_LIBRARIES} yaml-cpp TraceAnalyzerLib SysRootStrucLib MergerLib merger_data_dic)
 #target_link_libraries(anamerger_vandle ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib AnamergerLib)
 
-install(TARGETS trace_analyzer_main 
+install(TARGETS trace_analyzer_main
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )
+install(TARGETS merger_data_dic
+	LIBRARY DESTINATION lib)
 #install(FILES build/libMergerData_rdict.pcm DESTINATION lib)
