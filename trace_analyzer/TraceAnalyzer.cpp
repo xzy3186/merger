@@ -29,13 +29,14 @@ int TraceAnalyzer::Configure(const std::string &yaml_node_name){
    return 0;
    }
 
-   int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt){
+   int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt, const ULong64_t &ext){
    for(auto &channel: channel_vec_){
       
       if(!pspmt.subtype.CompareTo(channel.subtype_.c_str())
          && !pspmt.tag.CompareTo(channel.tag_.c_str())){
             channel.data_->Clear();
             channel.data_->pspmt_ = pspmt;
+	    channel.data_->external_ts_ = ext;
 	    /** implementation of trace analysis **/
             if(pspmt.trace.size()>100){
                /* subtract baseline */

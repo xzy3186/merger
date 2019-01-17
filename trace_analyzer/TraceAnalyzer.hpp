@@ -26,7 +26,7 @@ public:
 
    virtual int Configure(const std::string &yaml_node_name);
    virtual int Begin();
-   virtual int Process(const processor_struct::PSPMT &pspmt);
+   virtual int Process(const processor_struct::PSPMT &pspmt, const ULong64_t &ext);
    virtual int Terminate();
    virtual void ClearVec();
 

@@ -53,7 +53,7 @@ int main(int argc, char **argv){
       if(pixie_event->pspmt_vec_.empty())
          continue;
       for(auto pspmt : pixie_event->pspmt_vec_){
-         trace_analyzer.Process(pspmt);
+         trace_analyzer.Process(pspmt, pixie_event->externalTS1);
       }
       pspmt_analyzer.Process(trace_analyzer.GetChannelVec()); 
       trace_analyzer.ClearVec();
