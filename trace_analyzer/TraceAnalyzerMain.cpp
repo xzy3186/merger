@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <unistd.h>
 #include <map>
-
 #include "TFile.h"
 #include "TH1.h"
 #include "TTree.h"
@@ -14,12 +13,10 @@
 #include "TSelector.h"
 #include "Rtypes.h"
 #include "TMath.h"
-
 #include "ProcessorRootStruc.hpp"
 #include "TraceAnalyzer.hpp"
 #include "PspmtAnalyzer.hpp"
 #include "YamlParameter.hpp"
-
 
 int main(int argc, char **argv){
    std::cout<<"input file: "<<argv[1]<<std::endl;
@@ -61,10 +58,8 @@ int main(int argc, char **argv){
       pspmt_analyzer.Process(trace_analyzer.GetChannelVec()); 
       trace_analyzer.ClearVec();
    }//end loop through the TTree
-
    trace_analyzer.Terminate();
    pspmt_analyzer.Terminate();
-
    output_file_.Close();
    file.Close();
    return 0;
