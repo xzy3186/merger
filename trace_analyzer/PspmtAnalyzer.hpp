@@ -1,6 +1,6 @@
 #ifndef PSPMT_ANALYZER_HPP
 #define PSPMT_ANALYZER_HPP
-
+#include <fstream>
 #include <TTree.h>
 #include "ProcessorRootStruc.hpp"
 #include "PspmtAnalyzerData.hpp"
@@ -22,11 +22,14 @@ public:
    virtual int Process(const std::vector<parameter_struc> &pspmt);
    virtual int Terminate();
 
-   void CalculatePosition(pspmt_data_struc &data);
+   void CalculatePositionH(pspmt_data_struc &data);
+   void CalculatePositionL(pspmt_data_struc &data);
 
 protected:
+   std::fstream pos;
    TTree *output_tree_;
    PspmtAnalyzerData data_;
+   
 };
 
 const std::string TraceAnalyzer::kMsgPrefix("[TraceAnalyzer:]");

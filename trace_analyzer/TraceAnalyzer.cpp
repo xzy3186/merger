@@ -1,5 +1,5 @@
 #include "TraceAnalyzer.hpp"
-
+#include <algorithm>
 int TraceAnalyzer::Configure(const std::string &yaml_node_name){
    /** loads configuration from yaml **/
    YamlReader yaml_reader(yaml_node_name);
@@ -23,18 +23,20 @@ int TraceAnalyzer::Configure(const std::string &yaml_node_name){
    }
 
    return 0;
-}
+   }
 
-int TraceAnalyzer::Begin(){
+   int TraceAnalyzer::Begin(){
    return 0;
-}
+   }
 
-int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt){
+   int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt){
    for(auto &channel: channel_vec_){
+      
       if(!pspmt.subtype.CompareTo(channel.subtype_.c_str())
          && !pspmt.tag.CompareTo(channel.tag_.c_str())){
             channel.data_->Clear();
             channel.data_->pspmt_ = pspmt;
+	    /** implementation of trace analysis **/
             if(pspmt.trace.size()>100){
                /* subtract baseline */
                const Int_t kNBins = 20;
@@ -48,22 +50,33 @@ int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt){
                for(int i=55; i<70; ++i){
                   qdc += pspmt.trace.at(i) - baseline;
                }
-               channel.data_->trace_energy_ = qdc;
+              // channel.data_->trace_energy_ = qdc;
+               channel.data_->trace_max_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
+               channel.data_->trace_energy_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
+	     /** implementation of trace analysis **/
+              }
+            
+            channel.data_->trace_size_ = pspmt.trace.size();
+           if (pspmt.trace.size()!=0){
+	       std::cout<<"size is: "<<channel.data_->trace_size_<<std::endl;
+               // channel.data_->trace_max_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
+	       // std::cout<<"come here"<<std::endl;
+	       // std::cout<<"max is: "<<channel.data_->trace_max_<<std::endl;
+                channel.data_vec_.emplace_back(*(channel.data_));
+                channel.tree_->Fill();
             }
-            channel.data_vec_.emplace_back(*(channel.data_));
-            channel.tree_->Fill();
          }
-   }
-   return 0;
-}
+         }
+         return 0;
+         }
 
-int TraceAnalyzer::Terminate(){
-   for(auto &channel: channel_vec_){
-      channel.tree_->Write();
-   }
-}
+         int TraceAnalyzer::Terminate(){
+         for(auto &channel: channel_vec_){
+         channel.tree_->Write();
+         }
+         }
 
-void TraceAnalyzer::ClearVec(){
-   for(auto &channel: channel_vec_)
-      channel.data_vec_.clear();
-}
+         void TraceAnalyzer::ClearVec(){
+         for(auto &channel: channel_vec_)
+         channel.data_vec_.clear();
+         }

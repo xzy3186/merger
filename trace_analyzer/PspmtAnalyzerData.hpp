@@ -11,7 +11,9 @@ struct pspmt_data_struc{
    TraceAnalyzerData ya_;
    TraceAnalyzerData yb_;
    Double_t pos_x_ = -999;
+   Double_t pos_max_x_ = -999;
    Double_t pos_y_ = -999;
+   Double_t pos_max_y_ = -999;
    Int_t valid_ = 0;
 };
 static pspmt_data_struc DEFAULT_PSPMT_DATA_STRUC;

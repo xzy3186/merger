@@ -48,6 +48,11 @@ TraceAnalyzer:
           TreeName: "desi_bottom"
           SubtypeName: "desi"
           TagName: "bottom"
+       
+      - Channel:
+          TreeName: "dynode_singles"
+          SubtypeName: "dynode_high"
+          TagName: "singles"
 
 PspmtAnalyzer:
     TreeName: "pspmt"
