@@ -43,7 +43,7 @@ add_subdirectory(source)
 add_subdirectory(trace_analyzer)
 #add_executable(merger MergerMain.cpp)
 add_executable(merger_pid MergerImpPid.cpp)
-#add_executable(merger_beta MergerImpBeta.cpp)
+add_executable(merger_beta MergerImpBeta.cpp)
 #add_executable(merger_pid2 MergerPid2.cpp)
 #add_executable(merger_beta2 MergerBeta2.cpp)
 #add_executable(merger_imp_beta MergerBetaImp.cpp)
@@ -55,8 +55,8 @@ add_executable(trace_analyzer_main trace_analyzer/TraceAnalyzerMain.cpp)
 #   tree_dump_dic)
 target_link_libraries(merger_pid ${ROOT_LIBRARIES} yaml-cpp MergerLib
    TraceAnalyzerLib merger_data_dic)
-#target_link_libraries(merger_beta ${ROOT_LIBRARIES} yaml-cpp MergerData
-#   MergerLib tree_dump_dic)
+target_link_libraries(merger_beta ${ROOT_LIBRARIES} yaml-cpp MergerLib
+   TraceAnalyzerLib merger_data_dic)
 #target_link_libraries(merger_pid2 ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib
 #   tree_dump_dic)
 #target_link_libraries(merger_beta2 ${ROOT_LIBRARIES} yaml-cpp MergerData

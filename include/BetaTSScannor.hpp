@@ -5,10 +5,10 @@
 
 #include "TSScannorBase.hpp"
 #include "ProcessorRootStruc.hpp"
-#include "DumpTreeData.h"
+#include "PspmtAnalyzerData.hpp"
 
 /** timestamp scannor class for beta events **/
-class BetaTSScannor : public TSScannorBase<PixTreeEvent>
+class BetaTSScannor : public TSScannorBase<PspmtAnalyzerData>
 {
 public:
     const static std::string kMsgPrefix;
@@ -27,35 +27,10 @@ protected:
     {
         if(!tree_data_) throw kMsgPrefix + "In GetTS(), tree_data_ is null";
         if(!tree_data_->Get()) throw kMsgPrefix + "In GetTS(), tree_data_->Get() returned null";
-        return tree_data_->Get()->externalTS1;
+        return tree_data_->Get()->external_ts_high_;
     }
 
     Bool_t IsInGate() const; // gate conditions
 };
 
-/** timestamp scannor class for beta events **/
-class BetaTSScannor2 : public TSScannorBase<DumpTreeData>
-{
-public:
-    const static std::string kMsgPrefix;
-    BetaTSScannor2(){}
-    ~BetaTSScannor2(){}
-    void SetReader();
-
-protected:
-    /** energy gates on PSPMT dynode**/
-    Double_t high_gain_min_;
-    Double_t high_gain_max_;
-    Double_t low_gain_min_;
-    Double_t low_gain_max_;
-
-    ULong64_t GetTS() const
-    {
-        if(!tree_data_) throw kMsgPrefix + "In GetTS(), tree_data_ is null";
-        if(!tree_data_->Get()) throw kMsgPrefix + "In GetTS(), tree_data_->Get() returned null";
-        return tree_data_->Get()->externalTS1;
-    }
-
-    Bool_t IsInGate() const; // gate conditions
-};
 #endif /* VANDLE_MERGER_BETATSSCANNOR_HPP_ */

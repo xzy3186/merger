@@ -68,17 +68,13 @@ bool BetaTreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
 {
    const Double_t kDISTANCE = 0.1;
 
-   if(in1.pspmt_vec_.empty())
-      return false;
-   auto pspmt_imp = in1.pspmt_vec_.at(0);
-   if(in2.pspmt_vec_.empty())
-      return false;
-   auto pspmt_beta = in2.pspmt_vec_.at(0);
+   auto pspmt_imp = in1.low_gain_;
+   auto pspmt_beta = in2.high_gain_;
 
-   Double_t x_imp = pspmt_imp.xposL*1.5-0.12;
-   Double_t y_imp = pspmt_imp.yposL*1.6-0.12;
-   Double_t x_beta = pspmt_beta.xposH;
-   Double_t y_beta = pspmt_beta.yposH;
+   Double_t x_imp = in1.low_gain_.pos_x_*1.5-0.12;
+   Double_t y_imp = in1.low_gain_.pos_y_*1.6-0.12;
+   Double_t x_beta = in2.high_gain_.pos_x_;
+   Double_t y_beta = in2.high_gain_.pos_y_;
 
    if(pow(x_imp-x_beta,2)+pow(y_imp-y_beta,2)<pow(kDISTANCE,2))
       return true;

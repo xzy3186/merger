@@ -7,8 +7,8 @@ BigRIPSTSScannor:
 
 ImplantTSScannor:
   InputFileName: pixie_rootfiles/extTS_DD.root
-  TreeName: PixTree
-  PixieBranchName: PixTreeEvent
+  TreeName: pspmt
+  PixieBranchName: pspmt
   MinLowGainDynEnergy: 2000
   MaxLowGainDynEnergy: 65535
 #  FirstEntry: 0
@@ -18,7 +18,7 @@ BigRIPSImplantMerger:
   OutputFileName: mergedImp.root
   TreeName: mergedImp
   BranchName: mergedImp
-  ClassName: OutputTreeData<PixTreeEvent, TreeData>
+  ClassName: OutputTreeData<PspmtAnalyzerData, TreeData>
   TimeWindowLow: 1000
   TimeWindowUp: 1000
   TimeStampScale: 40
@@ -32,8 +32,8 @@ MergedImplantTSScannor:
 
 BetaTSScannor:
   InputFileName: pixie_rootfiles/extTS_DD.root
-  TreeName: PixTree
-  PixieBranchName: PixTreeEvent
+  TreeName: pspmt
+  PixieBranchName: pspmt
   MinHighGainDynEnergy: 10
   MaxHighGainDynEnergy: 30000
   MinLowGainDynEnergy: -2000
@@ -45,7 +45,7 @@ ImplantBetaMerger:
   OutputFileName: mergedBeta.root
   TreeName: mergedBeta
   BranchName: mergedBeta
-  ClassName: OutputTreeData<PixTreeEvent,OutputTreeData<PixTreeEvent, TreeData>>
+  ClassName: OutputTreeData<PspmtAnalyzerData,OutputTreeData<PspmtAnalyzerData, TreeData>>
   PrintFrequency: 10
   TimeWindowLow: 1000000000
   TimeWindowUp: 1000000000
@@ -54,7 +54,7 @@ BetaImplantMerger:
   OutputFileName: mergedImpBeta.root
   TreeName: mergedImpBeta
   BranchName: mergedImpBeta
-  ClassName: OutputTreeData<OutputTreeData<PixTreeEvent, TreeData>,PixTreeEvent>
+  ClassName: OutputTreeData<OutputTreeData<PspmtAnalyzerData, TreeData>,PspmtAnalyzerData>
   PrintFrequency: 10
   TimeWindowLow: 1000000000
   TimeWindowUp: 1000000000

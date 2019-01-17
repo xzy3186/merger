@@ -77,7 +77,7 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: Beta map size: " << beta_ts_scannor.GetMap().size() << std::endl;
 
     	    /** runs merger **/
-            BetaTreeMerger<OutputTreeData<PixTreeEvent, OutputTreeData<PixTreeEvent, TreeData>>, PixTreeEvent, OutputTreeData<PixTreeEvent, TreeData>> imp_beta_merger(&beta_ts_scannor,&mimp_ts_scannor);
+            BetaTreeMerger<OutputTreeData<PspmtAnalyzerData, OutputTreeData<PspmtAnalyzerData, TreeData>>, PspmtAnalyzerData, OutputTreeData<PspmtAnalyzerData, TreeData>> imp_beta_merger(&beta_ts_scannor,&mimp_ts_scannor);
             imp_beta_merger.Configure("ImplantBetaMerger");
             imp_beta_merger.Merge();
             imp_beta_merger.Write();

@@ -5,9 +5,9 @@ const std::string BetaTSScannor::kMsgPrefix("[BetaTSScannor]:");
 
 void BetaTSScannor::SetReader()
 {
-    TSScannorBase<PixTreeEvent>::SetReader();
+    TSScannorBase<PspmtAnalyzerData>::SetReader();
     std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    tree_data_ = new TTreeReaderValue<PixTreeEvent>(*tree_reader_,br_name.c_str());
+    tree_data_ = new TTreeReaderValue<PspmtAnalyzerData>(*tree_reader_,br_name.c_str());
     std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
 
     high_gain_min_ = yaml_reader_->GetDouble("MinHighGainDynEnergy");
@@ -21,73 +21,19 @@ void BetaTSScannor::SetReader()
 
 Bool_t BetaTSScannor::IsInGate() const
 {
-    //std::vector<processor_struct::PSPMT> pspmt_vec = tree_data_->Get()->pspmt_vec_;
-    auto pspmt_vec = tree_data_->Get()->pspmt_vec_;
-    if(pspmt_vec.empty())
-        return false;
-
-    auto pspmt = pspmt_vec.at(0);
-    if(pspmt.xa_h>8100 || pspmt.xb_h>8100 || pspmt.ya_h>8100 || pspmt.yb_h>8100 )
-        return false;
-    if(pspmt.xa_h<10 || pspmt.xb_h<10 || pspmt.ya_h<10 || pspmt.yb_h<10)
-        return false;
-    if(pspmt.dy_h<high_gain_min_ || pspmt.dy_h>high_gain_max_ )
-        return false;
-    //if(pspmt.dy_l<low_gain_min_ || pspmt.dy_l>low_gain_max_ )
-    //    return false;
-    
     /*
-    Double_t low_gain = pspmt_vec.at(0).dy_l;
-    Double_t high_gain = pspmt_vec.at(0).dy_h;
-    if( low_gain > low_gain_min_ && low_gain < low_gain_max_ && high_gain > high_gain_min_ && high_gain < high_gain_max_ )
-        return true;
-    else
+    auto pspmt_low = tree_data_->Get()->low_gain_;
+    auto pspmt_high = tree_data_->Get()->high_gain_;
+
+    if(pspmt_high.xa.trace_energy_>8100 || pspmt_high.xb.trace_energy_>8100 || pspmt_high.ya.trace_energy_>8100 || pspmt_high.yb.trace_energy_>8100 )
+        return false;
+    if(pspmt_high.xa.trace_energy_<10 || pspmt_high.xb.trace_energy_<10 || pspmt_high.ya.trace_energy_<10 || pspmt_high.yb.trace_energy_<10)
+        return false;
+    if(pspmt_high.dynode_.trace_energy_<high_gain_min_ || pspmt_high.dynode_.trace_energy_>high_gain_max_ )
+        return false;
+    if(pspmt_low.dynode_.trace_energy_<low_gain_min_ || pspmt_low.dynode_.trace_energy_>low_gain_max_ )
         return false;
     */
-}
-
-const std::string BetaTSScannor2::kMsgPrefix("[BetaTSScannor]:");
-
-void BetaTSScannor2::SetReader()
-{
-    TSScannorBase<DumpTreeData>::SetReader();
-    std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    tree_data_ = new TTreeReaderValue<DumpTreeData>(*tree_reader_,br_name.c_str());
-    std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
-
-    high_gain_min_ = yaml_reader_->GetDouble("MinHighGainDynEnergy");
-    high_gain_max_ = yaml_reader_->GetDouble("MaxHighGainDynEnergy");
-    std::cout << kMsgPrefix << "Beta range on dynode high gain: " << high_gain_min_ << " - " << high_gain_max_ << std::endl;
-    low_gain_min_ = yaml_reader_->GetDouble("MinLowGainDynEnergy");
-    low_gain_max_ = yaml_reader_->GetDouble("MaxLowGainDynEnergy");
-    std::cout << kMsgPrefix << "Beta range on dynode low gain: " << low_gain_min_ << " - " << low_gain_max_ << std::endl;
-    return;
-}
-
-Bool_t BetaTSScannor2::IsInGate() const
-{
     return true;
-    //std::vector<processor_struct::PSPMT> pspmt_vec = tree_data_->Get()->pspmt_vec_;
-    auto pspmt_vec = tree_data_->Get()->pspmt_vec_;
-    if(pspmt_vec.empty())
-        return false;
-
-    auto pspmt = pspmt_vec.at(0);
-    if(pspmt.xa_h>8100 || pspmt.xb_h>8100 || pspmt.ya_h>8100 || pspmt.yb_h>8100 )
-        return false;
-    if(pspmt.xa_h<10 || pspmt.xb_h<10 || pspmt.ya_h<10 || pspmt.yb_h<10)
-        return false;
-    if(pspmt.dy_h<high_gain_min_ || pspmt.dy_h>high_gain_max_ )
-        return false;
-    //if(pspmt.dy_l<low_gain_min_ || pspmt.dy_l>low_gain_max_ )
-    //    return false;
-    
-    /*
-    Double_t low_gain = pspmt_vec.at(0).dy_l;
-    Double_t high_gain = pspmt_vec.at(0).dy_h;
-    if( low_gain > low_gain_min_ && low_gain < low_gain_max_ && high_gain > high_gain_min_ && high_gain < high_gain_max_ )
-        return true;
-    else
-        return false;
-    */
 }
+
