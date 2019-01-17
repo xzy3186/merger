@@ -28,10 +28,11 @@ link_directories(${PWD}/anaerger/source)
 link_directories(${PWD}/tree_dump)
 link_directories(${PWD}/trace_analyzer)
 link_directories(${ROOTSYS}/lib)
-#ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp ${PAASS_DIR_PATH}/include/ProcessorRootStruc.hpp LINKDEF include/TreeDataLinkDef.h)
+ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp 
+        trace_analyzer/PspmtAnalyzerData.hpp LINKDEF include/TreeDataLinkDef.h)
 
 #---Create a shared library with geneated dictionary
-#add_library(merger_data_dic SHARED G__MergerData.cxx)
+add_library(merger_data_dic SHARED G__MergerData.cxx)
 #target_link_libraries(MergerData ${ROOT_LIBRARIES})
 #target_link_libraries(PspmtPositionData ${ROOT_LIBRARIES} yaml-cpp)
 
@@ -41,7 +42,7 @@ add_subdirectory(source)
 #add_subdirectory(tree_dump2)
 add_subdirectory(trace_analyzer)
 #add_executable(merger MergerMain.cpp)
-#add_executable(merger_pid MergerImpPid.cpp)
+add_executable(merger_pid MergerImpPid.cpp)
 #add_executable(merger_beta MergerImpBeta.cpp)
 #add_executable(merger_pid2 MergerPid2.cpp)
 #add_executable(merger_beta2 MergerBeta2.cpp)
@@ -52,8 +53,8 @@ add_subdirectory(trace_analyzer)
 add_executable(trace_analyzer_main trace_analyzer/TraceAnalyzerMain.cpp)
 #target_link_libraries(merger ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib
 #   tree_dump_dic)
-#target_link_libraries(merger_pid ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib
-#   tree_dump_dic)
+target_link_libraries(merger_pid ${ROOT_LIBRARIES} yaml-cpp MergerLib
+   TraceAnalyzerLib merger_data_dic)
 #target_link_libraries(merger_beta ${ROOT_LIBRARIES} yaml-cpp MergerData
 #   MergerLib tree_dump_dic)
 #target_link_libraries(merger_pid2 ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib
@@ -67,7 +68,7 @@ add_executable(trace_analyzer_main trace_analyzer/TraceAnalyzerMain.cpp)
 #target_link_libraries(anamerger_VANDLE ${ROOT_LIBRARIES} yaml-cpp MergerData
 #   MergerLib AnamergerLib tree_dump_dic)
 #target_link_libraries(treedump ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib TreeDumpLib)
-target_link_libraries(trace_analyzer_main ${ROOT_LIBRARIES} yaml-cpp TraceAnalyzerLib SysRootStrucLib MergerLib)
+target_link_libraries(trace_analyzer_main ${ROOT_LIBRARIES} yaml-cpp TraceAnalyzerLib SysRootStrucLib MergerLib merger_data_dic)
 #target_link_libraries(anamerger_vandle ${ROOT_LIBRARIES} yaml-cpp MergerData MergerLib AnamergerLib)
 
 install(TARGETS trace_analyzer_main 

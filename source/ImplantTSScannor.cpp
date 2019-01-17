@@ -5,9 +5,9 @@ const std::string ImplantTSScannor::kMsgPrefix("[ImplantTSScannor]:");
 
 void ImplantTSScannor::SetReader()
 {
-    TSScannorBase<PixTreeEvent>::SetReader();
+    TSScannorBase<PspmtAnalyzerData>::SetReader();
     std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    tree_data_ = new TTreeReaderValue<PixTreeEvent>(*tree_reader_,br_name.c_str());
+    tree_data_ = new TTreeReaderValue<PspmtAnalyzerData>(*tree_reader_,br_name.c_str());
     std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
 
     low_gain_min_ = yaml_reader_->GetDouble("MinLowGainDynEnergy");
@@ -18,82 +18,26 @@ void ImplantTSScannor::SetReader()
 
 Bool_t ImplantTSScannor::IsInGate() const
 {
-    return true;
-    auto pspmt_vec = tree_data_->Get()->pspmt_vec_;
-    if(pspmt_vec.empty())
+    /*
+    auto pspmt_low = tree_data_->Get()->low_gain_;
+    auto pspmt_high = tree_data_->Get()->high_gain_;
+    if(pspmt_low.xa_<10 || pspmt_low.xb_<10 || pspmt_low.ya_<10 || pspmt_low.yb_<10 )
         return false;
-    auto pspmt = pspmt_vec.at(0);
-    if(pspmt.xa_l<10 || pspmt.xb_l<10 || pspmt.ya_l<10 || pspmt.yb_l<10 )
+    if(pspmt_low.xa_>30000 || pspmt_low.xb_>30000 || pspmt_low.ya_>30000 || pspmt_low.yb_>30000)
         return false;
-    if(pspmt.xa_l>30000 || pspmt.xb_l>30000 || pspmt.ya_l>30000 || pspmt.yb_l>30000)
-        return false;
-    if(pspmt.dy_l<low_gain_min_ || pspmt.dy_l>low_gain_max_ )
-        return false;
-   /* 
-    Double_t low_gain = pspmt_vec.at(0).dy_l;
-    if( low_gain > low_gain_min_ && low_gain < low_gain_max_ )
-        return true;
-    else
+    if(pspmt_low.dynode_<low_gain_min_ || pspmt_low.dynode_>low_gain_max_ )
         return false;
         */
+    return true;
 }
 
 const std::string MergedImplantTSScannor::kMsgPrefix("[MergedImplantTSScannor]:");
 
 void MergedImplantTSScannor::SetReader()
 {
-    TSScannorBase<OutputTreeData<PixTreeEvent, TreeData>>::SetReader();
+    TSScannorBase<OutputTreeData<PspmtAnalyzerData, TreeData>>::SetReader();
     std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    tree_data_ = new TTreeReaderValue<OutputTreeData<PixTreeEvent, TreeData>>(*tree_reader_,br_name.c_str());
-    std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
-
-    return;
-}
-
-const std::string ImplantTSScannor2::kMsgPrefix("[ImplantTSScannor]:");
-
-void ImplantTSScannor2::SetReader()
-{
-    TSScannorBase<DumpTreeData>::SetReader();
-    std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    tree_data_ = new TTreeReaderValue<DumpTreeData>(*tree_reader_,br_name.c_str());
-    std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
-
-    low_gain_min_ = yaml_reader_->GetDouble("MinLowGainDynEnergy");
-    low_gain_max_ = yaml_reader_->GetDouble("MaxLowGainDynEnergy");
-    std::cout << kMsgPrefix << "Implant range on dynode low gain: " << low_gain_min_ << " - " << low_gain_max_ << std::endl;
-    return;
-}
-
-Bool_t ImplantTSScannor2::IsInGate() const
-{
-    return true;
-    auto pspmt_vec = tree_data_->Get()->pspmt_vec_;
-    if(pspmt_vec.empty())
-        return false;
-    auto pspmt = pspmt_vec.at(0);
-    if(pspmt.xa_l<10 || pspmt.xb_l<10 || pspmt.ya_l<10 || pspmt.yb_l<10 )
-        return false;
-    if(pspmt.xa_l>30000 || pspmt.xb_l>30000 || pspmt.ya_l>30000 || pspmt.yb_l>30000)
-        return false;
-    if(pspmt.dy_l<low_gain_min_ || pspmt.dy_l>low_gain_max_ )
-        return false;
-   /* 
-    Double_t low_gain = pspmt_vec.at(0).dy_l;
-    if( low_gain > low_gain_min_ && low_gain < low_gain_max_ )
-        return true;
-    else
-        return false;
-        */
-}
-
-const std::string MergedImplantTSScannor2::kMsgPrefix("[MergedImplantTSScannor]:");
-
-void MergedImplantTSScannor2::SetReader()
-{
-    TSScannorBase<OutputTreeData<DumpTreeData, TreeData>>::SetReader();
-    std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    tree_data_ = new TTreeReaderValue<OutputTreeData<DumpTreeData, TreeData>>(*tree_reader_,br_name.c_str());
+    tree_data_ = new TTreeReaderValue<OutputTreeData<PspmtAnalyzerData, TreeData>>(*tree_reader_,br_name.c_str());
     std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
 
     return;

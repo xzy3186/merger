@@ -7,10 +7,10 @@
 #include "ProcessorRootStruc.hpp"
 #include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
-#include "DumpTreeData.h"
+#include "PspmtAnalyzerData.hpp"
 
 /** timestamp scannor class for implant events **/
-class ImplantTSScannor : public TSScannorBase<PixTreeEvent>
+class ImplantTSScannor : public TSScannorBase<PspmtAnalyzerData>
 {
 public:
     const static std::string kMsgPrefix;
@@ -27,38 +27,14 @@ protected:
     {
         if(!tree_data_) throw kMsgPrefix + "in GetTS(), three_data is null";
         if(!tree_data_->Get()) throw kMsgPrefix + "in GetTS(), three_data->Get() returned null";
-        return tree_data_->Get()->externalTS1;
-    }
-
-    Bool_t IsInGate() const; // gate conditions
-};
-
-/** timestamp scannor class for implant events **/
-class ImplantTSScannor2 : public TSScannorBase<DumpTreeData>
-{
-public:
-    const static std::string kMsgPrefix;
-    ImplantTSScannor2(){}
-    ~ImplantTSScannor2(){}
-    void SetReader();
-
-protected:
-    /** energy gates on PSPMT dynode**/
-    Double_t low_gain_min_;
-    Double_t low_gain_max_;
-
-    ULong64_t GetTS() const
-    {
-        if(!tree_data_) throw kMsgPrefix + "in GetTS(), three_data is null";
-        if(!tree_data_->Get()) throw kMsgPrefix + "in GetTS(), three_data->Get() returned null";
-        return tree_data_->Get()->externalTS1;
+        return tree_data_->Get()->external_ts_low_;
     }
 
     Bool_t IsInGate() const; // gate conditions
 };
 
 /** timestamp scannor class for implant events merged with BigRIPS events **/
-class MergedImplantTSScannor : public TSScannorBase<OutputTreeData<PixTreeEvent, TreeData>>
+class MergedImplantTSScannor : public TSScannorBase<OutputTreeData<PspmtAnalyzerData, TreeData>>
 {
 public:
     const static std::string kMsgPrefix;
@@ -68,22 +44,7 @@ public:
 
 protected:
 
-    ULong64_t GetTS() const {return tree_data_->Get()->externalTS1;}
+    ULong64_t GetTS() const {return tree_data_->Get()->external_ts_low_;}
 };
-
-/** timestamp scannor class for implant events merged with BigRIPS events **/
-class MergedImplantTSScannor2 : public TSScannorBase<OutputTreeData<DumpTreeData, TreeData>>
-{
-public:
-    const static std::string kMsgPrefix;
-    MergedImplantTSScannor2(){}
-    ~MergedImplantTSScannor2(){}
-    void SetReader();
-
-protected:
-
-    ULong64_t GetTS() const {return tree_data_->Get()->externalTS1;}
-};
-
 
 #endif /* VANDLE_MERGER_IMPLANTTSSCANNOR_HPP_ */
