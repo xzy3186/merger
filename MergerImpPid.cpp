@@ -1,7 +1,7 @@
 #include <iostream>
 #include "OutputTreeData.hpp"
 #include "TreeDataLinkDef.h"
-#include "YamlParameter.h"
+#include "YamlParameter.hpp"
 #include "BetaTSScannor.hpp"
 #include "BigRIPSTSScannor.hpp"
 #include "ImplantTSScannor.hpp"
