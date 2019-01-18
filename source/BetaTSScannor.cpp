@@ -5,9 +5,9 @@ const std::string BetaTSScannor::kMsgPrefix("[BetaTSScannor]:");
 
 void BetaTSScannor::SetReader()
 {
-    TSScannorBase<PspmtAnalyzerData>::SetReader();
+    TSScannorBase<PspmtData>::SetReader();
     std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    tree_data_ = new TTreeReaderValue<PspmtAnalyzerData>(*tree_reader_,br_name.c_str());
+    tree_data_ = new TTreeReaderValue<PspmtData>(*tree_reader_,br_name.c_str());
     std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
 
     high_gain_min_ = yaml_reader_->GetDouble("MinHighGainDynEnergy");
@@ -21,19 +21,16 @@ void BetaTSScannor::SetReader()
 
 Bool_t BetaTSScannor::IsInGate() const
 {
-    /*
+    
     auto pspmt_low = tree_data_->Get()->low_gain_;
     auto pspmt_high = tree_data_->Get()->high_gain_;
 
-    if(pspmt_high.xa.trace_energy_>8100 || pspmt_high.xb.trace_energy_>8100 || pspmt_high.ya.trace_energy_>8100 || pspmt_high.yb.trace_energy_>8100 )
+    if(pspmt_high.trace_energy_<300 || pspmt_high.trace_energy_>4050 )
         return false;
-    if(pspmt_high.xa.trace_energy_<10 || pspmt_high.xb.trace_energy_<10 || pspmt_high.ya.trace_energy_<10 || pspmt_high.yb.trace_energy_<10)
+
+
+    if(pspmt_high.valid_==0 )
         return false;
-    if(pspmt_high.dynode_.trace_energy_<high_gain_min_ || pspmt_high.dynode_.trace_energy_>high_gain_max_ )
-        return false;
-    if(pspmt_low.dynode_.trace_energy_<low_gain_min_ || pspmt_low.dynode_.trace_energy_>low_gain_max_ )
-        return false;
-    */
     return true;
 }
 

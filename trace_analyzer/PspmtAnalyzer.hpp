@@ -4,6 +4,7 @@
 #include <TTree.h>
 #include "ProcessorRootStruc.hpp"
 #include "PspmtAnalyzerData.hpp"
+#include "PspmtData.hpp"
 #include "TraceAnalyzer.hpp"
 #include "YamlReader.hpp"
 
@@ -29,6 +30,7 @@ protected:
    std::fstream pos;
    TTree *output_tree_;
    PspmtAnalyzerData data_;
+   PspmtData pspmt_data_;
    
 };
 

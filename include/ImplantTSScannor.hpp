@@ -7,10 +7,10 @@
 #include "ProcessorRootStruc.hpp"
 #include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
-#include "PspmtAnalyzerData.hpp"
+#include "PspmtData.hpp"
 
 /** timestamp scannor class for implant events **/
-class ImplantTSScannor : public TSScannorBase<PspmtAnalyzerData>
+class ImplantTSScannor : public TSScannorBase<PspmtData>
 {
 public:
     const static std::string kMsgPrefix;
@@ -34,7 +34,7 @@ protected:
 };
 
 /** timestamp scannor class for implant events merged with BigRIPS events **/
-class MergedImplantTSScannor : public TSScannorBase<OutputTreeData<PspmtAnalyzerData, TreeData>>
+class MergedImplantTSScannor : public TSScannorBase<OutputTreeData<PspmtData, TreeData>>
 {
 public:
     const static std::string kMsgPrefix;

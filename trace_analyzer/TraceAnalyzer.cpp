@@ -17,6 +17,7 @@ int TraceAnalyzer::Configure(const std::string &yaml_node_name){
       struc.tag_ = tag_name;
       channel_vec_.emplace_back(struc);
    }
+
    for(auto &channel : channel_vec_){
       channel.data_ = new TraceAnalyzerData();
       channel.tree_->Branch("trace_data","TraceAnalyzerData",channel.data_);
@@ -52,14 +53,13 @@ int TraceAnalyzer::Configure(const std::string &yaml_node_name){
                   qdc += pspmt.trace.at(i) - baseline;
                }
               // channel.data_->trace_energy_ = qdc;
-               channel.data_->trace_max_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
+             //  channel.data_->trace_max_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
                channel.data_->trace_energy_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
 	     /** implementation of trace analysis **/
               }
             
             channel.data_->trace_size_ = pspmt.trace.size();
            if (pspmt.trace.size()!=0){
-	       std::cout<<"size is: "<<channel.data_->trace_size_<<std::endl;
                // channel.data_->trace_max_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
 	       // std::cout<<"come here"<<std::endl;
 	       // std::cout<<"max is: "<<channel.data_->trace_max_<<std::endl;

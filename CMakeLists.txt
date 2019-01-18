@@ -29,7 +29,7 @@ link_directories(${PWD}/tree_dump)
 link_directories(${PWD}/trace_analyzer)
 link_directories(${ROOTSYS}/lib)
 ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp 
-        trace_analyzer/PspmtAnalyzerData.hpp LINKDEF include/TreeDataLinkDef.h)
+        trace_analyzer/PspmtAnalyzerData.hpp trace_analyzer/PspmtData.hpp LINKDEF include/TreeDataLinkDef.h)
 
 #---Create a shared library with geneated dictionary
 add_library(merger_data_dic SHARED G__MergerData.cxx)

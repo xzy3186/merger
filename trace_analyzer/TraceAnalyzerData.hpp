@@ -15,8 +15,8 @@ public:
       pspmt_ = obj.pspmt_;
       trace_energy_ = obj.trace_energy_;
       trace_time_ = obj.trace_time_;
-      trace_max_ = obj.trace_max_;
-      trace_size_ = obj.trace_size_;
+      //trace_max_ = obj.trace_max_;
+       trace_size_ = obj.trace_size_;
    }
 
    void Clear(){
@@ -24,7 +24,7 @@ public:
       pspmt_ = processor_struct::PSPMT_DEFAULT_STRUCT;
       trace_energy_ = -999;
       trace_time_ = -999;
-      trace_max_ = -999;
+     // trace_max_ = -999;
       trace_size_ = -999;
    }
 
@@ -32,7 +32,7 @@ public:
    processor_struct::PSPMT pspmt_;
    Double_t trace_energy_;
    Double_t trace_time_;
-   Int_t trace_max_;
+  // Int_t trace_max_;
    Int_t trace_size_;
    ClassDef(TraceAnalyzerData,1)
 };

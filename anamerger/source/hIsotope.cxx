@@ -29,6 +29,7 @@ hIsotope::hIsotope( std::string isoname, Double_t a, Double_t b, Double_t x0, Do
 numberOfImplants(0),
 numberOfPID(0),
 isotopeName("")
+
 {
   myCutG = nullptr;
   isotopeName = isoname;
@@ -53,6 +54,7 @@ void hIsotope::initializeCut(TCutG * aCut)
 }
 
 void hIsotope::initializeHistos(TList* outputList)
+
 {
     if( myCutG ){
       // get the name of the isotope

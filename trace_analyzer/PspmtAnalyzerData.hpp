@@ -47,7 +47,6 @@ public:
    pspmt_data_struc low_gain_;
    TraceAnalyzerData desi_top_;
    TraceAnalyzerData desi_bottom_;
-
    ClassDef(PspmtAnalyzerData,1)
 };
 

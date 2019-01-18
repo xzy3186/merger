@@ -78,7 +78,7 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: Implant map size: " << implant_ts_scannor.GetMap().size() << std::endl;
 
 	    /** runs merger **/
-            TreeMerger<OutputTreeData<PspmtAnalyzerData, TreeData>, PspmtAnalyzerData, TreeData> brips_imp_merger(&implant_ts_scannor,&brips_ts_scannor);
+            TreeMerger<OutputTreeData<PspmtData, TreeData>, PspmtData, TreeData> brips_imp_merger(&implant_ts_scannor,&brips_ts_scannor);
             brips_imp_merger.Configure("BigRIPSImplantMerger");
             brips_imp_merger.Merge();
             brips_imp_merger.Write();

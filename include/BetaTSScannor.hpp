@@ -5,10 +5,10 @@
 
 #include "TSScannorBase.hpp"
 #include "ProcessorRootStruc.hpp"
-#include "PspmtAnalyzerData.hpp"
+#include "PspmtData.hpp"
 
 /** timestamp scannor class for beta events **/
-class BetaTSScannor : public TSScannorBase<PspmtAnalyzerData>
+class BetaTSScannor : public TSScannorBase<PspmtData>
 {
 public:
     const static std::string kMsgPrefix;

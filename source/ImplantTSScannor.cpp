@@ -5,9 +5,9 @@ const std::string ImplantTSScannor::kMsgPrefix("[ImplantTSScannor]:");
 
 void ImplantTSScannor::SetReader()
 {
-    TSScannorBase<PspmtAnalyzerData>::SetReader();
+    TSScannorBase<PspmtData>::SetReader();
     std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    tree_data_ = new TTreeReaderValue<PspmtAnalyzerData>(*tree_reader_,br_name.c_str());
+    tree_data_ = new TTreeReaderValue<PspmtData>(*tree_reader_,br_name.c_str());
     std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
 
     low_gain_min_ = yaml_reader_->GetDouble("MinLowGainDynEnergy");
@@ -35,9 +35,9 @@ const std::string MergedImplantTSScannor::kMsgPrefix("[MergedImplantTSScannor]:"
 
 void MergedImplantTSScannor::SetReader()
 {
-    TSScannorBase<OutputTreeData<PspmtAnalyzerData, TreeData>>::SetReader();
+    TSScannorBase<OutputTreeData<PspmtData, TreeData>>::SetReader();
     std::string br_name = yaml_reader_->GetString("PixieBranchName");
-    tree_data_ = new TTreeReaderValue<OutputTreeData<PspmtAnalyzerData, TreeData>>(*tree_reader_,br_name.c_str());
+    tree_data_ = new TTreeReaderValue<OutputTreeData<PspmtData, TreeData>>(*tree_reader_,br_name.c_str());
     std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
 
     return;

@@ -18,12 +18,12 @@
 //#pragma link C++ class PixTreeEvent+;
 
 #pragma link C++ class TreeData+;
-#pragma link C++ class OutputTreeData<PspmtAnalyzerData, TreeData>+;
-#pragma link C++ class OutputTreeData<PspmtAnalyzerData, OutputTreeData<PspmtAnalyzerData,TreeData>>+;
-#pragma link C++ class OutputTreeData<OutputTreeData<PspmtAnalyzerData,TreeData>, PspmtAnalyzerData>+;
-#pragma link C++ class TTreeReaderValue<OutputTreeData<PspmtAnalyzerData, TreeData>>+;
-#pragma link C++ class TTreeReaderValue<OutputTreeData<PspmtAnalyzerData, OutputTreeData<PspmtAnalyzerData,TreeData>>>+;
-#pragma link C++ class TTreeReaderValue<OutputTreeData<OutputTreeData<PspmtAnalyzerData,TreeData>, PspmtAnalyzerData>>+;
+#pragma link C++ class OutputTreeData<PspmtData, TreeData>+;
+#pragma link C++ class OutputTreeData<PspmtData, OutputTreeData<PspmtData,TreeData>>+;
+#pragma link C++ class OutputTreeData<OutputTreeData<PspmtData,TreeData>, PspmtData>+;
+#pragma link C++ class TTreeReaderValue<OutputTreeData<PspmtData, TreeData>>+;
+#pragma link C++ class TTreeReaderValue<OutputTreeData<PspmtData, OutputTreeData<PspmtData,TreeData>>>+;
+#pragma link C++ class TTreeReaderValue<OutputTreeData<OutputTreeData<PspmtData,TreeData>, PspmtData>>+;
 #pragma link C++ class AnamergerPidSelector+;
 #pragma link C++ class AnamergerVANDLESelector+;
 #pragma link C++ class OutputTreeData<DumpTreeData, TreeData>+;
