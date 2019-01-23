@@ -22,6 +22,7 @@ protected:
     Double_t high_gain_max_;
     Double_t low_gain_min_;
     Double_t low_gain_max_;
+    ULong64_t prev_implant_;
 
     ULong64_t GetTS() const
     {
@@ -30,7 +31,7 @@ protected:
         return tree_data_->Get()->external_ts_high_;
     }
 
-    Bool_t IsInGate() const; // gate conditions
+    Bool_t IsInGate(); // gate conditions
 };
 
 #endif /* VANDLE_MERGER_BETATSSCANNOR_HPP_ */
