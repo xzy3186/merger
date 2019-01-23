@@ -18,16 +18,17 @@ void ImplantTSScannor::SetReader()
 
 Bool_t ImplantTSScannor::IsInGate() const
 {
-    /*
+    
     auto pspmt_low = tree_data_->Get()->low_gain_;
+    /****
     auto pspmt_high = tree_data_->Get()->high_gain_;
     if(pspmt_low.xa_<10 || pspmt_low.xb_<10 || pspmt_low.ya_<10 || pspmt_low.yb_<10 )
         return false;
     if(pspmt_low.xa_>30000 || pspmt_low.xb_>30000 || pspmt_low.ya_>30000 || pspmt_low.yb_>30000)
+        return false;*///
+    if(pspmt_low.trace_energy_ < 510|| pspmt_low.trace_energy_ > 4050 )
         return false;
-    if(pspmt_low.dynode_<low_gain_min_ || pspmt_low.dynode_>low_gain_max_ )
-        return false;
-        */
+        
     return true;
 }
 
