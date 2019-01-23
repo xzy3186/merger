@@ -30,7 +30,7 @@ protected:
         return tree_data_->Get()->external_ts_low_;
     }
 
-    Bool_t IsInGate() const; // gate conditions
+    Bool_t IsInGate(); // gate conditions
 };
 
 /** timestamp scannor class for implant events merged with BigRIPS events **/

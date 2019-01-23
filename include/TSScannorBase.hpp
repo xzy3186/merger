@@ -49,7 +49,7 @@ protected:
     ULong64_t print_freq_; // frequency to print scan progress
 
     virtual ULong64_t GetTS() const = 0;
-    virtual Bool_t IsInGate() const {return true;}
+    virtual Bool_t IsInGate() {return true;}
     TTreeReaderValue<T> *tree_data_;
 };
 
