@@ -66,16 +66,16 @@ void BetaTreeMerger<TOUT,TIN1,TIN2>::Write()
 template <class TOUT, class TIN1, class TIN2>
 bool BetaTreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
 
-{  return true;
-   const Double_t kDISTANCE = 0.1;
+{  
+   const Double_t kDISTANCE = 0.2;
 
    auto pspmt_imp = in1.low_gain_;
    auto pspmt_beta = in2.high_gain_;
 
-   Double_t x_imp = in1.low_gain_.pos_x_*1.5-0.12;
-   Double_t y_imp = in1.low_gain_.pos_y_*1.6-0.12;
-   Double_t x_beta = in2.high_gain_.pos_x_;
-   Double_t y_beta = in2.high_gain_.pos_y_;
+   Double_t x_imp = in1.low_gain_.pos_x_*23.6647 - 2.8628 ; // Ion-image overlapped to the beta-image.
+   Double_t y_imp = in1.low_gain_.pos_y_*15.5979 - 1.4067;
+   Double_t x_beta = 11.9135*in2.high_gain_.pos_x_; 
+   Double_t y_beta = 10.0*in2.high_gain_.pos_y_;
 
    if(pow(x_imp-x_beta,2)+pow(y_imp-y_beta,2)<pow(kDISTANCE,2))
       return true;

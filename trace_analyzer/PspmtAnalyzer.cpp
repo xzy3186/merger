@@ -6,7 +6,7 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    const std::string tree_name = yaml_reader.GetString("TreeName");
    output_tree_ = new TTree(tree_name.c_str(),tree_name.c_str());
    output_tree_->Branch("pspmt_compressed","PspmtData",&pspmt_data_);
-   output_tree_->Branch(tree_name.c_str(),"PspmtAnalyzerData",&data_);
+   //output_tree_->Branch(tree_name.c_str(),"PspmtAnalyzerData",&data_);
 
    return 0;
    }
@@ -26,6 +26,7 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    Int_t n_high_gain = 0;
    Int_t n_low_gain = 0;
    Int_t n_desi = 0;
+   Int_t n_veto = 0;
    for(const auto &channel: channel_data_vec){
       if((channel.subtype_=="dynode_high")&&(channel.tag_=="ignore")){
          /* dynode high gain */
@@ -101,6 +102,7 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
          /* dE Si top */
          if(!channel.data_vec_.empty()){
             data_.desi_top_ = channel.data_vec_.at(0);
+            //std::cout << "desi_top_size " << channel.data_vec_.size() << std::endl;
             ++n_desi;
          }
       }
@@ -111,6 +113,21 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
             ++n_desi;
          }
       }
+      if((channel.subtype_=="veto")&&(channel.tag_=="1")){
+         /* dE Si bottom */
+         if(!channel.data_vec_.empty()){
+            //std::cout << "veto_first_size " << channel.data_vec_.size() << std::endl;
+            data_.veto_first_ = channel.data_vec_.at(0);
+            ++n_veto;
+         }
+      }
+      if((channel.subtype_=="veto")&&(channel.tag_=="2")){
+         /* dE Si bottom */
+         if(!channel.data_vec_.empty()){
+            data_.veto_second_ = channel.data_vec_.at(0);
+            ++n_veto;
+         }
+      }
    }
 
    /* position analysis */
@@ -119,6 +136,8 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
       data_.external_ts_high_ = data_.high_gain_.dynode_.external_ts_;
       pspmt_data_.external_ts_high_ = data_.high_gain_.dynode_.external_ts_;
       pspmt_data_.high_gain_.trace_energy_ = data_.high_gain_.dynode_.trace_energy_;
+      pspmt_data_.high_gain_.energy_ = data_.high_gain_.dynode_.pspmt_.energy;
+      pspmt_data_.high_gain_.time_ = data_.high_gain_.dynode_.pspmt_.time;
       
       CalculatePositionH(data_.high_gain_);
       pspmt_data_.high_gain_.pos_x_= data_.high_gain_.pos_x_;
@@ -131,10 +150,24 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
       data_.external_ts_low_ = data_.low_gain_.dynode_.external_ts_;
       pspmt_data_.external_ts_low_ = data_.low_gain_.dynode_.external_ts_;
       pspmt_data_.low_gain_.trace_energy_ = data_.low_gain_.dynode_.trace_energy_;
+      pspmt_data_.low_gain_.energy_ = data_.low_gain_.dynode_.pspmt_.energy;
+      pspmt_data_.low_gain_.time_ = data_.low_gain_.dynode_.pspmt_.time;
       CalculatePositionL(data_.low_gain_);
       pspmt_data_.low_gain_.pos_x_= data_.low_gain_.pos_x_;
       pspmt_data_.low_gain_.pos_y_= data_.low_gain_.pos_y_;
       pspmt_data_.low_gain_.valid_= data_.low_gain_.valid_;
+   }
+   if(1){
+      pspmt_data_.desi_top_energy_ = data_.desi_top_.pspmt_.energy;
+      pspmt_data_.desi_bottom_energy_ = data_.desi_bottom_.pspmt_.energy;
+      pspmt_data_.desi_top_time_ = data_.desi_top_.pspmt_.time;
+      pspmt_data_.desi_bottom_time_ = data_.desi_bottom_.pspmt_.time;
+   }
+   if(1){
+      pspmt_data_.veto_first_energy_ = data_.veto_first_.pspmt_.energy;
+      pspmt_data_.veto_second_energy_ = data_.veto_second_.pspmt_.energy;
+      pspmt_data_.veto_first_time_ = data_.veto_first_.pspmt_.time;
+      pspmt_data_.veto_second_time_ = data_.veto_second_.pspmt_.time;
    }
    output_tree_->Fill();
    return 0;
@@ -154,14 +187,17 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    const double ya = data.ya_.trace_energy_;
    const double yb = data.yb_.trace_energy_;
    const double sum = xa + xb + ya + yb;
-   if(sum<0)
+   if(sum<0){
+      data.valid_=0;
       return;
+   }
 
    data.pos_x_ = 0.5*(yb + xa)/sum;
    data.pos_y_ = 0.5*(xa + xb)/sum;
    if(xa>0&&xb>0&&ya>0&&yb>0){
       data.valid_ = 1;
-   }
+   }else
+      data.valid_ = 0;
    return;
    }
 
@@ -173,14 +209,18 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    const double yb =4096.0*(exp((data.yb_.trace_energy_)/(3000))-1);
    const double dynode_trace = data.dynode_.trace_energy_;
    const double sum = xa + xb + ya + yb;
-     if(sum<0)  
-     return;
+      if(sum<0){
+         data.valid_=0;
+         return;
+      }  
 
    data.pos_x_ = 0.5*(yb + xa)/sum;
    data.pos_y_ = 0.5*(xa + xb)/sum;
    if(xa>0&&xb>0&&ya>0&&yb>0){
       data.valid_ = 1;
    }
+   else
+      data.valid_ = 0;
    return;
    }
    

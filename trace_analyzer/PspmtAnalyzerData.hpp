@@ -32,6 +32,8 @@ public:
       low_gain_ = obj.low_gain_;
       desi_top_ = obj.desi_top_;
       desi_bottom_ = obj.desi_bottom_;
+      veto_first_ = obj.veto_first_;
+      veto_second_ = obj.veto_second_;
    }
 
    void Clear(){
@@ -47,6 +49,8 @@ public:
    pspmt_data_struc low_gain_;
    TraceAnalyzerData desi_top_;
    TraceAnalyzerData desi_bottom_;
+   TraceAnalyzerData veto_first_;
+   TraceAnalyzerData veto_second_;
    ClassDef(PspmtAnalyzerData,1)
 };
 

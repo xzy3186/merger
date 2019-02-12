@@ -26,10 +26,24 @@ Bool_t ImplantTSScannor::IsInGate()
         return false;
     if(pspmt_low.xa_>30000 || pspmt_low.xb_>30000 || pspmt_low.ya_>30000 || pspmt_low.yb_>30000)
         return false;*///
-    if(pspmt_low.trace_energy_ < 510|| pspmt_low.trace_energy_ > 4050 )
+    //if(pspmt_low.energy_ < 2000 || pspmt_low.energy_ > 8000 )
+    //    return false;
+
+    if(!pspmt_low.valid_)
         return false;
-        
-    return true;
+
+    // Gating on de si
+    const Double_t tdiff_top = tree_data_->Get()->desi_top_time_ - pspmt_low.time_ + 95.;
+    const Double_t de_top = tree_data_->Get()->desi_top_energy_;
+    const Double_t tdiff_bottom = tree_data_->Get()->desi_bottom_time_ - pspmt_low.time_ + 95.;
+    const Double_t de_bottom = tree_data_->Get()->desi_bottom_energy_;
+
+    if( tdiff_top<5. && tdiff_top>-5. && de_top>5200. && de_top<5600. ) //83Ga
+        return true;
+    else if ( tdiff_bottom<5. && tdiff_bottom>-5. && de_bottom>5600. && de_bottom<6400. ) //83Ga
+        return true;
+    else
+        return false;
 }
 
 const std::string MergedImplantTSScannor::kMsgPrefix("[MergedImplantTSScannor]:");
@@ -42,4 +56,12 @@ void MergedImplantTSScannor::SetReader()
     std::cout << kMsgPrefix << "TTreeReaderValue: " << br_name << " created." << std::endl;
 
     return;
+}
+
+Bool_t MergedImplantTSScannor::IsInGate()
+{
+    if(tree_data_->Get()->output_vec_.size()==0)
+        return false;
+    else
+        return true;
 }

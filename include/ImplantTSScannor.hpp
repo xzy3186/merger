@@ -45,6 +45,7 @@ public:
 protected:
 
     ULong64_t GetTS() const {return tree_data_->Get()->external_ts_low_;}
+    Bool_t IsInGate();
 };
 
 #endif /* VANDLE_MERGER_IMPLANTTSSCANNOR_HPP_ */

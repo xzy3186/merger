@@ -59,13 +59,13 @@ int TraceAnalyzer::Configure(const std::string &yaml_node_name){
               }
             
             channel.data_->trace_size_ = pspmt.trace.size();
-           if (pspmt.trace.size()!=0){
+           //if (pspmt.trace.size()!=0){
                // channel.data_->trace_max_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
 	       // std::cout<<"come here"<<std::endl;
 	       // std::cout<<"max is: "<<channel.data_->trace_max_<<std::endl;
                 channel.data_vec_.emplace_back(*(channel.data_));
-                channel.tree_->Fill();
-            }
+                //channel.tree_->Fill();
+            //}
          }
          }
          return 0;
@@ -73,7 +73,7 @@ int TraceAnalyzer::Configure(const std::string &yaml_node_name){
 
          int TraceAnalyzer::Terminate(){
          for(auto &channel: channel_vec_){
-         channel.tree_->Write();
+         //channel.tree_->Write();
          }
          }
 

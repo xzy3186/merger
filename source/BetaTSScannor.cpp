@@ -21,30 +21,56 @@ void BetaTSScannor::SetReader()
 
 Bool_t BetaTSScannor::IsInGate()
 {
+    auto high = tree_data_->Get()->high_gain_;
     {   /** checks if this is an implant event **/
-        /** if so, record the timestamp and returns false **/
-        auto pspmt_high = tree_data_->Get()->high_gain_;
-        if(pspmt_high.trace_energy_>4050){
-            prev_implant_ = tree_data_->Get()->external_ts_high_;
-            return false;
+        /** if there is a coinsidence with one of the desi detectors, record the timestamp and returns false **/
+        {
+            const Double_t tdiff = high.time_ - tree_data_->Get()->desi_top_time_ - 95.;
+            const Double_t energy = tree_data_->Get()->desi_top_energy_;
+            if( tdiff > -5. && tdiff < 5. && energy > 10. ){
+                prev_implant_ = tree_data_->Get()->external_ts_high_;
+                return false;
+            }
+        }
+        {
+            const Double_t tdiff = high.time_ - tree_data_->Get()->desi_bottom_time_ - 95.;
+            const Double_t energy = tree_data_->Get()->desi_bottom_energy_;
+            if( tdiff > -5. && tdiff < 5. && energy > 10.){
+                prev_implant_ = tree_data_->Get()->external_ts_high_;
+                return false;
+            }
         }
     }
 
-    {
-        auto pspmt_high = tree_data_->Get()->high_gain_;
-        if(pspmt_high.trace_energy_<300 || pspmt_high.trace_energy_>4050 )
-            return false;
-        if(pspmt_high.valid_==0 )
-            return false;
+    {   /* checks if there is a coincidence with veto detector */
+        {
+            const Double_t tdiff = high.time_ - tree_data_->Get()->veto_first_time_ - 100.;
+            const Double_t energy = tree_data_->Get()->veto_first_energy_;
+            if( tdiff > -20. && tdiff < 20. && energy > 10. )
+                return false;
+        }
+        {
+            const Double_t tdiff = high.time_ - tree_data_->Get()->veto_second_time_ - 100.;
+            const Double_t energy = tree_data_->Get()->veto_second_energy_;
+            if( tdiff > -20. && tdiff < 20. && energy > 10.)
+                return false;
+        }
     }
 
+    {   /* energy gates on pspmt */
+        auto pspmt_high = tree_data_->Get()->high_gain_;
+        if(pspmt_high.energy_<10 || pspmt_high.energy_>4050 )
+            return false;
+        if(pspmt_high.valid_ == 0 )
+            return false;
+    }
+/*
     {
         auto pspmt_ts_high = tree_data_->Get()->external_ts_high_;
-        if(pspmt_ts_high-prev_implant_ < 50E+6 && pspmt_ts_high-prev_implant_>0)
+        if(pspmt_ts_high-prev_implant_ < 50E+3/40. && pspmt_ts_high-prev_implant_>0)
             return false;
     }
-
-
+*/
     return true;
 }
 

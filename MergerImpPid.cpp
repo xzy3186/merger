@@ -8,6 +8,7 @@
 #include "ProcessorRootStruc.hpp"
 #include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
+#include "PspmtData.hpp"
 #include "TreeMerger.hpp"
 
 /** prints usage **/

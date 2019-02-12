@@ -9,6 +9,7 @@
 #include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
 #include "BetaTreeMerger.hpp"
+#include "PspmtAnalyzerData.hpp"
 
 /** prints usage **/
 void usage(char *argv0)
