@@ -67,20 +67,22 @@ template <class TOUT, class TIN1, class TIN2>
 bool BetaTreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
 
 {  
-   const Double_t kDISTANCE = 0.2;
+    const Double_t kDISTANCE = 0.3;
 
-   auto pspmt_imp = in1.low_gain_;
-   auto pspmt_beta = in2.high_gain_;
+    auto pspmt_imp = in2.low_gain_;
+    auto pspmt_beta = in1.high_gain_;
 
-   Double_t x_imp = in1.low_gain_.pos_x_*23.6647 - 2.8628 ; // Ion-image overlapped to the beta-image.
-   Double_t y_imp = in1.low_gain_.pos_y_*15.5979 - 1.4067;
-   Double_t x_beta = 11.9135*in2.high_gain_.pos_x_; 
-   Double_t y_beta = 10.0*in2.high_gain_.pos_y_;
+    Double_t x_imp = pspmt_imp.pos_x_*23.6647 - 2.8628 ; // Ion-image overlapped to the beta-image.
+    Double_t y_imp = pspmt_imp.pos_y_*15.5979 - 1.4067;
+    Double_t x_beta = 11.9135*pspmt_beta.pos_x_; 
+    Double_t y_beta = 10.0*pspmt_beta.pos_y_;
 
-   if(pow(x_imp-x_beta,2)+pow(y_imp-y_beta,2)<pow(kDISTANCE,2))
-      return true;
-   else
-      return false;
+    //std::cout << "ximp:" << x_imp << " xbeta:" << x_beta << " yimp:" << y_imp << " ybeta:" << y_beta << " dist:" << pow(x_imp-x_beta,2)+pow(y_imp-y_beta,2) << std::endl;
+
+    if(pow(x_imp-x_beta,2)+pow(y_imp-y_beta,2)<pow(kDISTANCE,2))
+        return true;
+    else
+        return false;
 }
 
 #endif /* VANDLE_MERGER_TREEMERGER_HPP_ */

@@ -26,8 +26,8 @@ Bool_t ImplantTSScannor::IsInGate()
         return false;
     if(pspmt_low.xa_>30000 || pspmt_low.xb_>30000 || pspmt_low.ya_>30000 || pspmt_low.yb_>30000)
         return false;*///
-    //if(pspmt_low.energy_ < 2000 || pspmt_low.energy_ > 8000 )
-    //    return false;
+    if(pspmt_low.energy_ < 2000 || pspmt_low.energy_ > 8000 )
+        return false;
 
     if(!pspmt_low.valid_)
         return false;
