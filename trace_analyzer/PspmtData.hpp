@@ -31,6 +31,10 @@ public:
       desi_bottom_time_ = obj.desi_bottom_time_;
       veto_first_time_ = obj.veto_first_time_;
       veto_second_time_ = obj.veto_second_time_;
+      ion_white_energy_ = obj.ion_white_energy_;
+      ion_green_energy_ = obj.ion_green_energy_;
+      ion_blue_energy_ = obj.ion_blue_energy_;
+      ion_black_energy_ = obj.ion_black_energy_;
       high_gain_ = obj.high_gain_;
       low_gain_ = obj.low_gain_;
    }
@@ -46,6 +50,14 @@ public:
       desi_bottom_time_ = 0;
       veto_first_time_ = 0;
       veto_second_time_ = 0;
+      ion_white_energy_ = 0;
+      ion_green_energy_ = 0;
+      ion_blue_energy_ = 0;
+      ion_black_energy_ = 0;
+      ion_white_time_ = 0;
+      ion_green_time_ = 0;
+      ion_blue_time_ = 0;
+      ion_black_time_ = 0;
       high_gain_ = DEFAULT_PSPMT_STRUC;
       low_gain_ = DEFAULT_PSPMT_STRUC;
    }
@@ -60,6 +72,14 @@ public:
    Double_t desi_bottom_time_;
    Double_t veto_first_time_;
    Double_t veto_second_time_;
+   Double_t ion_white_energy_;
+   Double_t ion_green_energy_;
+   Double_t ion_blue_energy_;
+   Double_t ion_black_energy_;
+   Double_t ion_white_time_;
+   Double_t ion_green_time_;
+   Double_t ion_blue_time_;
+   Double_t ion_black_time_;
    pspmt_struc high_gain_;
    pspmt_struc low_gain_;
   

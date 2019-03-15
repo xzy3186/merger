@@ -113,3 +113,27 @@ double YamlReader::GetDouble(const std::string &attr, const bool &throw_error, c
     }
     return yaml_[attr].as<double>();
 }
+
+double YamlReader::GetBoolean(const std::string &attr, const bool &throw_error, const bool &default_val) const
+{
+    try {
+       if( !yaml_[attr] ) {
+           if(throw_error) {
+               throw kMsgPrefix + "No node named \"" + attr + "\" found in the config file.";
+           } else {
+               std::cout << kMsgPrefix << "Loaded default value " << attr << " = " << default_val << std::endl;
+               return default_val;
+           }
+       }
+       std::cout << kMsgPrefix << "Loaded " << attr << " = " << yaml_[attr].as<bool>() << std::endl;
+    }
+    catch (YAML::Exception& e) {
+      std::cout << kMsgPrefix << "exception " << e.what() << std::endl;
+      throw;
+    }
+    catch (std::string msg){
+      std::cout << msg << std::endl;
+      throw;
+    }
+    return yaml_[attr].as<bool>();
+}

@@ -114,7 +114,7 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
          }
       }
       if((channel.subtype_=="veto")&&(channel.tag_=="1")){
-         /* dE Si bottom */
+         /* veto first channel */
          if(!channel.data_vec_.empty()){
             //std::cout << "veto_first_size " << channel.data_vec_.size() << std::endl;
             data_.veto_first_ = channel.data_vec_.at(0);
@@ -122,9 +122,37 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
          }
       }
       if((channel.subtype_=="veto")&&(channel.tag_=="2")){
-         /* dE Si bottom */
+         /* veto second channel */
          if(!channel.data_vec_.empty()){
             data_.veto_second_ = channel.data_vec_.at(0);
+            ++n_veto;
+         }
+      }
+      if((channel.subtype_=="ion")&&(channel.tag_=="white")){
+         /* ion (front plastic) white channel */
+         if(!channel.data_vec_.empty()){
+            data_.ion_white_ = channel.data_vec_.at(0);
+            ++n_veto;
+         }
+      }
+      if((channel.subtype_=="ion")&&(channel.tag_=="green")){
+         /* ion (front plastic) green channel */
+         if(!channel.data_vec_.empty()){
+            data_.ion_green_ = channel.data_vec_.at(0);
+            ++n_veto;
+         }
+      }
+      if((channel.subtype_=="ion")&&(channel.tag_=="blue")){
+         /* ion (front plastic) blue channel */
+         if(!channel.data_vec_.empty()){
+            data_.ion_blue_ = channel.data_vec_.at(0);
+            ++n_veto;
+         }
+      }
+      if((channel.subtype_=="ion")&&(channel.tag_=="black")){
+         /* ion (front plastic) black channel */
+         if(!channel.data_vec_.empty()){
+            data_.ion_black_ = channel.data_vec_.at(0);
             ++n_veto;
          }
       }
@@ -168,6 +196,16 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
       pspmt_data_.veto_second_energy_ = data_.veto_second_.pspmt_.energy;
       pspmt_data_.veto_first_time_ = data_.veto_first_.pspmt_.time;
       pspmt_data_.veto_second_time_ = data_.veto_second_.pspmt_.time;
+   }
+   if(1){
+      pspmt_data_.ion_white_energy_ = data_.ion_white_.pspmt_.energy;
+      pspmt_data_.ion_green_energy_ = data_.ion_green_.pspmt_.energy;
+      pspmt_data_.ion_blue_energy_ = data_.ion_blue_.pspmt_.energy;
+      pspmt_data_.ion_black_energy_ = data_.ion_black_.pspmt_.energy;
+      pspmt_data_.ion_white_time_ = data_.ion_white_.pspmt_.time;
+      pspmt_data_.ion_green_time_ = data_.ion_green_.pspmt_.time;
+      pspmt_data_.ion_blue_time_ = data_.ion_blue_.pspmt_.time;
+      pspmt_data_.ion_black_time_ = data_.ion_black_.pspmt_.time;
    }
    output_tree_->Fill();
    return 0;

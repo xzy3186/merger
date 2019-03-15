@@ -67,7 +67,7 @@ template <class TOUT, class TIN1, class TIN2>
 bool BetaTreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
 
 {  
-    const Double_t kDISTANCE = 0.3;
+    const Double_t kDISTANCE = 0.2;
 
     auto pspmt_imp = in2.low_gain_;
     auto pspmt_beta = in1.high_gain_;

@@ -34,6 +34,10 @@ public:
       desi_bottom_ = obj.desi_bottom_;
       veto_first_ = obj.veto_first_;
       veto_second_ = obj.veto_second_;
+      ion_white_ = obj.ion_white_;
+      ion_green_ = obj.ion_green_;
+      ion_blue_ = obj.ion_blue_;
+      ion_black_ = obj.ion_black_;
    }
 
    void Clear(){
@@ -51,6 +55,10 @@ public:
    TraceAnalyzerData desi_bottom_;
    TraceAnalyzerData veto_first_;
    TraceAnalyzerData veto_second_;
+   TraceAnalyzerData ion_white_;
+   TraceAnalyzerData ion_green_;
+   TraceAnalyzerData ion_blue_;
+   TraceAnalyzerData ion_black_;
    ClassDef(PspmtAnalyzerData,1)
 };
 

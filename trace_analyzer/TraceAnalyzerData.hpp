@@ -16,7 +16,7 @@ public:
       trace_energy_ = obj.trace_energy_;
       trace_time_ = obj.trace_time_;
       //trace_max_ = obj.trace_max_;
-       trace_size_ = obj.trace_size_;
+      trace_size_ = obj.trace_size_;
    }
 
    void Clear(){

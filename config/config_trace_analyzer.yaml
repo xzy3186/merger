@@ -48,6 +48,30 @@ TraceAnalyzer:
           TreeName: "desi_bottom"
           SubtypeName: "desi"
           TagName: "bottom"
+      - Channel:
+          TreeName: "veto_first"
+          SubtypeName: "veto"
+          TagName: "first"
+      - Channel:
+          TreeName: "veto_second"
+          SubtypeName: "veto"
+          TagName: "second"
+      - Channel:
+          TreeName: "ion_white"
+          SubtypeName: "ion"
+          TagName: "white"
+      - Channel:
+          TreeName: "ion_green"
+          SubtypeName: "ion"
+          TagName: "green"
+      - Channel:
+          TreeName: "ion_blue"
+          SubtypeName: "ion"
+          TagName: "blue"
+      - Channel:
+          TreeName: "ion_black"
+          SubtypeName: "ion"
+          TagName: "black"
        
       - Channel:
           TreeName: "dynode_singles"

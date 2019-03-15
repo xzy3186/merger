@@ -35,6 +35,7 @@ public:
    }
 
 protected:
+   bool channel_output_flag;
    std::vector<parameter_struc> channel_vec_;
 };
 
