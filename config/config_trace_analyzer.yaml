@@ -1,3 +1,7 @@
+RunSetting:
+    InitalEvent: 0
+    NumEvents: 10000
+
 TraceAnalyzer:
     ChannelList:
       - Channel:
