@@ -1,5 +1,6 @@
 #include "TraceAnalyzer.hpp"
 #include <algorithm>
+
 int TraceAnalyzer::Configure(const std::string &yaml_node_name){
    /** loads configuration from yaml **/
    YamlReader yaml_reader(yaml_node_name);
@@ -41,34 +42,48 @@ int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt, const ULong64_t
          channel.data_->pspmt_ = pspmt;
          channel.data_->external_ts_ = ext;
          /** implementation of trace analysis **/
-         if(pspmt.trace.size()>100){
+         if(pspmt.trace.size()>129){
             /* subtract baseline */
-            const Int_t kNBins = 20;
+            const Int_t kNBins = 40;
             Double_t baseline = 0;
             for(int i=0; i<kNBins; ++i){
                baseline += pspmt.trace.at(i);
             }
             baseline = baseline/(double)kNBins;
+            /* baseline at later time */
+            Double_t baseline_later = 0;
+            for(int i=110; i<130; ++i){
+               baseline_later += pspmt.trace.at(i);
+            }
+            baseline_later = baseline_later/20.;
+
             /* QDC */
             Double_t qdc = -999;
             for(int i=55; i<70; ++i){
                qdc += pspmt.trace.at(i) - baseline;
             }
-            // channel.data_->trace_energy_ = qdc;
-            //  channel.data_->trace_max_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
-            channel.data_->trace_energy_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
+            /** implementation of trace analysis **/
+            auto itr = std::max_element(pspmt.trace.begin(),pspmt.trace.end());
+            channel.data_->trace_energy_ = (*itr);
+            /* bad trace rejection */
+            for(int i=0; i<kNBins; ++i){
+               if(abs(pspmt.trace.at(i)-baseline > 40)){
+                  channel.data_->trace_energy_ = 0;
+                  break;
+               }
+            }
+            const int distance = std::distance(pspmt.trace.begin(),itr);
+            if(distance>70||distance<40)
+               channel.data_->trace_energy_ = 0;
+            //if(abs(baseline - baseline_later)>400)
+            //   channel.data_->trace_energy_ = 0;
+
          }
-         /** implementation of trace analysis **/
       
          channel.data_->trace_size_ = pspmt.trace.size();
-         //if (pspmt.trace.size()!=0){
-         // channel.data_->trace_max_ = (*std::max_element(pspmt.trace.begin(), pspmt.trace.end())); // getting the trace maximum 
-         // std::cout<<"come here"<<std::endl;
-         // std::cout<<"max is: "<<channel.data_->trace_max_<<std::endl;
          channel.data_vec_.emplace_back(*(channel.data_));
          if(channel_output_flag)
-           channel.tree_->Fill();
-         //}
+            channel.tree_->Fill();
       }
    }
       return 0;

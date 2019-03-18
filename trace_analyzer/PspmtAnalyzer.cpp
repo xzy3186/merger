@@ -9,16 +9,14 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    //output_tree_->Branch(tree_name.c_str(),"PspmtAnalyzerData",&data_);
 
    return 0;
-   }
+}
 
-   int PspmtAnalyzer::Begin(){
-
-   // pos.open("pos.txt",std::fstream::out);
-
+int PspmtAnalyzer::Begin(){
+// pos.open("pos.txt",std::fstream::out);
    return 0;
-   }
+}
 
-   int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec){
+int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec){
 
    data_.Clear();
    pspmt_data_.Clear();
@@ -166,12 +164,12 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
       pspmt_data_.high_gain_.trace_energy_ = data_.high_gain_.dynode_.trace_energy_;
       pspmt_data_.high_gain_.energy_ = data_.high_gain_.dynode_.pspmt_.energy;
       pspmt_data_.high_gain_.time_ = data_.high_gain_.dynode_.pspmt_.time;
-      
+
       CalculatePositionH(data_.high_gain_);
       pspmt_data_.high_gain_.pos_x_= data_.high_gain_.pos_x_;
       pspmt_data_.high_gain_.pos_y_= data_.high_gain_.pos_y_;
       pspmt_data_.high_gain_.valid_= data_.high_gain_.valid_;
-     
+   
    }
    if(1){
       /* low gain */
@@ -209,16 +207,16 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    }
    output_tree_->Fill();
    return 0;
-   }
+}
 
-   int PspmtAnalyzer::Terminate(){
-  // pos.close();
+int PspmtAnalyzer::Terminate(){
+   pos.close();
    output_tree_->Write();
    return 0;
-   }
+}
 
-   void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
-   {
+void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
+{
    /* pspmt position calculation */
    const double xa = data.xa_.trace_energy_;
    const double xb = data.xb_.trace_energy_;
@@ -237,10 +235,10 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    }else
       data.valid_ = 0;
    return;
-   }
+}
 
-   void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
-   {
+void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
+{
    const double xa =4096.0*(exp((data.xa_.trace_energy_)/(3000))-1);
    const double xb =4096.0*(exp((data.xb_.trace_energy_)/(3000))-1);
    const double ya =4096.0*(exp((data.ya_.trace_energy_)/(3000))-1);
@@ -251,7 +249,7 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
          data.valid_=0;
          return;
       }  
-
+   
    data.pos_x_ = 0.5*(yb + xa)/sum;
    data.pos_y_ = 0.5*(xa + xb)/sum;
    if(xa>0&&xb>0&&ya>0&&yb>0){
@@ -260,5 +258,5 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    else
       data.valid_ = 0;
    return;
-   }
-   
+}
+
