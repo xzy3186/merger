@@ -75,8 +75,8 @@ int TraceAnalyzer::Process(const processor_struct::PSPMT &pspmt, const ULong64_t
             const int distance = std::distance(pspmt.trace.begin(),itr);
             if(distance>70||distance<40)
                channel.data_->trace_energy_ = 0;
-            //if(abs(baseline - baseline_later)>400)
-            //   channel.data_->trace_energy_ = 0;
+            if(abs(baseline - baseline_later)>400 && channel.subtype_=="dynode_high")
+               channel.data_->trace_energy_ = 0;
 
          }
       
