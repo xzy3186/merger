@@ -5,9 +5,10 @@
 #include <iomanip>
 #include <unistd.h>
 #include <map>
+#include <dirent.h>
 #include "TFile.h"
 #include "TH1.h"
-#include "TTree.h"
+#include "TChain.h"
 #include "TTreeReader.h"
 #include "TTreeReaderValue.h"
 #include "TSelector.h"
@@ -20,24 +21,62 @@
 #include "YamlReader.hpp"
 
 int main(int argc, char **argv){
-   std::cout<<"input file: "<<argv[1]<<std::endl;
-   TFile file(argv[1]);
-   TTree *tree = (TTree*)file.Get("PixTree");
-   ULong64_t total_entry = tree->GetEntries();
+   /* print usage */
+   if(argc!=4){
+      std::cout << "Usage: trace_analyzer_main [input file] [output file] [config file]"
+         << std::endl;
+      std::cout << "When TChainFlag in the config file is false." << std::endl;
+      std::cout << "Usage: trace_analyzer_main [input file prefix] [output file] [config file]"
+         << std::endl;
+      std::cout << "When TChainFlag in the config file is true." << std::endl;
+      return 1;
+   }
+
+   /* Open config file */
+   YamlParameter::Create(argv[3]);
+   YamlReader yaml_reader("RunSetting");
+   const bool chain_flag = yaml_reader.GetBoolean("TChainFlag",false,0);
+
+   /* create TChain and add input files */
+   TChain *chain = new TChain("PixTree");
+   if(chain_flag){ /* add all files matches argv[1]*.root */
+      const std::string fileprefix(argv[1]);
+      const std::size_t found = fileprefix.find_last_of("/\\");
+      const std::string file_path = fileprefix.substr(0,found);
+      const std::string file_prefix = fileprefix.substr(found+1);
+      std::cout << "path: " << file_path << "file prefix: " << file_prefix << std::endl;
+      struct dirent **namelist = NULL;
+      const int dir_elements = scandir(file_path.c_str(),&namelist,NULL,NULL);
+      std::vector<std::string> input_files;
+      for(int i=0; i<dir_elements; ++i){
+         const std::string element_name(namelist[i]->d_name);
+         if( element_name.find(file_prefix) != std::string::npos 
+            && element_name.find(".root") != std::string::npos){
+            
+            input_files.push_back(file_path + "/" + element_name);
+         }
+      }
+      sort(input_files.begin(),input_files.end());
+      for(auto input_file : input_files){
+         chain->Add(input_file.c_str());
+         std::cout << "file added: " << input_file << std::endl;
+      }
+   }
+   else{ /* add single file when TChainFlag is false */
+      std::cout<<"input file: "<<argv[1]<<std::endl;
+      chain->Add(argv[1]);
+   }
+   ULong64_t total_entry = chain->GetEntries();
    std::cout<<"input tree entries: "<<total_entry<<std::endl;
 
-   TTreeReader tree_reader(tree);
+   /* Set TTreeReader */
+   TTreeReader tree_reader(chain);
    TTreeReaderValue<PixTreeEvent> pixie_event_reader_(tree_reader, "PixTreeEvent");
 
+   /* Open output file */
    std::cout<<"output file: "<<argv[2]<<std::endl;
    TFile output_file_(argv[2],"RECREATE");
 
-   //TraceAnalyzerData trace_analyzer_data;    
-   //TTree *trave_tree_ = new TTree("trace_tree","trace_tree");
-   //beta_tree_->Branch("TraceAnalyzerData","TraceAnalyzerData",&trace_analyzer_data);
-  
-   YamlParameter::Create(argv[3]);
-   YamlReader yaml_reader("RunSetting");
    const uint64_t initial_event = yaml_reader.GetULong64("InitialEvent",false,0);
    const uint64_t num_events = yaml_reader.GetULong64("NumEvents",false,
                                                       tree_reader.GetEntries(kTRUE));
@@ -71,11 +110,9 @@ int main(int argc, char **argv){
       pspmt_analyzer.Process(trace_analyzer.GetChannelVec()); 
       trace_analyzer.ClearVec();
    }//end loop through the TTree
+
    trace_analyzer.Terminate();
    pspmt_analyzer.Terminate();
    output_file_.Close();
-   file.Close();
    return 0;
 }
-
-
