@@ -1,4 +1,5 @@
 RunSetting:
+    TChainFlag: True
     InitalEvent: 0
     NumEvents: 10000
 
