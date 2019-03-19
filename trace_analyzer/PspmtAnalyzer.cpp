@@ -223,9 +223,9 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
    }
    if(n_f11){
       pspmt_data_.f11_left_energy_ = data_.f11_left_.pspmt_.energy;
-      pspmt_data_.f11_right_energy_ = data_.f11_left_.pspmt_.energy;
+      pspmt_data_.f11_right_energy_ = data_.f11_right_.pspmt_.energy;
       pspmt_data_.f11_left_time_ = data_.f11_left_.pspmt_.time;
-      pspmt_data_.f11_right_time_ = data_.f11_left_.pspmt_.time;
+      pspmt_data_.f11_right_time_ = data_.f11_right_.pspmt_.time;
    }
    output_tree_->Fill();
    return 0;

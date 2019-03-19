@@ -40,6 +40,7 @@ public:
       ion_blue_time_ = obj.ion_blue_time_;
       ion_black_time_ = obj.ion_black_time_;
       f11_left_energy_ = obj.f11_left_energy_;
+      f11_left_time_ = obj.f11_left_time_;
       f11_right_energy_ = obj.f11_right_energy_;
       f11_right_time_ = obj.f11_right_time_;
       high_gain_ = obj.high_gain_;

@@ -18,7 +18,7 @@ void ImplantTSScannor::SetReader()
 
 Bool_t ImplantTSScannor::IsInGate()
 {
-    
+    return true;
     auto pspmt_low = tree_data_->Get()->low_gain_;
     /****
     auto pspmt_high = tree_data_->Get()->high_gain_;
