@@ -38,6 +38,8 @@ public:
       ion_green_ = obj.ion_green_;
       ion_blue_ = obj.ion_blue_;
       ion_black_ = obj.ion_black_;
+      f11_left_ = obj.f11_left_;
+      f11_right_ = obj.f11_right_;
    }
 
    void Clear(){
@@ -59,6 +61,8 @@ public:
    TraceAnalyzerData ion_green_;
    TraceAnalyzerData ion_blue_;
    TraceAnalyzerData ion_black_;
+   TraceAnalyzerData f11_left_;
+   TraceAnalyzerData f11_right_;
    ClassDef(PspmtAnalyzerData,1)
 };
 

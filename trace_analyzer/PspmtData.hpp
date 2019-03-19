@@ -35,6 +35,13 @@ public:
       ion_green_energy_ = obj.ion_green_energy_;
       ion_blue_energy_ = obj.ion_blue_energy_;
       ion_black_energy_ = obj.ion_black_energy_;
+      ion_white_time_ = obj.ion_white_time_;
+      ion_green_time_ = obj.ion_green_time_;
+      ion_blue_time_ = obj.ion_blue_time_;
+      ion_black_time_ = obj.ion_black_time_;
+      f11_left_energy_ = obj.f11_left_energy_;
+      f11_right_energy_ = obj.f11_right_energy_;
+      f11_right_time_ = obj.f11_right_time_;
       high_gain_ = obj.high_gain_;
       low_gain_ = obj.low_gain_;
    }
@@ -58,6 +65,10 @@ public:
       ion_green_time_ = 0;
       ion_blue_time_ = 0;
       ion_black_time_ = 0;
+      f11_left_energy_ = 0;
+      f11_right_energy_ = 0;
+      f11_left_time_ = 0;
+      f11_right_time_ = 0;
       high_gain_ = DEFAULT_PSPMT_STRUC;
       low_gain_ = DEFAULT_PSPMT_STRUC;
    }
@@ -80,6 +91,10 @@ public:
    Double_t ion_green_time_;
    Double_t ion_blue_time_;
    Double_t ion_black_time_;
+   Double_t f11_left_energy_;
+   Double_t f11_right_energy_;
+   Double_t f11_left_time_;
+   Double_t f11_right_time_;
    pspmt_struc high_gain_;
    pspmt_struc low_gain_;
   

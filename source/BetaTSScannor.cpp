@@ -59,17 +59,17 @@ Bool_t BetaTSScannor::IsInGate()
 
     {   /* energy gates on pspmt */
         auto pspmt_high = tree_data_->Get()->high_gain_;
-        if(pspmt_high.energy_<400 || pspmt_high.energy_>4050 )
-            return false;
+    //    if(pspmt_high.energy_<400 || pspmt_high.energy_>4050 )
+    //        return false;
         if(pspmt_high.valid_ == 0 )
             return false;
     }
 
-    {
-        auto pspmt_ts_high = tree_data_->Get()->external_ts_high_;
-        if(pspmt_ts_high-prev_implant_ < 50E+3/40. && pspmt_ts_high-prev_implant_>0)
-            return false;
-    }
+    //{
+    //    auto pspmt_ts_high = tree_data_->Get()->external_ts_high_;
+    //    if(pspmt_ts_high-prev_implant_ < 50E+3/40. && pspmt_ts_high-prev_implant_>0)
+    //        return false;
+    //}
 
     return true;
 }

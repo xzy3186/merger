@@ -156,7 +156,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
         //auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
         auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
         auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
-        if( it == map2.end() ) // Skip if there is no correlated event.
+        if( it == map2.end() || it == last ) // Skip if there is no correlated event.
             continue;
         //TIN1* in1 = input_scannor_1_->GetEntry(entry.second);
         //TOUT o_obj(*in1);

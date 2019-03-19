@@ -1,9 +1,10 @@
 RunSetting:
     TChainFlag: True
     InitalEvent: 0
-    NumEvents: 10000
+    #NumEvents: 10000
 
 TraceAnalyzer:
+    ChannelOutput: False
     ChannelList:
       - Channel:
           TreeName: "dynode_high"
@@ -77,6 +78,14 @@ TraceAnalyzer:
           TreeName: "ion_black"
           SubtypeName: "ion"
           TagName: "black"
+      - Channel:
+          TreeName: "f11_left"
+          SubtypeName: "f11"
+          TagName: "left"
+      - Channel:
+          TreeName: "f11_right"
+          SubtypeName: "f11"
+          TagName: "right"
        
       - Channel:
           TreeName: "dynode_singles"
