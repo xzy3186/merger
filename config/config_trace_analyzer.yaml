@@ -1,5 +1,5 @@
 RunSetting:
-    TChainFlag: True
+    TChainFlag: False
     InitalEvent: 0
     #NumEvents: 10000
 
@@ -57,11 +57,11 @@ TraceAnalyzer:
       - Channel:
           TreeName: "veto_first"
           SubtypeName: "veto"
-          TagName: "first"
+          TagName: "1"
       - Channel:
           TreeName: "veto_second"
           SubtypeName: "veto"
-          TagName: "second"
+          TagName: "2"
       - Channel:
           TreeName: "ion_white"
           SubtypeName: "ion"
