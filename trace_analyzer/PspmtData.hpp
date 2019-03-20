@@ -78,7 +78,7 @@ public:
    pspmt_struc high_gain_;
    pspmt_struc low_gain_;
   
-   ClassDef(PspmtData,1)
+   ClassDef(PspmtData,2)
 };
 
 
