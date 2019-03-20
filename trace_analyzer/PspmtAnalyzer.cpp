@@ -27,15 +27,15 @@ void PspmtAnalyzer::SetEventId(const TString &file_name, const ULong64_t event_n
 int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec){
    /* time window parameters relative to the high gain dynode signal */
    /* in clock ticks (8ns) */
-   const Double_t kTWINDOW = 10.; 
-   const Double_t kTWINDOW_DESI = 10.; 
-   const Double_t kTOFFSET_DESI = 95.; 
-   const Double_t kTWINDOW_ION = 10.; 
-   const Double_t kTOFFSET_ION = 100.; 
-   const Double_t kTWINDOW_VETO = 10.; 
-   const Double_t kTOFFSET_VETO = 100.; 
-   const Double_t kTWINDOW_F11 = 10.;
-   const Double_t kTOFFSET_F11 = 100.;
+   const Double_t kTWINDOW = 20.; 
+   const Double_t kTWINDOW_DESI = 20.; 
+   const Double_t kTOFFSET_DESI = -95.; 
+   const Double_t kTWINDOW_ION = 20.; 
+   const Double_t kTOFFSET_ION = -105.; 
+   const Double_t kTWINDOW_VETO = 20.; 
+   const Double_t kTOFFSET_VETO = -100.; 
+   const Double_t kTWINDOW_F11 = 20.;
+   const Double_t kTOFFSET_F11 = -95.;
 
    /* Get a vector of dynode_high events */
    std::vector<TraceAnalyzerData> dynode_high_vec;
