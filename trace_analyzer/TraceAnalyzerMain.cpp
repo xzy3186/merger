@@ -107,6 +107,7 @@ int main(int argc, char **argv){
       for(auto pspmt : pixie_event->pspmt_vec_){
          trace_analyzer.Process(pspmt, pixie_event->externalTS1);
       }
+      pspmt_analyzer.SetEventId(pixie_event->fileName, pixie_event->eventNum);
       pspmt_analyzer.Process(trace_analyzer.GetChannelVec()); 
       trace_analyzer.ClearVec();
    }//end loop through the TTree

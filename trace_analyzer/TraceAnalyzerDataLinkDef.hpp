@@ -9,6 +9,7 @@
 
 #pragma link C++ class pspmt_data_struc+;
 #pragma link C++ class pspmt_struc+;
+#pragma link C++ class beamline_detector_struc+;
 #pragma link C++ class PspmtAnalyzerData+;
 #pragma link C++ class std::vector<PspmtAnalyzerData>+;
 

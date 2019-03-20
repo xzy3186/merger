@@ -22,20 +22,33 @@ void BetaTSScannor::SetReader()
 Bool_t BetaTSScannor::IsInGate()
 {
     auto high = tree_data_->Get()->high_gain_;
+    Bool_t beam_flag = false;
+    {   /* if there is a coinsidence with ion detector, record the timestamp and set the flag on */
+        const Double_t tdiff_g = high.time_ - tree_data_->Get()->ion_green_.time_;
+        const Double_t tdiff_b = high.time_ - tree_data_->Get()->ion_blue_.time_;
+        const Double_t tdiff_k = high.time_ - tree_data_->Get()->ion_black_.time_;
+        if(tdiff_g>103&&tdiff_g<120&&tdiff_b>103&&tdiff_b<120&&tdiff_k>103&&tdiff_k<120){
+            prev_implant_ = tree_data_->Get()->external_ts_high_;
+            beam_flag = true;
+        }
+    }
+
     {   /** checks if this is an implant event **/
         /** if there is a coinsidence with one of the desi detectors, record the timestamp and returns false **/
         {
-            const Double_t tdiff = high.time_ - tree_data_->Get()->desi_top_time_ - 95.;
-            const Double_t energy = tree_data_->Get()->desi_top_energy_;
-            if( tdiff > -5. && tdiff < 5. && energy > 10. ){
+            const Double_t tdiff = high.time_ - tree_data_->Get()->desi_top_.time_ - 95.;
+            const Double_t energy = tree_data_->Get()->desi_top_.energy_;
+            if( tdiff > -5. && tdiff < 5. && energy > 10. && beam_flag ){
+            //if( tdiff > -5. && tdiff < 5. && energy > 10. ){
                 prev_implant_ = tree_data_->Get()->external_ts_high_;
                 return false;
             }
         }
         {
-            const Double_t tdiff = high.time_ - tree_data_->Get()->desi_bottom_time_ - 95.;
-            const Double_t energy = tree_data_->Get()->desi_bottom_energy_;
-            if( tdiff > -5. && tdiff < 5. && energy > 10.){
+            const Double_t tdiff = high.time_ - tree_data_->Get()->desi_bottom_.time_ - 95.;
+            const Double_t energy = tree_data_->Get()->desi_bottom_.energy_;
+            if( tdiff > -5. && tdiff < 5. && energy > 10. && beam_flag ){
+            //if( tdiff > -5. && tdiff < 5. && energy > 10.  ){
                 prev_implant_ = tree_data_->Get()->external_ts_high_;
                 return false;
             }
@@ -43,24 +56,20 @@ Bool_t BetaTSScannor::IsInGate()
     }
 
     {   /* checks if there is a coincidence with veto detector */
-        {
-            const Double_t tdiff = high.time_ - tree_data_->Get()->veto_first_time_ - 100.;
-            const Double_t energy = tree_data_->Get()->veto_first_energy_;
-            if( tdiff > -20. && tdiff < 20. && energy > 10. )
-                return false;
-        }
-        {
-            const Double_t tdiff = high.time_ - tree_data_->Get()->veto_second_time_ - 100.;
-            const Double_t energy = tree_data_->Get()->veto_second_energy_;
-            if( tdiff > -20. && tdiff < 20. && energy > 10.)
-                return false;
-        }
+        const Double_t tdiff_first = high.time_ - tree_data_->Get()->veto_first_.time_ - 100.;
+        const Double_t energy_first = tree_data_->Get()->veto_first_.energy_;
+        const Double_t tdiff_second = high.time_ - tree_data_->Get()->veto_second_.time_ - 100.;
+        const Double_t energy_second = tree_data_->Get()->veto_second_.energy_;
+        if( tdiff_first > -20. && tdiff_first < 20. && energy_first > 10.
+            && tdiff_second > -20. && tdiff_second < 20. && energy_second > 10. )
+            return false;
     }
 
     {   /* energy gates on pspmt */
         auto pspmt_high = tree_data_->Get()->high_gain_;
-    //    if(pspmt_high.energy_<400 || pspmt_high.energy_>4050 )
-    //        return false;
+        //if(pspmt_high.energy_<400 || pspmt_high.energy_>4050 )
+        //if(pspmt_high.energy_>4050 )
+        //    return false;
         if(pspmt_high.valid_ == 0 )
             return false;
     }

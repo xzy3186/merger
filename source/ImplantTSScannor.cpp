@@ -18,32 +18,34 @@ void ImplantTSScannor::SetReader()
 
 Bool_t ImplantTSScannor::IsInGate()
 {
-    return true;
     auto pspmt_low = tree_data_->Get()->low_gain_;
-    /****
-    auto pspmt_high = tree_data_->Get()->high_gain_;
-    if(pspmt_low.xa_<10 || pspmt_low.xb_<10 || pspmt_low.ya_<10 || pspmt_low.yb_<10 )
-        return false;
-    if(pspmt_low.xa_>30000 || pspmt_low.xb_>30000 || pspmt_low.ya_>30000 || pspmt_low.yb_>30000)
-        return false;*///
-    if(pspmt_low.energy_ < 2000 || pspmt_low.energy_ > 8000 )
-        return false;
-
     if(!pspmt_low.valid_)
         return false;
+    //if(pspmt_low.energy_ < 2000 || pspmt_low.energy_ > 8000 )
+    //    return false;
 
-    // Gating on de si
-    const Double_t tdiff_top = tree_data_->Get()->desi_top_time_ - pspmt_low.time_ + 95.;
-    const Double_t de_top = tree_data_->Get()->desi_top_energy_;
-    const Double_t tdiff_bottom = tree_data_->Get()->desi_bottom_time_ - pspmt_low.time_ + 95.;
-    const Double_t de_bottom = tree_data_->Get()->desi_bottom_energy_;
+    // Anti-gating on veto
+    {
+        const Double_t tdiff_first = tree_data_->Get()->veto_first_.time_ - pspmt_low.time_ + 100.;
+        const Double_t tdiff_second = tree_data_->Get()->veto_second_.time_ - pspmt_low.time_ + 100.;
+        if(tdiff_first<10.&&tdiff_first>-10.&&tdiff_second<10.&&tdiff_second>-10.)
+            return false;
+    }
 
-    if( tdiff_top<5. && tdiff_top>-5. && de_top>5200. && de_top<5600. ) //83Ga
-        return true;
-    else if ( tdiff_bottom<5. && tdiff_bottom>-5. && de_bottom>5600. && de_bottom<6400. ) //83Ga
-        return true;
-    else
-        return false;
+    // Gating on dE Si
+    {
+        const Double_t tdiff_top = tree_data_->Get()->desi_top_.time_ - pspmt_low.time_ + 95.;
+        const Double_t de_top = tree_data_->Get()->desi_top_.energy_;
+        const Double_t tdiff_bottom = tree_data_->Get()->desi_bottom_.time_ - pspmt_low.time_ + 95.;
+        const Double_t de_bottom = tree_data_->Get()->desi_bottom_.energy_;
+
+        if( tdiff_top<10. && tdiff_top>-10. && de_top>5200. && de_top<5600. ) //83Ga
+            return true;
+        else if ( tdiff_bottom<10. && tdiff_bottom>-10. && de_bottom>5600. && de_bottom<6400. ) //83Ga
+            return true;
+        else
+            return false;
+    }
 }
 
 const std::string MergedImplantTSScannor::kMsgPrefix("[MergedImplantTSScannor]:");
