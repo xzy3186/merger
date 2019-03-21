@@ -26,22 +26,18 @@ Bool_t ImplantTSScannor::IsInGate()
 
     // Anti-gating on veto
     {
-        const Double_t tdiff_first = tree_data_->Get()->veto_first_.time_ - pspmt_low.time_ + 100.;
-        const Double_t tdiff_second = tree_data_->Get()->veto_second_.time_ - pspmt_low.time_ + 100.;
-        if(tdiff_first<10.&&tdiff_first>-10.&&tdiff_second<10.&&tdiff_second>-10.)
+        if(tree_data_->Get()->veto_first_.energy_>10. && tree_data_->Get()->veto_second_.energy_>10.)
             return false;
     }
 
     // Gating on dE Si
     {
-        const Double_t tdiff_top = tree_data_->Get()->desi_top_.time_ - pspmt_low.time_ + 95.;
         const Double_t de_top = tree_data_->Get()->desi_top_.energy_;
-        const Double_t tdiff_bottom = tree_data_->Get()->desi_bottom_.time_ - pspmt_low.time_ + 95.;
         const Double_t de_bottom = tree_data_->Get()->desi_bottom_.energy_;
 
-        if( tdiff_top<10. && tdiff_top>-10. && de_top>5200. && de_top<5600. ) //83Ga
+        if( de_top>5200. && de_top<5600. ) //83Ga
             return true;
-        else if ( tdiff_bottom<10. && tdiff_bottom>-10. && de_bottom>5600. && de_bottom<6400. ) //83Ga
+        else if ( de_bottom>5600. && de_bottom<6400. ) //83Ga
             return true;
         else
             return false;
