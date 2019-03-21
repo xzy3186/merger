@@ -58,3 +58,6 @@ BetaImplantMerger:
   PrintFrequency: 10
   TimeWindowLow: 1000000000
   TimeWindowUp: 1000000000
+
+BetaTreeMerger:
+  YSOMapFile: "./yso_map.txt"

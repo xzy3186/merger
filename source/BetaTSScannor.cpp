@@ -66,8 +66,8 @@ Bool_t BetaTSScannor::IsInGate()
         //if(pspmt_high.energy_<400 || pspmt_high.energy_>4050 )
         //if(pspmt_high.energy_>4050 )
         //    return false;
-        if(pspmt_low.energ_>2000)
-            return false;
+        //if(pspmt_low.energy_>2000)
+        //    return false;
         if(pspmt_high.valid_ == 0 )
             return false;
     }

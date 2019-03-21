@@ -5,6 +5,7 @@
 
 #include "TreeMerger.hpp"
 #include "BetaTreeMerger.hpp"
+#include "YSOMap.h"
 
 /** merger class **/
 // input_2 events will be merged to a vector in input_1
@@ -24,6 +25,9 @@ public:
     //void Write(); // writes tree to the file
     virtual bool IsInGate(const TIN1 &in1, const TIN2 &in2);
 
+protected:
+    YSOMap *yso_map_;
+    Double_t correlation_radius_;
 };
 
 template <class TOUT, class TIN1, class TIN2>
@@ -38,6 +42,9 @@ template <class TOUT, class TIN1, class TIN2>
 BetaTreeMerger<TOUT,TIN1,TIN2>::BetaTreeMerger(TSScannorBase<TIN1> *input1, TSScannorBase<TIN2> *input2)
    : TreeMerger<TOUT,TIN1,TIN2>(input1,input2)
 {
+    YamlReader yaml_reader("BetaTreeMerger");
+    yso_map_ = new YSOMap(yaml_reader.GetString("YSOMapFile"));
+    correlation_radius_ = yaml_reader.GetDouble("CorrelationRadius");
 }
 
 template <class TOUT, class TIN1, class TIN2>
@@ -67,19 +74,15 @@ template <class TOUT, class TIN1, class TIN2>
 bool BetaTreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
 
 {  
-    const Double_t kDISTANCE = 0.2;
+    /* position correlation between beta and implant events */
+    const auto pspmt_imp = in2.low_gain_;
+    const auto pspmt_beta = in1.high_gain_;
+    const double beta_x = 11.9135504*pspmt_beta.pos_x_;
+    const double beta_y = 10.0*pspmt_beta.pos_y_;
+    const double imp_x = 23.664712*pspmt_imp.pos_x_ - 2.862757;
+    const double imp_y = 15.5979*pspmt_imp.pos_y_ - 1.4067;
 
-    auto pspmt_imp = in2.low_gain_;
-    auto pspmt_beta = in1.high_gain_;
-
-    Double_t x_imp = pspmt_imp.pos_x_*23.6647 - 2.8628 ; // Ion-image overlapped to the beta-image.
-    Double_t y_imp = pspmt_imp.pos_y_*15.5979 - 1.4067;
-    Double_t x_beta = 11.9135*pspmt_beta.pos_x_; 
-    Double_t y_beta = 10.0*pspmt_beta.pos_y_;
-
-    //std::cout << "ximp:" << x_imp << " xbeta:" << x_beta << " yimp:" << y_imp << " ybeta:" << y_beta << " dist:" << pow(x_imp-x_beta,2)+pow(y_imp-y_beta,2) << std::endl;
-
-    if(pow(x_imp-x_beta,2)+pow(y_imp-y_beta,2)<pow(kDISTANCE,2))
+    if(yso_map_->IsInside(beta_x,beta_y,imp_x,imp_y,correlation_radius_))
         return true;
     else
         return false;
