@@ -19,19 +19,36 @@ void YSOMap::LoadPositionParameters(std::string fname){
     ifile >> iy;
     YSOPositionData *pos = new YSOPositionData();
     pos->SetPositions(bx,by,ix,iy);
-    fVectorOfYSOPositions.push_back(pos);
+    fVectorOfYSOPositions.push_back(*pos);
   }
   std::cout << "[YSOMap]: loaded " << fVectorOfYSOPositions.size() << " pixiels from " << fname << std::endl;
 }
 
-Bool_t YSOMap::IsInside(Double_t beta_x,Double_t beta_y,Double_t ion_x,Double_t ion_y,Double_t ion_r) const {
+Bool_t YSOMap::IsInside(const Double_t &beta_x,const Double_t &beta_y,
+  const Double_t &ion_x,const Double_t &ion_y,const Double_t &ion_r) {
+
+/*
+  auto lambda = [&x = beta_x, &y = beta_y] (
+      const YSOPositionData &a,
+      const YSOPositionData &b
+    ) 
+    { return a.Distance(x,y) < b.Distance(x,y); };
+
+  std::sort(fVectorOfYSOPositions.begin(),fVectorOfYSOPositions.end(), lambda);
+  if( fVectorOfYSOPositions.at(0).IonIsInside(ion_x,ion_y,ion_r) ){
+    return true;
+  }
+  else{
+    return false;
+  }
+*/
 
   YSOPositionData* p_closest = nullptr;
   Double_t distance_min = 1E+6;
   for( auto pos : fVectorOfYSOPositions ){
-    if(pos->Distance(beta_x,beta_y)<distance_min) {
-      p_closest = pos;
-      distance_min = pos->Distance(beta_x,beta_y);
+    if(pos.Distance(beta_x,beta_y)<distance_min) {
+      p_closest = &pos;
+      distance_min = pos.Distance(beta_x,beta_y);
     }
   }
   if(!p_closest)
@@ -42,7 +59,7 @@ Bool_t YSOMap::IsInside(Double_t beta_x,Double_t beta_y,Double_t ion_x,Double_t 
     return false;
 }
 
-void YSOPositionData::SetPositions(Double_t beta_x,Double_t beta_y,Double_t ion_x,Double_t ion_y){
+void YSOPositionData::SetPositions(const Double_t &beta_x,const Double_t &beta_y,const Double_t &ion_x,const Double_t &ion_y){
   fBetaX = beta_x;
   fBetaY = beta_y;
   fIonX = ion_x;
@@ -51,15 +68,15 @@ void YSOPositionData::SetPositions(Double_t beta_x,Double_t beta_y,Double_t ion_
   return;
 }
 
-Bool_t YSOPositionData::BetaIsInside(Double_t beta_x,Double_t beta_y) const {
+Bool_t YSOPositionData::BetaIsInside(const Double_t &beta_x,const Double_t &beta_y) const {
   return (TMath::Power((Double_t)beta_x-(Double_t)fBetaX,2.)+TMath::Power((Double_t)beta_y-(Double_t)fBetaY,2.)<kBetaR*kBetaR);
 }
 
-Double_t YSOPositionData::Distance(Double_t beta_x,Double_t beta_y) const {
+Double_t YSOPositionData::Distance(const Double_t &beta_x,const Double_t &beta_y) const {
   return (TMath::Power((Double_t)beta_x-(Double_t)fBetaX,2.)+TMath::Power((Double_t)beta_y-(Double_t)fBetaY,2.));
 }
 
-Bool_t YSOPositionData::IonIsInside(Double_t ion_x,Double_t ion_y,Double_t ion_r) const {
+Bool_t YSOPositionData::IonIsInside(const Double_t &ion_x,const Double_t &ion_y,const Double_t &ion_r) const {
   if(ion_r<0)
     return (TMath::Power((Double_t)ion_x-(Double_t)fIonX,2.)+TMath::Power((Double_t)ion_y-(Double_t)fIonY,2.)<kIonR*kIonR);
   else
