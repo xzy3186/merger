@@ -37,10 +37,10 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
    const Double_t kTWINDOW_F11 = 20.;
    const Double_t kTOFFSET_F11 = -95.;
 
-   /* Get a vector of dynode_high events */
+   /* Get a vector of dynode_high singles events */
    std::vector<TraceAnalyzerData> dynode_high_vec;
    for(const auto &channel: channel_data_vec){
-      if((channel.subtype_=="dynode_high")&&(channel.tag_=="ignore")){
+      if((channel.subtype_=="dynode_high")&&(channel.tag_=="singles")){
          dynode_high_vec = channel.data_vec_;
       }
    }
@@ -50,7 +50,8 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
       data_.Clear();
       pspmt_data_.Clear();
       const Double_t t0 = dyn_high.pspmt_.time; // reference time
-      data_.high_gain_.dynode_ = dyn_high;
+      pspmt_data_.dyn_single_.time_ = t0;
+      pspmt_data_.dyn_single_.energy_ = dyn_high.pspmt_.energy;
 
       /* fills data to PspmtAnalyzerData */
       Int_t n_low_gain = 0;
@@ -59,6 +60,15 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
       Int_t n_ion = 0;
       Int_t n_f11 = 0;
       for(const auto &channel: channel_data_vec){
+         if((channel.subtype_=="dynode_high")&&(channel.tag_=="ignore")){
+            /* dynode high gain (triple) */
+            for(const auto &ch_data: channel.data_vec_){
+               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
+                  data_.high_gain_.dynode_ = ch_data;
+               }
+            }
+         }
          if((channel.subtype_=="dynode_low")&&(channel.tag_=="ignore")){
             /* dynode low gain */
             for(const auto &ch_data: channel.data_vec_){

@@ -20,7 +20,7 @@ public:
         output_vec_.clear();
         T::Clear();
     }
-    ClassDef(OutputTreeData,2)
+    ClassDef(OutputTreeData,3)
 };
 
 #endif /** VANDLE_MERGER_OUTPUTTREEDATA_HPP_ **/
