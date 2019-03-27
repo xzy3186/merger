@@ -94,7 +94,7 @@ TraceAnalyzer:
 PspmtAnalyzer:
     TreeName: "pspmt"
     CloverVec: True
-    #VANDLEVec: True
+    VANDLEVec: True
     TimeWindow: 20 # in clock ticks (8ns)
     TimeOffset: 0
     TimeWindowDeSi: 20

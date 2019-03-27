@@ -11,6 +11,8 @@ ImplantTSScannor:
   PixieBranchName: pspmt
   MinLowGainDynEnergy: 2000
   MaxLowGainDynEnergy: 65535
+  OtherBranches:
+    - "clover_vec_"
 #  FirstEntry: 0
 #  LastEntry: 10000
 
@@ -38,6 +40,9 @@ BetaTSScannor:
   MaxHighGainDynEnergy: 30000
   MinLowGainDynEnergy: -2000
   MaxLowGainDynEnergy: 2000
+  OtherBranches:
+    - "clover_vec_"
+    - "vandle_vec_"
 #  FirstEntry: 0
 #  LastEntry: 1000
 
@@ -61,3 +66,4 @@ BetaImplantMerger:
 
 BetaTreeMerger:
   YSOMapFile: "./yso_map.txt"
+  CorrelationRadius: 0.4
