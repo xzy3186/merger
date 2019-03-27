@@ -124,6 +124,13 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
 
     /** frequency of printing scan progress default = 10000 **/
     print_freq_ = yaml_reader_->GetULong64("PrintFrequency",false,10000);
+
+    /** SetBranchAddress for other branches **/
+    auto b_map = input_scannor_1_->GetBranchMap();
+    for( const auto &br : b_map){
+        tree_->Branch(br.first.c_str(),br.second.first.c_str(),br.second.second); 
+    }
+    input_scannor_1_->SetBranchAddress();
     return;
 }
 

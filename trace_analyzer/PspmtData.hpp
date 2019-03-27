@@ -10,6 +10,7 @@ struct pspmt_struc{
    Double_t trace_energy_ = 0;
    Double_t energy_ = 0;
    Double_t time_ = 0;
+   Double_t energy_sum_ = 0;
 };
 static pspmt_struc DEFAULT_PSPMT_STRUC;
 
@@ -81,7 +82,7 @@ public:
    pspmt_struc high_gain_;
    pspmt_struc low_gain_;
   
-   ClassDef(PspmtData,3)
+   ClassDef(PspmtData,4)
 };
 
 

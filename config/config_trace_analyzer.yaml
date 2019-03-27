@@ -1,5 +1,5 @@
 RunSetting:
-    TChainFlag: False
+    TChainFlag: True
     InitalEvent: 0
     #NumEvents: 10000
 
@@ -86,7 +86,6 @@ TraceAnalyzer:
           TreeName: "f11_right"
           SubtypeName: "f11"
           TagName: "right"
-       
       - Channel:
           TreeName: "dynode_singles"
           SubtypeName: "dynode_high"
@@ -94,3 +93,15 @@ TraceAnalyzer:
 
 PspmtAnalyzer:
     TreeName: "pspmt"
+    CloverVec: True
+    #VANDLEVec: True
+    TimeWindow: 20 # in clock ticks (8ns)
+    TimeOffset: 0
+    TimeWindowDeSi: 20
+    TimeOffsetDeSi: -95
+    TimeWindowIon: 20
+    TimeOffsetIon: -105
+    TimeWindowVeto: 20
+    TimeOffsetVeto: -100
+    TimeWindowF11: 20
+    TimeOffsetF11: -95

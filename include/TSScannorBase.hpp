@@ -36,6 +36,9 @@ public:
         if(!tree_data_) throw kMsgPrefix + "GetCurrentEntry(), tree_data_ is null.";
         return tree_reader_->GetCurrentEntry();
     }
+    TTree* GetTree() const { return tree_reader_->GetTree(); }
+    std::map<std::string, std::pair<std::string,void*>> GetBranchMap() const { return branch_map_; }
+    void SetBranchAddress();
 
 protected:
     TFile *tree_file_; // Input tree TFile
@@ -47,6 +50,7 @@ protected:
     ULong64_t first_entry_; // the index of the first entry to scan
     ULong64_t last_entry_; // the index of the last entry to scan
     ULong64_t print_freq_; // frequency to print scan progress
+    std::map<std::string, std::pair<std::string,void*>> branch_map_; // other branches to copy
 
     virtual ULong64_t GetTS() const = 0;
     virtual Bool_t IsInGate() {return true;}
@@ -99,6 +103,19 @@ template <class T> void TSScannorBase<T>::Configure(const std::string &yaml_node
     }
     tree_reader_ = new TTreeReader(tree_name.c_str(),tree_file_);
 
+    /** generates a map of branch addresses for branch outputs **/
+    {
+        YAML::Node doc = yaml_reader_->GetNode("OtherBranches",false);
+        for(int i=0; i<doc.size(); ++i) {
+            std::string name = doc[i].as<std::string>();
+            TBranch* branch =(TBranch*)tree_reader_->GetTree()->FindBranch(name.c_str()); 
+            std::string class_name(branch->GetClassName());
+            auto na_pair = std::pair<std::string,void*>(class_name,nullptr);
+            branch_map_.emplace(std::pair<std::string,std::pair<std::string,void*>>(name,na_pair));
+            std::cout << kMsgPrefix << "added an output branch, " << class_name << " " << name << std::endl;
+        }
+    }
+
     /** scan entries range **/
     first_entry_ = yaml_reader_->GetULong64("FirstEntry",false,0);
     last_entry_ = yaml_reader_->GetULong64("LastEntry",false,tree_reader_->GetEntries(true));
@@ -140,6 +157,13 @@ template <class T> void TSScannorBase<T>::Scan()
             std::cout << 100.*(double)i_entry/(double)(total_entry) << "\% scanned. Remaining " << remain->tm_hour << "h ";
             std::cout << remain->tm_min << "m " << remain->tm_sec << "s" << std::endl;
         }
+    }
+    return;
+}
+
+template <class T> void TSScannorBase<T>::SetBranchAddress(){
+    for(auto br: branch_map_){
+        tree_reader_->GetTree()->SetBranchAddress(br.first.c_str(),br.second.second);
     }
     return;
 }

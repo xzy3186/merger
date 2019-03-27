@@ -24,6 +24,7 @@ public:
    virtual int Terminate();
 
    void SetEventId(const TString &file_name, const ULong64_t event_num);
+   void SetEventData(PixTreeEvent* pixie_event);
    void CalculatePositionH(pspmt_data_struc &data);
    void CalculatePositionL(pspmt_data_struc &data);
 
@@ -34,7 +35,23 @@ protected:
    PspmtData pspmt_data_;
    ULong64_t pixie_event_num_;
    TString file_name_;
-   
+   std::vector<processor_struct::CLOVERS> clover_data_;
+   std::vector<processor_struct::VANDLES> vandle_data_;
+   std::vector<processor_struct::GAMMASCINT> gamma_scint_data_;
+   std::vector<processor_struct::DOUBLEBETA> double_beta_data_;
+
+   /* time window parameters relative to the high gain dynode signal */
+   /* in clock ticks (8ns) */
+   Double_t kTWINDOW; 
+   Double_t kTOFFSET; 
+   Double_t kTWINDOW_DESI; 
+   Double_t kTOFFSET_DESI; 
+   Double_t kTWINDOW_ION; 
+   Double_t kTOFFSET_ION; 
+   Double_t kTWINDOW_VETO; 
+   Double_t kTOFFSET_VETO; 
+   Double_t kTWINDOW_F11;
+   Double_t kTOFFSET_F11;
 };
 
 const std::string TraceAnalyzer::kMsgPrefix("[TraceAnalyzer:]");

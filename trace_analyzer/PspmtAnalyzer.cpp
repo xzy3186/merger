@@ -1,14 +1,31 @@
 #include "PspmtAnalyzer.hpp"
 
 int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
-   /** loads configuration from yaml **/
+   /** loads configuration from the yaml file **/
    YamlReader yaml_reader(yaml_node_name);
    const std::string tree_name = yaml_reader.GetString("TreeName");
    output_tree_ = new TTree(tree_name.c_str(),tree_name.c_str());
    output_tree_->Branch("pspmt_compressed","PspmtData",&pspmt_data_);
    output_tree_->Branch("pixie_event_num",&pixie_event_num_,"pixie_event_num/l");
    output_tree_->Branch("file_name","TString", &file_name_);
-   //output_tree_->Branch(tree_name.c_str(),"PspmtAnalyzerData",&data_);
+   if(yaml_reader.GetBoolean("CloverVec",false,false))
+      output_tree_->Branch("clover_vec_","processor_struct::CLOVERS",&clover_data_);
+   if(yaml_reader.GetBoolean("VANDLEVec",false,false))
+      output_tree_->Branch("vandle_vec_","processor_struct::VANDLES",&vandle_data_);
+   if(yaml_reader.GetBoolean("GammaScintVec",false,false))
+      output_tree_->Branch("gamma_scint_vec_","processor_struct::GAMMASCINT",&gamma_scint_data_);
+   if(yaml_reader.GetBoolean("DoubleBetaVec",false,false))
+      output_tree_->Branch("double_beta_vec_","processor_struct::DOUBLEBETA",&double_beta_data_);
+   kTWINDOW = yaml_reader.GetDouble("TimeWindow"); 
+   kTOFFSET = yaml_reader.GetDouble("TimeOffset"); 
+   kTWINDOW_DESI = yaml_reader.GetDouble("TimeWindowDeSi");
+   kTOFFSET_DESI = yaml_reader.GetDouble("TimeOffsetDeSi");
+   kTWINDOW_ION = yaml_reader.GetDouble("TimeWindowIon");
+   kTOFFSET_ION = yaml_reader.GetDouble("TimeOffsetIon");
+   kTWINDOW_VETO = yaml_reader.GetDouble("TimeWindowVeto");
+   kTOFFSET_VETO = yaml_reader.GetDouble("TimeOffsetVeto");
+   kTWINDOW_F11 = yaml_reader.GetDouble("TimeWindowF11");
+   kTOFFSET_F11 = yaml_reader.GetDouble("TimeOffsetF11");
 
    return 0;
 }
@@ -24,18 +41,15 @@ void PspmtAnalyzer::SetEventId(const TString &file_name, const ULong64_t event_n
    return;
 }
 
+void PspmtAnalyzer::SetEventData(PixTreeEvent* pixie_event){
+   clover_data_ = pixie_event->clover_vec_;
+   vandle_data_ = pixie_event->vandle_vec_;
+   gamma_scint_data_ = pixie_event->gamma_scint_vec_;
+   double_beta_data_ = pixie_event->doublebeta_vec_;
+   return;
+}
+
 int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec){
-   /* time window parameters relative to the high gain dynode signal */
-   /* in clock ticks (8ns) */
-   const Double_t kTWINDOW = 20.; 
-   const Double_t kTWINDOW_DESI = 20.; 
-   const Double_t kTOFFSET_DESI = -95.; 
-   const Double_t kTWINDOW_ION = 20.; 
-   const Double_t kTOFFSET_ION = -105.; 
-   const Double_t kTWINDOW_VETO = 20.; 
-   const Double_t kTOFFSET_VETO = -100.; 
-   const Double_t kTWINDOW_F11 = 20.;
-   const Double_t kTOFFSET_F11 = -95.;
 
    /* Get a vector of dynode_high singles events */
    std::vector<TraceAnalyzerData> dynode_high_vec;
@@ -63,7 +77,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="dynode_high")&&(channel.tag_=="ignore")){
             /* dynode high gain (triple) */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
                   data_.high_gain_.dynode_ = ch_data;
                }
@@ -72,7 +86,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="dynode_low")&&(channel.tag_=="ignore")){
             /* dynode low gain */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
                   data_.low_gain_.dynode_ = ch_data;
                   ++n_low_gain;
@@ -82,7 +96,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="anode_low")&&(channel.tag_=="xa")){
             /* anode low gain xa */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
                   data_.low_gain_.xa_ = ch_data;
                   ++n_low_gain;
@@ -92,7 +106,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="anode_low")&&(channel.tag_=="xb")){
             /* anode low gain xb */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
                   data_.low_gain_.xb_ = ch_data;
                   ++n_low_gain;
@@ -102,7 +116,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="anode_low")&&(channel.tag_=="ya")){
             /* anode low gain ya */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
                   data_.low_gain_.ya_ = ch_data;
                   ++n_low_gain;
@@ -112,7 +126,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="anode_low")&&(channel.tag_=="yb")){
             /* anode low gain yb */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
                   data_.low_gain_.yb_ = ch_data;
                   ++n_low_gain;
@@ -122,7 +136,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="anode_high")&&(channel.tag_=="xa")){
             /* anode high gain xa */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
                   data_.high_gain_.xa_ = ch_data;
             }
@@ -130,7 +144,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="anode_high")&&(channel.tag_=="xb")){
             /* anode high gain xb */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
                   data_.high_gain_.xb_ = ch_data;
             }
@@ -138,7 +152,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="anode_high")&&(channel.tag_=="ya")){
             /* anode high gain ya */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
                   data_.high_gain_.ya_ = ch_data;
             }
@@ -146,7 +160,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          if((channel.subtype_=="anode_high")&&(channel.tag_=="yb")){
             /* anode high gain yb */
             for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0;
+               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
                   data_.high_gain_.yb_ = ch_data;
             }
@@ -211,7 +225,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
                }
             }
          }
-         if((channel.subtype_=="veto")&&(channel.tag_=="first")){
+         if((channel.subtype_=="veto")&&(channel.tag_=="1")){
             /* veto plastic first */
             for(const auto &ch_data: channel.data_vec_){
                const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_VETO;
@@ -221,7 +235,7 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
                }
             }
          }
-         if((channel.subtype_=="veto")&&(channel.tag_=="second")){
+         if((channel.subtype_=="veto")&&(channel.tag_=="2")){
             /* veto plastic second */
             for(const auto &ch_data: channel.data_vec_){
                const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_VETO;
@@ -261,6 +275,9 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          pspmt_data_.high_gain_.trace_energy_ = data_.high_gain_.dynode_.trace_energy_;
          pspmt_data_.high_gain_.energy_ = data_.high_gain_.dynode_.pspmt_.energy;
          pspmt_data_.high_gain_.time_ = data_.high_gain_.dynode_.pspmt_.time;
+         pspmt_data_.high_gain_.energy_sum_ = data_.high_gain_.xa_.trace_energy_
+            + data_.high_gain_.xb_.trace_energy_ + data_.high_gain_.ya_.trace_energy_
+            + data_.high_gain_.yb_.trace_energy_;
 
          CalculatePositionH(data_.high_gain_);
          pspmt_data_.high_gain_.pos_x_= data_.high_gain_.pos_x_;
@@ -275,6 +292,10 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
          pspmt_data_.low_gain_.trace_energy_ = data_.low_gain_.dynode_.trace_energy_;
          pspmt_data_.low_gain_.energy_ = data_.low_gain_.dynode_.pspmt_.energy;
          pspmt_data_.low_gain_.time_ = data_.low_gain_.dynode_.pspmt_.time;
+         pspmt_data_.low_gain_.energy_sum_ = data_.low_gain_.xa_.trace_energy_
+            + data_.low_gain_.xb_.trace_energy_ + data_.low_gain_.ya_.trace_energy_
+            + data_.low_gain_.yb_.trace_energy_;
+
          CalculatePositionL(data_.low_gain_);
          pspmt_data_.low_gain_.pos_x_= data_.low_gain_.pos_x_;
          pspmt_data_.low_gain_.pos_y_= data_.low_gain_.pos_y_;

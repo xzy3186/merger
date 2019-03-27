@@ -12,7 +12,7 @@ public:
     YamlReader(const std::string &yaml_node_name);
     ~YamlReader(){}
 
-    YAML::Node GetNode(const std::string &attr) const;
+    YAML::Node GetNode(const std::string &attr,const bool &throw_error=true) const;
     std::string GetString(const std::string &attr, const bool &throw_error=true, const std::string &default_str="default") const;
     unsigned long long GetULong64(const std::string &attr, const bool &throw_error=true, const unsigned long long &default_val=0) const;
     double GetDouble(const std::string &attr, const bool &throw_error=true, const double &default_val=0) const;
