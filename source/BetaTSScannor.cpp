@@ -21,6 +21,7 @@ void BetaTSScannor::SetReader()
 
 Bool_t BetaTSScannor::IsInGate()
 {
+    return true;
     auto high = tree_data_->Get()->high_gain_;
     Bool_t beam_flag = false;
     {   /* if there is a coinsidence with ion detector, record the timestamp and set the flag on */
@@ -68,8 +69,8 @@ Bool_t BetaTSScannor::IsInGate()
         //    return false;
         //if(pspmt_low.energy_>2000)
         //    return false;
-        if(pspmt_high.valid_ == 0 )
-            return false;
+        //if(pspmt_high.valid_ == 0 )
+        //    return false;
     }
 
     //{

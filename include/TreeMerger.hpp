@@ -157,12 +157,13 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
             std::cout << 100.*(double)i_entry/(double)(total_entry) << "\% merged. Remaining " << remain->tm_hour << "h ";
             std::cout << remain->tm_min << "m " << remain->tm_sec << "s" << std::endl;
         }
+        ++i_entry;
         /** loop over input2 events whithin T1-up < T2 < T1+low **/
         auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
         auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
         if( it == map2.end() || it == last ) // Skip if there is no correlated event.
             continue;
-        input_scannor_1_->GetTree()->GetEntry(i_entry);
+        input_scannor_1_->GetIEntry(entry.first);
         TOUT o_obj(entry.second);
         while ( it != last )
         {
@@ -172,7 +173,6 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
         }
         output_object_ = o_obj;
         tree_->Fill();
-        ++i_entry;
     }
 
     return;

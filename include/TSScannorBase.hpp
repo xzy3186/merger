@@ -27,6 +27,7 @@ public:
     void Scan(); // scan through events from first_entry_ to last_entry_ of the tree
     //std::map<ULong64_t,ULong64_t> GetMap(){ return ts_entry_map_;}
     std::map<ULong64_t,T> GetMap(){ return ts_entry_map_;}
+    ULong64_t GetIEntry(const ULong64_t &ts){ return ts_i_entry_map_[ts]; }
     void Restart(){ tree_reader_->Restart(); }
     T* GetEntry(const ULong64_t &i_entry)
     {
@@ -48,7 +49,8 @@ protected:
     TTreeReader *tree_reader_; // TTreeReader
     YamlReader *yaml_reader_; // config reader
     //std::map<ULong64_t,ULong64_t> ts_entry_map_; // map of key=timestamp, value=index
-    std::map<ULong64_t,T> ts_entry_map_; // map of key=timestamp, value=index
+    std::map<ULong64_t,T> ts_entry_map_; // map of key=timestamp, value=data
+    std::map<ULong64_t,ULong64_t> ts_i_entry_map_; // map of key=timestamp, value=index
     RemainTime *remain_time_; // estimates remaining time
     ULong64_t first_entry_; // the index of the first entry to scan
     ULong64_t last_entry_; // the index of the last entry to scan
@@ -152,13 +154,13 @@ template <class T> void TSScannorBase<T>::Scan()
 
     while ( tree_reader_->Next() )
     {
+        ULong64_t i_entry = tree_reader_->GetCurrentEntry() - first_entry_;
         /** If the event is in the gate, emplace <timestamp, index> to the map **/
         if ( IsInGate() ){
-            //ts_entry_map_.emplace(std::make_pair(GetTS(), tree_reader_->GetCurrentEntry()));
             ts_entry_map_.emplace(std::make_pair(GetTS(), *tree_data_->Get()));
+            ts_i_entry_map_.emplace(std::make_pair(GetTS(), i_entry));
         }
         /** displays progress **/
-        ULong64_t i_entry = tree_reader_->GetCurrentEntry() - first_entry_;
         if ( !(tree_reader_->GetCurrentEntry()%print_freq_) && i_entry){
             tm *remain = remain_time.remain(i_entry);
             std::cout << kMsgPrefix << tree_reader_->GetCurrentEntry() << "/" << last_entry_ << " ";
