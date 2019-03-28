@@ -9,13 +9,13 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    output_tree_->Branch("pixie_event_num",&pixie_event_num_,"pixie_event_num/l");
    output_tree_->Branch("file_name","TString", &file_name_);
    if(yaml_reader.GetBoolean("CloverVec",false,false))
-      output_tree_->Branch("clover_vec_","processor_struct::CLOVERS",&clover_data_);
+      output_tree_->Branch("clover_vec_","std::vector<processor_struct::CLOVERS>",&clover_data_);
    if(yaml_reader.GetBoolean("VANDLEVec",false,false))
-      output_tree_->Branch("vandle_vec_","processor_struct::VANDLES",&vandle_data_);
+      output_tree_->Branch("vandle_vec_","std::vector<processor_struct::VANDLES>",&vandle_data_);
    if(yaml_reader.GetBoolean("GammaScintVec",false,false))
-      output_tree_->Branch("gamma_scint_vec_","processor_struct::GAMMASCINT",&gamma_scint_data_);
+      output_tree_->Branch("gamma_scint_vec_","std::vector<processor_struct::GAMMASCINT>",&gamma_scint_data_);
    if(yaml_reader.GetBoolean("DoubleBetaVec",false,false))
-      output_tree_->Branch("double_beta_vec_","processor_struct::DOUBLEBETA",&double_beta_data_);
+      output_tree_->Branch("double_beta_vec_","std::vector<processor_struct::DOUBLEBETA>",&double_beta_data_);
    kTWINDOW = yaml_reader.GetDouble("TimeWindow"); 
    kTOFFSET = yaml_reader.GetDouble("TimeOffset"); 
    kTWINDOW_DESI = yaml_reader.GetDouble("TimeWindowDeSi");

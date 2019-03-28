@@ -129,6 +129,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
     auto b_map = input_scannor_1_->GetBranchMap();
     for( const auto &br : b_map){
         tree_->Branch(br.first.c_str(),br.second.first.c_str(),br.second.second); 
+        std::cout << kMsgPrefix << "Branch(" << br.first << ", " << br.second.first << ", " << br.second.second << ")" << std::endl;
     }
     input_scannor_1_->SetBranchAddress();
     return;
@@ -146,8 +147,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
     const ULong64_t total_entry = map1.size();
     RemainTime remain_time(total_entry); // set total number of entries to estimate remaining time.
     ULong64_t i_entry = 0;
- 
-    //input_scannor_1_->Restart();
+    input_scannor_1_->Restart();
     for ( auto entry :  map1 )
     {
         /** displays progress **/
@@ -157,16 +157,12 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
             std::cout << 100.*(double)i_entry/(double)(total_entry) << "\% merged. Remaining " << remain->tm_hour << "h ";
             std::cout << remain->tm_min << "m " << remain->tm_sec << "s" << std::endl;
         }
-        //input_scannor_2_->Restart();
         /** loop over input2 events whithin T1-up < T2 < T1+low **/
-        //auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
-        //auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
         auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
         auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
         if( it == map2.end() || it == last ) // Skip if there is no correlated event.
             continue;
-        //TIN1* in1 = input_scannor_1_->GetEntry(entry.second);
-        //TOUT o_obj(*in1);
+        input_scannor_1_->GetTree()->GetEntry(i_entry);
         TOUT o_obj(entry.second);
         while ( it != last )
         {

@@ -4,8 +4,11 @@
 #define VANDLE_MERGER_TSSCANNORBASE_HPP_
 
 #include <TFile.h>
+#include <TROOT.h>
+#include <TClass.h>
 #include <TTreeReader.h>
 #include <TTreeReaderValue.h>
+#include "ProcessorRootStruc.hpp"
 #include "YamlReader.hpp"
 #include "RemainTime.h"
 
@@ -110,9 +113,14 @@ template <class T> void TSScannorBase<T>::Configure(const std::string &yaml_node
             std::string name = doc[i].as<std::string>();
             TBranch* branch =(TBranch*)tree_reader_->GetTree()->FindBranch(name.c_str()); 
             std::string class_name(branch->GetClassName());
-            auto na_pair = std::pair<std::string,void*>(class_name,nullptr);
+            for(ULong64_t i=0; !branch->GetEntry(i); ++i){} // loop until the first entry of the branch
+            TClass* tclass = (TClass*)gROOT->GetListOfClasses()->FindObject(class_name.c_str());
+            void* addr = tclass->New();
+            auto na_pair = std::pair<std::string,void*>(class_name,addr);
             branch_map_.emplace(std::pair<std::string,std::pair<std::string,void*>>(name,na_pair));
-            std::cout << kMsgPrefix << "added an output branch, " << class_name << " " << name << std::endl;
+            std::cout << kMsgPrefix << "added an output branch, " << class_name << " " << name
+                << " to the address " << addr << std::endl;
+            branch->ResetReadEntry();
         }
     }
 
@@ -164,6 +172,7 @@ template <class T> void TSScannorBase<T>::Scan()
 template <class T> void TSScannorBase<T>::SetBranchAddress(){
     for(auto br: branch_map_){
         tree_reader_->GetTree()->SetBranchAddress(br.first.c_str(),br.second.second);
+        std::cout << kMsgPrefix << "SetBranchAddress(" << br.first << ", " << br.second.second << ")" << std::endl;
     }
     return;
 }
