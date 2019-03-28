@@ -52,6 +52,11 @@ protected:
    Double_t kTOFFSET_VETO; 
    Double_t kTWINDOW_F11;
    Double_t kTOFFSET_F11;
+   /** energy thresholds and overflow thresholds for anode signals **/
+   Double_t kHIGH_GAIN_THRESHOLD;
+   Double_t kHIGH_GAIN_OVERFLOW;
+   Double_t kLOW_GAIN_THRESHOLD;
+   Double_t kLOW_GAIN_OVERFLOW;
 };
 
 const std::string TraceAnalyzer::kMsgPrefix("[TraceAnalyzer:]");

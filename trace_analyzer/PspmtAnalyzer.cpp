@@ -16,6 +16,7 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
       output_tree_->Branch("gamma_scint_vec_","std::vector<processor_struct::GAMMASCINT>",&gamma_scint_data_);
    if(yaml_reader.GetBoolean("DoubleBetaVec",false,false))
       output_tree_->Branch("double_beta_vec_","std::vector<processor_struct::DOUBLEBETA>",&double_beta_data_);
+
    kTWINDOW = yaml_reader.GetDouble("TimeWindow"); 
    kTOFFSET = yaml_reader.GetDouble("TimeOffset"); 
    kTWINDOW_DESI = yaml_reader.GetDouble("TimeWindowDeSi");
@@ -26,6 +27,11 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    kTOFFSET_VETO = yaml_reader.GetDouble("TimeOffsetVeto");
    kTWINDOW_F11 = yaml_reader.GetDouble("TimeWindowF11");
    kTOFFSET_F11 = yaml_reader.GetDouble("TimeOffsetF11");
+
+   kHIGH_GAIN_THRESHOLD = yaml_reader.GetDouble("HighGainThreshold",false,0);
+   kHIGH_GAIN_OVERFLOW = yaml_reader.GetDouble("HighGainOverflow",false,4050);
+   kLOW_GAIN_THRESHOLD = yaml_reader.GetDouble("LowGainThreshold",false,0);
+   kLOW_GAIN_OVERFLOW = yaml_reader.GetDouble("LowGainOverflow",false,65535);
 
    return 0;
 }
@@ -349,18 +355,28 @@ void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
    const double xb = data.xb_.trace_energy_;
    const double ya = data.ya_.trace_energy_;
    const double yb = data.yb_.trace_energy_;
-   const double sum = xa + xb + ya + yb;
-   if(sum<0){
-      data.valid_=0;
+   /** check if all four anode signals are good **/
+   if(
+      xa>kHIGH_GAIN_THRESHOLD &&
+      xb>kHIGH_GAIN_THRESHOLD &&
+      ya>kHIGH_GAIN_THRESHOLD &&
+      yb>kHIGH_GAIN_THRESHOLD &&
+      xa<kHIGH_GAIN_OVERFLOW &&
+      xb<kHIGH_GAIN_OVERFLOW &&
+      ya<kHIGH_GAIN_OVERFLOW &&
+      yb<kHIGH_GAIN_OVERFLOW
+   ){
+      data.valid_ = 1;
+   }
+   else{
+      data.valid_ = 0;
       return;
    }
 
+   /** position calculation **/
+   const double sum = xa + xb + ya + yb;
    data.pos_x_ = 0.5*(yb + xa)/sum;
    data.pos_y_ = 0.5*(xa + xb)/sum;
-   if(xa>0&&xb>0&&ya>0&&yb>0){
-      data.valid_ = 1;
-   }else
-      data.valid_ = 0;
    return;
 }
 
@@ -370,20 +386,28 @@ void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
    const double xb =4096.0*(exp((data.xb_.trace_energy_)/(3000))-1);
    const double ya =4096.0*(exp((data.ya_.trace_energy_)/(3000))-1);
    const double yb =4096.0*(exp((data.yb_.trace_energy_)/(3000))-1);
-   const double dynode_trace = data.dynode_.trace_energy_;
-   const double sum = xa + xb + ya + yb;
-      if(sum<0){
-         data.valid_=0;
-         return;
-      }  
-
-   data.pos_x_ = 0.5*(yb + xa)/sum;
-   data.pos_y_ = 0.5*(xa + xb)/sum;
-   if(xa>0&&xb>0&&ya>0&&yb>0){
+   /** check if all four anode signals are good **/
+   if(
+      xa>kLOW_GAIN_THRESHOLD &&
+      xb>kLOW_GAIN_THRESHOLD &&
+      ya>kLOW_GAIN_THRESHOLD &&
+      yb>kLOW_GAIN_THRESHOLD &&
+      xa<kLOW_GAIN_OVERFLOW &&
+      xb<kLOW_GAIN_OVERFLOW &&
+      ya<kLOW_GAIN_OVERFLOW &&
+      yb<kLOW_GAIN_OVERFLOW
+   ){
       data.valid_ = 1;
    }
-   else
+   else{
       data.valid_ = 0;
+      return;
+   }
+
+   /** position calculation **/
+   const double sum = xa + xb + ya + yb;
+   data.pos_x_ = 0.5*(yb + xa)/sum;
+   data.pos_y_ = 0.5*(xa + xb)/sum;
    return;
 }
 
