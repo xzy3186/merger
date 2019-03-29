@@ -1,0 +1,7 @@
+AnamergerMain:
+    TreeName: mergedBeta
+    MergerListName: "./mergerList.txt"
+    NumWorkers: 4
+    PrintFrequency: 10000
+    #NumEntries: 10000
+    #FirstEntry: 0

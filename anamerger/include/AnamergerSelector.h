@@ -12,17 +12,17 @@
 
 #include "TFile.h"
 #include "TH1.h"
+#include "TH2.h"
 #include "TTree.h"
 #include "TTreeReader.h"
 #include "TTreeReaderValue.h"
-#include "TStopwatch.h"
 #include "TSelector.h"
 #include "TProofServ.h"
-#include "Rtypes.h"
 #include "TMath.h"
-
-
-const string ANAMERGER_PATH = AM_PATH;
+#include "OutputTreeData.hpp"
+#include "PspmtData.hpp"
+#include "BigRIPSTreeData.h"
+#include "ProcessorRootStruc.hpp"
 
 class AnamergerSelector : public TSelector {
 public :
@@ -43,28 +43,20 @@ public :
   virtual void    SlaveTerminate(){}
   virtual void    Terminate();
 
-  int loadCUTG(std::string icutname);
-
 protected:
-  std::vector <hIsotope> vectorIsotopes;
-  const Double_t tini = 0;
-  const Double_t tfin = 1e15;
 
-  TTreeReader aReader;
-  TTreeReaderValue <brData2TTree>    bigrips;
-  TTreeReaderValue <impData2TTree>   implant;
-  TTreeReaderValue <betaData2TTree>  beta; 
-  TTreeReaderValue <neuData2TTree>   neutron;
-  TTreeReaderValue <gammaData2TTree> gamma;  
-  TTreeReaderValue <ancData2TTree>   ancillary;
+  TTreeReader tree_reader_;
+  TTreeReaderValue <OutputTreeData<PspmtData,OutputTreeData<PspmtData,TreeData>>> beta_;
+  TTreeReaderValue <std::vector<processor_struct::CLOVERS>> clover_vec_;
+  TTreeReaderValue <std::vector<processor_struct::VANDLES>> vandle_vec_;
+  ULong64_t total_entry_;
 
   // array for histograms
   TObjArray* fHistArray;
   // output file
   TFile * fOutputFile;
-  YSOMap *fYSOMap;
 
-  ClassDef(AnamergerSelector,0)
+  ClassDef(AnamergerSelector,1)
 };
 
 #endif

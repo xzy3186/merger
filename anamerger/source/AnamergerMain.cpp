@@ -6,7 +6,7 @@
 #include "TROOT.h"
 #include "YamlParameter.h"
 #include "YamlReader.hpp"
-#include "AnamergerPidSelector.h"
+#include "AnamergerSelector.h"
 
 void usage(char const *arg)
 {
@@ -43,7 +43,8 @@ int main(int argc, char **argv)
     }
   }
 
-  //gROOT->SetBatch(true); 
+  //gROOT->SetBatch(true);
+  TProof *pr;
 
   try {
     /** creates YamlParameter instance **/
@@ -51,11 +52,12 @@ int main(int argc, char **argv)
     YamlReader *yaml_reader_ = new YamlReader("AnamergerMain");
     const std::string tree_name = yaml_reader_->GetString("TreeName");
     const std::string merger_list_name = yaml_reader_->GetString("MergerListName");
-    const std::string num_workers = yaml_reader_->GetString("NumWorkers");
-
-    const std::string proof_arg = "workers=" + num_workers;
-    TProof *pr = TProof::Open("localhost",proof_arg.c_str());
-
+    const bool use_proof = yaml_reader_->GetBoolean("UseProof",false,false);
+    if(use_proof){
+      const std::string num_workers = yaml_reader_->GetString("NumWorkers");
+      const std::string proof_arg = "workers=" + num_workers;
+      pr = TProof::Open("lite://",proof_arg.c_str());
+    }
     TChain *chain = new TChain(tree_name.c_str());
     std::ifstream mergerListFiles( merger_list_name.c_str() );
     std::string tempName("");
@@ -67,33 +69,36 @@ int main(int argc, char **argv)
     }
     
     mergerListFiles.close();
-    std::cout << "Number of TTrees added to the chain: " << chain->GetNtrees() << std::endl;
+    std::cout << "[AnamergerMain]: Number of TTrees added to the chain: " << chain->GetNtrees() << std::endl;
   
     const unsigned long long n_entries = yaml_reader_->GetULong64("NumEntries",false,chain->GetEntries());
     const unsigned long long first_entry = yaml_reader_->GetULong64("FirstEntry",false,0);
 
-    chain->SetProof();
-    std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
+    if(use_proof){
+      chain->SetProof();
+      std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
+    }
 
-    AnamergerPidSelector *selector = new AnamergerPidSelector(chain);
+    AnamergerSelector *selector = new AnamergerSelector(chain);
 
     std::cout << "Start Processing..." << std::endl;
     chain->Process(selector,"",n_entries, first_entry);
     //pr->Process(tree_name.c_str(),selector,"",n_entries, first_entry);
 
-    pr->Close();
+    if(use_proof)
+      pr->Close();
 
     /** destroys YamlParameter instance **/
       YamlParameter::Destroy();
   }
   catch (std::string msg) {
       std::cout << msg << std::endl;
-      std::cout << "[AnamergerMergerMain]: exiting from main() due to the error" << std::endl;
+      std::cout << "[AnamergerMain]: exiting from main() due to the error" << std::endl;
       return 1;
   }
   catch (std::bad_alloc){
-      std::cout << "[AnamergerMergerMain]: bad_alloc occured while setting up." << std::endl;
-      std::cout << "[AnamergerMergerMain]: exiting from main() due to the error" << std::endl;
+      std::cout << "[AnamergerMain]: bad_alloc occured while setting up." << std::endl;
+      std::cout << "[AnamergerMain]: exiting from main() due to the error" << std::endl;
       return 1;
   }
  
