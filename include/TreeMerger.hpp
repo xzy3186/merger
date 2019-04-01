@@ -163,7 +163,6 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
         auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
         if( it == map2.end() || it == last ) // Skip if there is no correlated event.
             continue;
-        input_scannor_1_->GetIEntry(entry.first);
         TOUT o_obj(entry.second);
         while ( it != last )
         {
@@ -172,6 +171,8 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
             ++it; 
         }
         output_object_ = o_obj;
+        const ULong64_t iet = input_scannor_1_->GetIEntry(entry.first);
+        input_scannor_1_->GetTree()->GetEntry(iet);
         tree_->Fill();
     }
 

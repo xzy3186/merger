@@ -158,7 +158,7 @@ template <class T> void TSScannorBase<T>::Scan()
         /** If the event is in the gate, emplace <timestamp, index> to the map **/
         if ( IsInGate() ){
             ts_entry_map_.emplace(std::make_pair(GetTS(), *tree_data_->Get()));
-            ts_i_entry_map_.emplace(std::make_pair(GetTS(), i_entry));
+            ts_i_entry_map_.emplace(std::make_pair(GetTS(), tree_reader_->GetCurrentEntry()));
         }
         /** displays progress **/
         if ( !(tree_reader_->GetCurrentEntry()%print_freq_) && i_entry){

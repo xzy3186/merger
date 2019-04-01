@@ -29,6 +29,8 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
   fHistArray = new TObjArray();
 
   fHistArray->Add(new TH2F("Tib_ClvE","ClvE_Tib",4000,0,4000,1000,-3,3));
+  fHistArray->Add(new TH2F("Tib_HighE","Tib_HighE",4000,0,8000,1000,-3,3));
+  fHistArray->Add(new TH2F("Tib_LowE","Tib_LowE",4000,0,8000,1000,-3,3));
   fHistArray->Add(new TH1F("Tib","Tib",1000,-3,3));
 
   //adding histograms to output list
@@ -63,8 +65,9 @@ Bool_t AnamergerSelector::Process(Long64_t entry){
     auto clover_vec = clover_vec_.Get();
     for( const auto &imp : beta->output_vec_){
       const Double_t tib = (40.*((double)beta->external_ts_high_ - (double)imp.external_ts_low_))/1.E+9;
-      auto hTib = (TH1F*)fHistArray->FindObject("Tib");
-      hTib->Fill(tib);
+      ((TH1F*)fHistArray->FindObject("Tib"))->Fill(tib);
+      ((TH2F*)fHistArray->FindObject("Tib_HighE"))->Fill(beta->high_gain_.energy_sum_,tib);
+      ((TH2F*)fHistArray->FindObject("Tib_LowE"))->Fill(beta->low_gain_.energy_,tib);
       for( const auto &clv : *clover_vec){
         auto hist = (TH2F*)fHistArray->FindObject("Tib_ClvE");
         hist->Fill(clv.energy,tib);
