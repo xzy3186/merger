@@ -5,9 +5,11 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <map>
 #include <TMath.h>
 
 class YSOPositionData{
+  /* an object to map a pixel position in the beta image to the ion image*/
 public:
   YSOPositionData(){};
   virtual ~YSOPositionData(){};
@@ -16,6 +18,8 @@ public:
   Bool_t BetaIsInside(const Double_t &beta_x,const Double_t &beta_y) const;
   Bool_t IonIsInside(const Double_t &ion_x,const Double_t &ion_y,const Double_t &ion_r=-1) const;
   Double_t Distance(const Double_t &beta_x,const Double_t &beta_y) const;
+  Double_t GetBetaX() const {return fBetaX;}
+  Double_t GetBetaY() const {return fBetaY;}
 
 protected:
   Double_t fBetaX;
@@ -34,8 +38,19 @@ public:
 
   void LoadPositionParameters(std::string fname);
   Bool_t IsInside(const Double_t &beta_x,const Double_t &beta_y,const Double_t &ion_x,const Double_t &ion_y,const Double_t &ion_r=-1);
+  Int_t GenerateMap(const Int_t &num_div=10);
 protected:
   std::vector<YSOPositionData> fVectorOfYSOPositions;
+  std::map<Int_t, std::vector<YSOPositionData>> fMap;
+  Int_t fNumDiv = 0;
+  Double_t fRangeX = 0;
+  Double_t fRangeY = 0;
+  Double_t fMinX = 0;
+  Double_t fMinY = 0;
+  Int_t GetId(const Double_t &x, const Double_t &y) const {
+    //std::cout << "GetId(): " << x << ", " << ((double)x-fMinX)/fRangeX <<", " << ((Int_t)(((double)x-fMinX)/fRangeX*fNumDiv)) << std::endl;
+    return (Int_t)(((double)x-fMinX)/fRangeX*fNumDiv) + (fNumDiv)*((Int_t)(((double)y-fMinY)/fRangeY*fNumDiv));
+  }
 };
 
 #endif
