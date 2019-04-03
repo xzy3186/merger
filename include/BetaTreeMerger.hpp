@@ -26,7 +26,7 @@ public:
     virtual bool IsInGate(const TIN1 &in1, const TIN2 &in2);
 
 protected:
-    YSOMap *yso_map_;
+    YSOMap *yso_map_ = nullptr;
     Double_t correlation_radius_;
 };
 
@@ -44,12 +44,15 @@ BetaTreeMerger<TOUT,TIN1,TIN2>::BetaTreeMerger(TSScannorBase<TIN1> *input1, TSSc
 {
     YamlReader yaml_reader("BetaTreeMerger");
     yso_map_ = new YSOMap(yaml_reader.GetString("YSOMapFile"));
+    yso_map_->GenerateMap(10);
     correlation_radius_ = yaml_reader.GetDouble("CorrelationRadius");
 }
 
 template <class TOUT, class TIN1, class TIN2>
 BetaTreeMerger<TOUT,TIN1,TIN2>::~BetaTreeMerger()
 {
+    if(yso_map_)
+        delete yso_map_;
 }
 /*
 template <class TOUT, class TIN1, class TIN2>
@@ -74,7 +77,6 @@ template <class TOUT, class TIN1, class TIN2>
 bool BetaTreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
 
 {  
-    /* position correlation between beta and implant events */
     const auto pspmt_imp = in2.low_gain_;
     const auto pspmt_beta = in1.high_gain_;
     /* if high gain position is available, use it for correlation */
@@ -91,12 +93,12 @@ bool BetaTreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
     }
     /* otherwise, use low gain position */
     else{
-        const double beta_x = 23.664712*pspmt_imp.pos_x_ - 2.862757;
-        const double beta_y = 15.5979*pspmt_imp.pos_y_ - 1.4067;
+        const double beta_x = 23.664712*in1.low_gain_.pos_x_ - 2.862757;
+        const double beta_y = 15.5979*in1.low_gain_.pos_y_ - 1.4067;
         const double imp_x = 23.664712*pspmt_imp.pos_x_ - 2.862757;
         const double imp_y = 15.5979*pspmt_imp.pos_y_ - 1.4067;
 
-        if(yso_map_->IsInside(beta_x,beta_y,imp_x,imp_y,correlation_radius_))
+        if(TMath::Power(beta_x-imp_x,2)+TMath::Power(beta_y-imp_y,2)<correlation_radius_*correlation_radius_)
             return true;
         else
             return false;

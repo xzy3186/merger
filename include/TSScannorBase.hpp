@@ -156,12 +156,14 @@ template <class T> void TSScannorBase<T>::Scan()
     {
         ULong64_t i_entry = tree_reader_->GetCurrentEntry() - first_entry_;
         /** If the event is in the gate, emplace <timestamp, index> to the map **/
+        //std::cout << "TSScannorBase<T>::Scan(): i_entry, TS, IsInGate(), mapsize: " << i_entry << ", " << GetTS() << ", " << IsInGate() << ", " << ts_entry_map_.size() << std::endl;
         if ( IsInGate() ){
             ts_entry_map_.emplace(std::make_pair(GetTS(), *tree_data_->Get()));
             ts_i_entry_map_.emplace(std::make_pair(GetTS(), tree_reader_->GetCurrentEntry()));
         }
         /** displays progress **/
         if ( !(tree_reader_->GetCurrentEntry()%print_freq_) && i_entry){
+            //std::cout << "TSScannorBase<T>::Scan(): map size: " << ts_entry_map_.size();
             tm *remain = remain_time.remain(i_entry);
             std::cout << kMsgPrefix << tree_reader_->GetCurrentEntry() << "/" << last_entry_ << " ";
             std::cout << 100.*(double)i_entry/(double)(total_entry) << "\% scanned. Remaining " << remain->tm_hour << "h ";

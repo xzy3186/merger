@@ -138,6 +138,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
 template <class TOUT, class TIN1, class TIN2>
 void TreeMerger<TOUT,TIN1,TIN2>::Merge()
 {
+    std::cout << "TreeMerger::Merge()" << std::endl;
     if((!input_scannor_1_)||(!input_scannor_2_))
         throw kMsgPrefix + "Merger(), pointer to input scannors are null";
  
@@ -148,6 +149,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
     RemainTime remain_time(total_entry); // set total number of entries to estimate remaining time.
     ULong64_t i_entry = 0;
     input_scannor_1_->Restart();
+    std::cout << "TreeMerger::Merge():total entry " << total_entry << std::endl;
     for ( auto entry :  map1 )
     {
         /** displays progress **/
