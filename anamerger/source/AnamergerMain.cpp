@@ -7,6 +7,7 @@
 #include "YamlParameter.h"
 #include "YamlReader.hpp"
 #include "AnamergerSelector.h"
+#include "LibraryConfig.h"
 
 void usage(char const *arg)
 {
@@ -43,7 +44,7 @@ int main(int argc, char **argv)
     }
   }
 
-  //gROOT->SetBatch(true);
+  gROOT->SetBatch();
   TProof *pr;
 
   try {
@@ -57,6 +58,17 @@ int main(int argc, char **argv)
       const std::string num_workers = yaml_reader_->GetString("NumWorkers");
       const std::string proof_arg = "workers=" + num_workers;
       pr = TProof::Open("lite://",proof_arg.c_str());
+      std::vector<std::string> libs =
+      {
+        getYamlcppLibDir()+"libyaml-cpp.so",
+        getMergerLibDir()+"libTraceAnalyzerLib.so",
+        getMergerLibDir()+"libmerger_data_dic.so",
+        getMergerLibDir()+"libMergerLib.so",
+        getMergerLibDir()+"libAnamergerLib.so"
+      };
+      for( const auto &lib : libs){
+        pr->Load(lib.c_str());
+      }
     }
     TChain *chain = new TChain(tree_name.c_str());
     std::ifstream mergerListFiles( merger_list_name.c_str() );
@@ -77,13 +89,13 @@ int main(int argc, char **argv)
     if(use_proof){
       chain->SetProof();
       std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
+      chain->Process("AnamergerSelector","",n_entries, first_entry);
     }
-
-    AnamergerSelector *selector = new AnamergerSelector(chain);
-
-    std::cout << "Start Processing..." << std::endl;
-    chain->Process(selector,"",n_entries, first_entry);
-    //pr->Process(tree_name.c_str(),selector,"",n_entries, first_entry);
+    else{
+      std::cout << "Start Processing (Proof OFF)..." << std::endl;
+      AnamergerSelector *selector = new AnamergerSelector(chain);
+      chain->Process(selector,"",n_entries, first_entry);
+    }
 
     if(use_proof)
       pr->Close();

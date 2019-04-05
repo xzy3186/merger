@@ -31,6 +31,7 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
   fHistArray->Add(new TH2F("Tib_ClvE","ClvE_Tib",4000,0,4000,1000,-3,3));
   fHistArray->Add(new TH2F("Tib_HighE","Tib_HighE",4000,0,8000,1000,-3,3));
   fHistArray->Add(new TH2F("Tib_LowE","Tib_LowE",4000,0,8000,1000,-3,3));
+  fHistArray->Add(new TH2F("nQDC_nToF","nQDC_nToF",1000,-100,500,1000,0,8000));
   fHistArray->Add(new TH1F("Tib","Tib",1000,-3,3));
 
   //adding histograms to output list
@@ -63,6 +64,7 @@ Bool_t AnamergerSelector::Process(Long64_t entry){
   {
     auto beta = beta_.Get();
     auto clover_vec = clover_vec_.Get();
+    auto vandle_vec = vandle_vec_.Get();
     for( const auto &imp : beta->output_vec_){
       const Double_t tib = (40.*((double)beta->external_ts_high_ - (double)imp.external_ts_low_))/1.E+9;
       ((TH1F*)fHistArray->FindObject("Tib"))->Fill(tib);
@@ -71,6 +73,10 @@ Bool_t AnamergerSelector::Process(Long64_t entry){
       for( const auto &clv : *clover_vec){
         auto hist = (TH2F*)fHistArray->FindObject("Tib_ClvE");
         hist->Fill(clv.energy,tib);
+      }
+      for( const auto &vandle : *vandle_vec){
+        auto hist = (TH2F*)fHistArray->FindObject("nQDC_nTOF");
+        hist->Fill(vandle.tof,vandle.qdc);
       }
     }
 

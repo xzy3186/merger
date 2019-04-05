@@ -3,5 +3,6 @@ AnamergerMain:
     MergerListName: "./mergerList.txt"
     NumWorkers: 4
     PrintFrequency: 10000
+    UseProof: True
     #NumEntries: 10000
     #FirstEntry: 0
