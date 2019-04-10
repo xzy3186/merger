@@ -31,7 +31,8 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
   fHistArray->Add(new TH2F("Tib_ClvE","ClvE_Tib",4000,0,4000,1000,-3,3));
   fHistArray->Add(new TH2F("Tib_HighE","Tib_HighE",4000,0,8000,1000,-3,3));
   fHistArray->Add(new TH2F("Tib_LowE","Tib_LowE",4000,0,8000,1000,-3,3));
-  fHistArray->Add(new TH2F("nQDC_nToF","nQDC_nToF",1000,-100,500,1000,0,8000));
+  fHistArray->Add(new TH2F("nQDC_nToF","nQDC_nToF",1600,-100,1500,1000,0,32000));
+  fHistArray->Add(new TH2F("BarN_nToF","BarN_nToF",1600,-100,1500,50,-0.5,49.5));
   fHistArray->Add(new TH1F("Tib","Tib",1000,-3,3));
 
   //adding histograms to output list
@@ -66,7 +67,9 @@ Bool_t AnamergerSelector::Process(Long64_t entry){
     auto clover_vec = clover_vec_.Get();
     auto vandle_vec = vandle_vec_.Get();
     for( const auto &imp : beta->output_vec_){
-      const Double_t tib = (40.*((double)beta->external_ts_high_ - (double)imp.external_ts_low_))/1.E+9;
+      if( !imp.output_vec_.at(0).sts )
+        continue;
+      const Double_t tib = (8.*((double)beta->dyn_single_.time_ - (double)imp.dyn_single_.time_))/1.E+9;
       ((TH1F*)fHistArray->FindObject("Tib"))->Fill(tib);
       ((TH2F*)fHistArray->FindObject("Tib_HighE"))->Fill(beta->high_gain_.energy_sum_,tib);
       ((TH2F*)fHistArray->FindObject("Tib_LowE"))->Fill(beta->low_gain_.energy_,tib);
@@ -75,8 +78,16 @@ Bool_t AnamergerSelector::Process(Long64_t entry){
         hist->Fill(clv.energy,tib);
       }
       for( const auto &vandle : *vandle_vec){
-        auto hist = (TH2F*)fHistArray->FindObject("nQDC_nTOF");
-        hist->Fill(vandle.tof,vandle.qdc);
+        if( tib > 0.02 && tib < 1.0 ){
+          {
+            auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF");
+            hist->Fill(vandle.tof,vandle.qdc);
+          }
+          {
+            auto hist = (TH2F*)fHistArray->FindObject("BarN_nToF");
+            hist->Fill(vandle.tof,vandle.barNum);
+          }
+        }
       }
     }
 
@@ -100,7 +111,6 @@ void AnamergerSelector::Terminate(){
   }
 
   fOutputFile->Close();
-  fHistArray->Clear();
   
   return ;
 }
