@@ -9,6 +9,8 @@
 #include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
 #include "TreeMerger.hpp"
+#include "BetaTreeMerger.hpp"
+#include "PspmtAnalyzerData.hpp"
 
 /** prints usage **/
 void usage(char *argv0)
@@ -78,7 +80,7 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: Implant map size: " << implant_ts_scannor.GetMap().size() << std::endl;
 
 	    /** runs merger **/
-            TreeMerger<OutputTreeData<PixTreeEvent, TreeData>, PixTreeEvent, TreeData> brips_imp_merger(&implant_ts_scannor,&brips_ts_scannor);
+            TreeMerger<OutputTreeData<PspmtData, TreeData>, PspmtData, TreeData> brips_imp_merger(&implant_ts_scannor,&brips_ts_scannor);
             brips_imp_merger.Configure("BigRIPSImplantMerger");
             brips_imp_merger.Merge();
             brips_imp_merger.Write();
@@ -112,7 +114,7 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: Beta map size: " << beta_ts_scannor.GetMap().size() << std::endl;
 
     	    /** runs merger **/
-            TreeMerger<OutputTreeData<PixTreeEvent, OutputTreeData<PixTreeEvent, TreeData>>, PixTreeEvent, OutputTreeData<PixTreeEvent, TreeData>> imp_beta_merger(&beta_ts_scannor,&mimp_ts_scannor);
+            BetaTreeMerger<OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>, PspmtData, OutputTreeData<PspmtData, TreeData>> imp_beta_merger(&beta_ts_scannor,&mimp_ts_scannor);
             imp_beta_merger.Configure("ImplantBetaMerger");
             imp_beta_merger.Merge();
             imp_beta_merger.Write();

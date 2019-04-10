@@ -43,13 +43,15 @@ add_subdirectory(source)
 add_subdirectory(anamerger)
 add_subdirectory(trace_analyzer)
 add_subdirectory(share)
-#add_executable(merger MergerMain.cpp)
+add_executable(merger_main MergerMain.cpp)
 add_executable(merger_pid MergerImpPid.cpp)
 add_executable(merger_beta MergerImpBeta.cpp)
 #add_executable(merger_imp_beta MergerBetaImp.cpp)
 add_executable(anamerger_main anamerger/source/AnamergerMain.cpp)
 add_executable(trace_analyzer_main trace_analyzer/TraceAnalyzerMain.cpp)
 
+target_link_libraries(merger_main ${ROOT_LIBRARIES} yaml-cpp MergerLib
+   TraceAnalyzerLib merger_data_dic)
 target_link_libraries(merger_pid ${ROOT_LIBRARIES} yaml-cpp MergerLib
    TraceAnalyzerLib merger_data_dic)
 target_link_libraries(merger_beta ${ROOT_LIBRARIES} yaml-cpp MergerLib
@@ -65,6 +67,10 @@ install(TARGETS trace_analyzer_main
         LIBRARY DESTINATION lib
         )
 install(TARGETS anamerger_main
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        )
+install(TARGETS merger_main
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )
