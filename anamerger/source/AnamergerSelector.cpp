@@ -9,7 +9,8 @@ AnamergerSelector::AnamergerSelector(TTree* mergedData):
    tree_reader_ (mergedData),
    beta_  (tree_reader_, "mergedBeta"),
    clover_vec_  (tree_reader_, "clover_vec_"),
-   vandle_vec_  (tree_reader_, "vandle_vec_")
+   vandle_vec_  (tree_reader_, "vandle_vec_"),
+   output_file_name_ ("anamerger_output.root")
 {
 
 }
@@ -22,6 +23,11 @@ AnamergerSelector::~AnamergerSelector()
 void AnamergerSelector::Begin(TTree* mergedData)
 {
   GetOutputList()->Clear();
+  if(fInput){
+    TNamed *named = (TNamed*)fInput->FindObject("output_file_name");
+    if(named)
+      output_file_name_ = named->GetTitle();
+  }
 }
 
 void AnamergerSelector::SlaveBegin(TTree* mergedData)
@@ -67,8 +73,8 @@ Bool_t AnamergerSelector::Process(Long64_t entry){
     auto clover_vec = clover_vec_.Get();
     auto vandle_vec = vandle_vec_.Get();
     for( const auto &imp : beta->output_vec_){
-      if( !imp.output_vec_.at(0).sts )
-        continue;
+      //if( !imp.output_vec_.at(0).sts )
+      //  continue;
       const Double_t tib = (8.*((double)beta->dyn_single_.time_ - (double)imp.dyn_single_.time_))/1.E+9;
       ((TH1F*)fHistArray->FindObject("Tib"))->Fill(tib);
       ((TH2F*)fHistArray->FindObject("Tib_HighE"))->Fill(beta->high_gain_.energy_sum_,tib);
@@ -98,11 +104,8 @@ Bool_t AnamergerSelector::Process(Long64_t entry){
 
 void AnamergerSelector::Terminate(){
  
-  {
-    const std::string fname = "anamerger_output.root";
-    fOutputFile = new TFile(fname.c_str(),"recreate");
-  }
-
+  fOutputFile = new TFile(output_file_name_.c_str(),"recreate");
+  std::cout << "[AnamergerSelector::Terminate()]: output file: " << output_file_name_ << std::endl;
   // write the histograms
   TIter next(GetOutputList());
   while( TObject* obj = next() ){

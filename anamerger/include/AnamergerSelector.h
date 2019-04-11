@@ -43,6 +43,10 @@ public :
   virtual void    SlaveTerminate(){}
   virtual void    Terminate();
 
+  void SetOutputFileName(const std::string &file_name){
+    output_file_name_ = file_name;
+  }
+
 protected:
 
   TTreeReader tree_reader_;
@@ -55,6 +59,7 @@ protected:
   TObjArray* fHistArray;
   // output file
   TFile * fOutputFile;
+  std::string output_file_name_;
 
   ClassDef(AnamergerSelector,1)
 };

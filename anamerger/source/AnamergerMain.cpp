@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 {
   std::string input_file_name;
   std::string config_file_name;
-  std::string output_file_name;
+  std::string output_file_name = "anamerger_output.root";
 
   /** parsing commandline arguments **/
   if(argc<3){
@@ -89,11 +89,13 @@ int main(int argc, char **argv)
     if(use_proof){
       chain->SetProof();
       std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
+      pr->AddInput(new TNamed("output_file_name",output_file_name.c_str()));
       chain->Process("AnamergerSelector","",n_entries, first_entry);
     }
     else{
       std::cout << "Start Processing (Proof OFF)..." << std::endl;
       AnamergerSelector *selector = new AnamergerSelector(chain);
+      selector->SetOutputFileName(output_file_name);
       chain->Process(selector,"",n_entries, first_entry);
     }
 
