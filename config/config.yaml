@@ -24,6 +24,7 @@ BigRIPSImplantMerger:
   TimeWindowLow: 1000
   TimeWindowUp: 1000
   TimeStampScale: 40
+  ScanWindow: 1E+9
 
 MergedImplantTSScannor:
   InputFileName: mergedImp.root
@@ -51,18 +52,19 @@ ImplantBetaMerger:
   TreeName: mergedBeta
   BranchName: mergedBeta
   ClassName: OutputTreeData<PspmtAnalyzerData,OutputTreeData<PspmtAnalyzerData, TreeData>>
-  PrintFrequency: 10
-  TimeWindowLow: 1000000000
-  TimeWindowUp: 1000000000
+  PrintFrequency: 1000
+  TimeWindowLow: 500000000
+  TimeWindowUp: 500000000
+  ScanWindow: 10
 
 BetaImplantMerger:
   OutputFileName: mergedImpBeta.root
   TreeName: mergedImpBeta
   BranchName: mergedImpBeta
   ClassName: OutputTreeData<OutputTreeData<PspmtAnalyzerData, TreeData>,PspmtAnalyzerData>
-  PrintFrequency: 10
-  TimeWindowLow: 1000000000
-  TimeWindowUp: 1000000000
+  PrintFrequency: 1000
+  TimeWindowLow: 500000000
+  TimeWindowUp: 500000000
 
 BetaTreeMerger:
   YSOMapFile: "./yso_map.txt"
