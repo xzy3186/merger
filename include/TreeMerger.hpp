@@ -33,6 +33,7 @@ protected:
     RemainTime *remain_time_; // estimates remaining time
     Double_t time_window_low_; // lower limit of the time window to merge events (T1-T2)
     Double_t time_window_up_; // upper limit of the time window to merge events (T1-T2)
+    Double_t scan_window_; // scan window factor to load entries to meory. (see def. in Configure())
     Double_t ts_scale_; // timestamp scale
     ULong64_t print_freq_; // frequency to print scan progress
     TOUT output_object_; // output class object
@@ -121,6 +122,9 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
     time_window_low_ = yaml_reader_->GetDouble("TimeWindowLow");
     time_window_up_ = yaml_reader_->GetDouble("TimeWindowUp");
     ts_scale_ = yaml_reader_->GetDouble("TimeStampScale",false,1);
+    /** How many times the time window to load entries to memory at a time  **/
+    /** events in a scan_window_*(time_window_low_+time_window_up_) window will be load at a time **/
+    scan_window_ = yaml_reader_->GetDouble("ScanWindow",false,100);
 
     /** frequency of printing scan progress default = 10000 **/
     print_freq_ = yaml_reader_->GetULong64("PrintFrequency",false,10000);
@@ -142,14 +146,16 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
     if((!input_scannor_1_)||(!input_scannor_2_))
         throw kMsgPrefix + "Merger(), pointer to input scannors are null";
  
-    auto map1 = input_scannor_1_->GetMap();
-    auto map2 = input_scannor_2_->GetMap();
+    auto map1 = input_scannor_1_->GetIEntryMap();
+    std::pair<ULong64_t,Double_t> map_window = std::make_pair<ULong64_t,Double_t>(0,0);
  
     const ULong64_t total_entry = map1.size();
     RemainTime remain_time(total_entry); // set total number of entries to estimate remaining time.
     ULong64_t i_entry = 0;
     input_scannor_1_->Restart();
+    input_scannor_2_->Restart();
     std::cout << "TreeMerger::Merge():total entry " << total_entry << std::endl;
+    std::map<ULong64_t,TIN2>* map2;
     for ( auto entry :  map1 )
     {
         /** displays progress **/
@@ -160,21 +166,34 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
             std::cout << remain->tm_min << "m " << remain->tm_sec << "s" << std::endl;
         }
         ++i_entry;
+
         /** loop over input2 events whithin T1-up < T2 < T1+low **/
-        auto it = map2.lower_bound((ULong64_t)(entry.first*ts_scale_ - time_window_up_));
-        auto last = map2.upper_bound((ULong64_t)(entry.first*ts_scale_ + time_window_low_));
-        if( it == map2.end() || it == last ) // Skip if there is no correlated event.
+        const ULong64_t t_low = (ULong64_t)(entry.first*ts_scale_ - time_window_up_);
+        const ULong64_t t_up = (ULong64_t)(entry.first*ts_scale_ + time_window_low_);
+
+        /** load entries to memory if needed **/
+        if( map_window.first > t_low || map_window.second < t_up ){
+            map_window.second = t_low + scan_window_*(time_window_up_ + time_window_low_);
+            map2 = input_scannor_2_->LoadEntries(t_low, map_window.second); 
+            map_window.first = t_low;
+        }
+
+        auto it = map2->lower_bound(t_low);
+        auto last = map2->upper_bound(t_up);
+        if( it == map2->end() || it == last ) // Skips if there is no correlated event.
             continue;
-        TOUT o_obj(entry.second);
+
+        const TIN1 *input1 = input_scannor_1_->GetEntry(entry.second);
+        TOUT o_obj(*input1); // initializes output object with input1 entry
+
         while ( it != last )
         {
-            if(IsInGate(entry.second,it->second))
+            if(IsInGate(*input1,it->second))
                 o_obj.output_vec_.emplace_back(it->second);
             ++it; 
         }
         output_object_ = o_obj;
-        const ULong64_t iet = input_scannor_1_->GetIEntry(entry.first);
-        input_scannor_1_->GetTree()->GetEntry(iet);
+        input_scannor_1_->GetTree()->GetEntry(entry.second);
         tree_->Fill();
     }
 

@@ -25,7 +25,8 @@ public:
     void Configure(const std::string &yaml_node_name);
     virtual void SetReader(); // virtual function to define TTreeReaderValue
     void Scan(); // scan through events from first_entry_ to last_entry_ of the tree
-    //std::map<ULong64_t,ULong64_t> GetMap(){ return ts_entry_map_;}
+    std::map<ULong64_t,T>* LoadEntries(const ULong64_t &ts_low, const ULong64_t &ts_up); // loads entries in a time rage from ts_low_ to ts_up_ to the ts_entry_map_
+    std::map<ULong64_t,ULong64_t> GetIEntryMap(){ return ts_i_entry_map_;}
     std::map<ULong64_t,T> GetMap(){ return ts_entry_map_;}
     ULong64_t GetIEntry(const ULong64_t &ts){ return ts_i_entry_map_[ts]; }
     void Restart(){ tree_reader_->Restart(); }
@@ -158,8 +159,8 @@ template <class T> void TSScannorBase<T>::Scan()
         /** If the event is in the gate, emplace <timestamp, index> to the map **/
         //std::cout << "TSScannorBase<T>::Scan(): i_entry, TS, IsInGate(), mapsize: " << i_entry << ", " << GetTS() << ", " << IsInGate() << ", " << ts_entry_map_.size() << std::endl;
         if ( IsInGate() ){
-            ts_entry_map_.emplace(std::make_pair(GetTS(), *tree_data_->Get()));
-            ts_i_entry_map_.emplace(std::make_pair(GetTS(), tree_reader_->GetCurrentEntry()));
+            //ts_entry_map_.emplace(std::make_pair(GetTS(), *tree_data_->Get())); // loads entire entry to the memory
+            ts_i_entry_map_.emplace(std::make_pair(GetTS(), tree_reader_->GetCurrentEntry())); // loads iEntry to the memory
         }
         /** displays progress **/
         if ( !(tree_reader_->GetCurrentEntry()%print_freq_) && i_entry){
@@ -171,6 +172,23 @@ template <class T> void TSScannorBase<T>::Scan()
         }
     }
     return;
+}
+
+template <class T> std::map<ULong64_t,T>* TSScannorBase<T>::LoadEntries(const ULong64_t &ts_low, const ULong64_t &ts_up)
+{
+    ts_entry_map_.clear();
+    auto it = ts_i_entry_map_.lower_bound(ts_low);
+    auto last = ts_i_entry_map_.upper_bound(ts_up);
+    if( it == ts_i_entry_map_.end() || it == last ){
+        return &ts_entry_map_;
+    }
+    std::cout << kMsgPrefix << "Loading entries from " << it->first << ", " << it->second << " to " << last->first << ", " << last->second << std::endl;
+    Restart();
+    while( it != last ){
+        ts_entry_map_.emplace(it->first,*GetEntry(it->second));
+        ++it;
+    }
+    return &ts_entry_map_;
 }
 
 template <class T> void TSScannorBase<T>::SetBranchAddress(){

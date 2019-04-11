@@ -76,8 +76,8 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: scanning Implant events..." << std::endl;
             implant_ts_scannor.Scan();
 
-            std::cout << "[MergerMain]: BigRIPS map size: " << brips_ts_scannor.GetMap().size() << std::endl;
-            std::cout << "[MergerMain]: Implant map size: " << implant_ts_scannor.GetMap().size() << std::endl;
+            std::cout << "[MergerMain]: BigRIPS map size: " << brips_ts_scannor.GetIEntryMap().size() << std::endl;
+            std::cout << "[MergerMain]: Implant map size: " << implant_ts_scannor.GetIEntryMap().size() << std::endl;
 
 	    /** runs merger **/
             TreeMerger<OutputTreeData<PspmtData, TreeData>, PspmtData, TreeData> brips_imp_merger(&implant_ts_scannor,&brips_ts_scannor);
@@ -110,8 +110,8 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: scanning Beta events..." << std::endl;
             beta_ts_scannor.Scan();
 
-            std::cout << "[MergerMain]: MergedImplant map size: " << mimp_ts_scannor.GetMap().size() << std::endl;
-            std::cout << "[MergerMain]: Beta map size: " << beta_ts_scannor.GetMap().size() << std::endl;
+            std::cout << "[MergerMain]: MergedImplant map size: " << mimp_ts_scannor.GetIEntryMap().size() << std::endl;
+            std::cout << "[MergerMain]: Beta map size: " << beta_ts_scannor.GetIEntryMap().size() << std::endl;
 
     	    /** runs merger **/
             BetaTreeMerger<OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>, PspmtData, OutputTreeData<PspmtData, TreeData>> imp_beta_merger(&beta_ts_scannor,&mimp_ts_scannor);
