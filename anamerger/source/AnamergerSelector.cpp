@@ -38,6 +38,8 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
   fHistArray->Add(new TH2F("Tib_HighE","Tib_HighE",4000,0,8000,1000,-3,3));
   fHistArray->Add(new TH2F("Tib_LowE","Tib_LowE",4000,0,8000,1000,-3,3));
   fHistArray->Add(new TH2F("nQDC_nToF","nQDC_nToF",1600,-100,1500,1000,0,32000));
+  fHistArray->Add(new TH2F("nQDC_nToF_BG","nQDC_nToF_BG",1600,-100,1500,1000,0,32000));
+  fHistArray->Add(new TH2F("nToF_nQDC","nTof_nQDC",1000,0,32000,1600,-100,1000));
   fHistArray->Add(new TH2F("BarN_nToF","BarN_nToF",1600,-100,1500,50,-0.5,49.5));
   fHistArray->Add(new TH1F("Tib","Tib",1000,-3,3));
 
@@ -47,6 +49,9 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
      GetOutputList()->Add(hist);
   }
 
+  n_correction = new TF1("n_correction","[0]+[1]*pow(x,2)",0,65536);
+  n_correction->SetParameters(2.9,6.5E-9);
+  
   if (gProofServ) {
     const TString msg = TString::Format("SlaveBegin() of Ord = %s called. %d histograms are initialized.",
                                          gProofServ->GetOrdinal(),GetOutputList()->GetEntries());
@@ -87,11 +92,21 @@ Bool_t AnamergerSelector::Process(Long64_t entry){
         if( tib > 0.02 && tib < 1.0 ){
           {
             auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF");
-            hist->Fill(vandle.tof,vandle.qdc);
+            hist->Fill(vandle.tof - n_correction->Eval(vandle.qdc),vandle.qdc);
+          }
+          {
+            auto hist = (TH2F*)fHistArray->FindObject("nToF_nQDC");
+            hist->Fill(vandle.qdc,vandle.tof);
           }
           {
             auto hist = (TH2F*)fHistArray->FindObject("BarN_nToF");
             hist->Fill(vandle.tof,vandle.barNum);
+          }
+        }
+        if( tib > -1.0 && tib < -0.02 ){
+          {
+            auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_BG");
+            hist->Fill(vandle.tof - n_correction->Eval(vandle.qdc),vandle.qdc);
           }
         }
       }

@@ -13,6 +13,7 @@
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TF1.h"
 #include "TTree.h"
 #include "TTreeReader.h"
 #include "TTreeReaderValue.h"
@@ -60,6 +61,7 @@ protected:
   // output file
   TFile * fOutputFile;
   std::string output_file_name_;
+  TF1* n_correction;
 
   ClassDef(AnamergerSelector,1)
 };

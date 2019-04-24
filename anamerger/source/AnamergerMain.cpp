@@ -4,7 +4,7 @@
 #include "TChain.h"
 #include "TProof.h"
 #include "TROOT.h"
-#include "YamlParameter.h"
+#include "YamlParameter.hpp"
 #include "YamlReader.hpp"
 #include "AnamergerSelector.h"
 #include "LibraryConfig.h"
