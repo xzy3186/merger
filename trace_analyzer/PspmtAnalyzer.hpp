@@ -8,6 +8,11 @@
 #include "TraceAnalyzer.hpp"
 #include "YamlReader.hpp"
 
+struct event_info_struc {
+   TString file_name_;
+   ULong64_t pixie_event_num_;
+};
+
 class PspmtAnalyzer {
 public:
    const static std::string kMsgPrefix;
@@ -33,8 +38,7 @@ protected:
    TTree *output_tree_;
    PspmtAnalyzerData data_;
    PspmtData pspmt_data_;
-   ULong64_t pixie_event_num_;
-   TString file_name_;
+   event_info_struc event_info_;
    std::vector<processor_struct::CLOVERS> clover_data_;
    std::vector<processor_struct::VANDLES> vandle_data_;
    std::vector<processor_struct::GAMMASCINT> gamma_scint_data_;

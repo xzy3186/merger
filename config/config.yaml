@@ -13,6 +13,7 @@ ImplantTSScannor:
   MaxLowGainDynEnergy: 65535
   OtherBranches:
     - "clover_vec_"
+    - "event_info"
 #  FirstEntry: 0
 #  LastEntry: 10000
 
@@ -44,6 +45,7 @@ BetaTSScannor:
   OtherBranches:
     - "clover_vec_"
     - "vandle_vec_"
+    - "event_info"
 #  FirstEntry: 0
 #  LastEntry: 1000
 

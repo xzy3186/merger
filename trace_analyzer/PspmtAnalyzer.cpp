@@ -6,8 +6,7 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    const std::string tree_name = yaml_reader.GetString("TreeName");
    output_tree_ = new TTree(tree_name.c_str(),tree_name.c_str());
    output_tree_->Branch("pspmt_compressed","PspmtData",&pspmt_data_);
-   output_tree_->Branch("pixie_event_num",&pixie_event_num_,"pixie_event_num/l");
-   output_tree_->Branch("file_name","TString", &file_name_);
+   output_tree_->Branch("event_info","event_info_struc",&event_info_);
    if(yaml_reader.GetBoolean("CloverVec",false,false))
       output_tree_->Branch("clover_vec_","std::vector<processor_struct::CLOVERS>",&clover_data_);
    if(yaml_reader.GetBoolean("VANDLEVec",false,false))
@@ -42,8 +41,8 @@ int PspmtAnalyzer::Begin(){
 }
 
 void PspmtAnalyzer::SetEventId(const TString &file_name, const ULong64_t event_num){
-   file_name_ = file_name;
-   pixie_event_num_ = event_num;
+   event_info_.file_name_ = file_name;
+   event_info_.pixie_event_num_ = event_num;
    return;
 }
 
