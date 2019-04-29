@@ -116,7 +116,7 @@ template <class T> void TSScannorBase<T>::Configure(const std::string &yaml_node
             std::string name = doc[i].as<std::string>();
             TBranch* branch =(TBranch*)tree_reader_->GetTree()->FindBranch(name.c_str()); 
             std::string class_name(branch->GetClassName());
-            for(ULong64_t i=0; !branch->GetEntry(i); ++i){} // loop until the first entry of the branch
+            for(ULong64_t i=0; !branch->GetEntry(i)&&i<tree_reader_->GetEntries(true); ++i){} // loop until the first entry of the branch
             TClass* tclass = (TClass*)gROOT->GetListOfClasses()->FindObject(class_name.c_str());
             void* addr = tclass->New();
             auto na_pair = std::pair<std::string,void*>(class_name,addr);
