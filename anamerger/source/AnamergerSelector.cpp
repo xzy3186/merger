@@ -89,24 +89,24 @@ Bool_t AnamergerSelector::Process(Long64_t entry){
         hist->Fill(clv.energy,tib);
       }
       for( const auto &vandle : *vandle_vec){
-        if( tib > 0.02 && tib < 1.0 ){
+        if( tib > 0.01 && tib < 0.1 ){
           {
             auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF");
-            hist->Fill(vandle.tof - n_correction->Eval(vandle.qdc),vandle.qdc);
+            hist->Fill(vandle.corTof - n_correction->Eval(vandle.qdc),vandle.qdc);
           }
           {
             auto hist = (TH2F*)fHistArray->FindObject("nToF_nQDC");
-            hist->Fill(vandle.qdc,vandle.tof);
+            hist->Fill(vandle.qdc,vandle.corTof);
           }
           {
             auto hist = (TH2F*)fHistArray->FindObject("BarN_nToF");
-            hist->Fill(vandle.tof,vandle.barNum);
+            hist->Fill(vandle.corTof,vandle.barNum);
           }
         }
-        if( tib > -1.0 && tib < -0.02 ){
+        if( tib > -0.1 && tib < -0.01 ){
           {
             auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_BG");
-            hist->Fill(vandle.tof - n_correction->Eval(vandle.qdc),vandle.qdc);
+            hist->Fill(vandle.corTof - n_correction->Eval(vandle.qdc),vandle.qdc);
           }
         }
       }
