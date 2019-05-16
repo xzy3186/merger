@@ -28,9 +28,9 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    kTOFFSET_F11 = yaml_reader.GetDouble("TimeOffsetF11");
 
    kHIGH_GAIN_THRESHOLD = yaml_reader.GetDouble("HighGainThreshold",false,0);
-   kHIGH_GAIN_OVERFLOW = yaml_reader.GetDouble("HighGainOverflow",false,4050);
+   kHIGH_GAIN_OVERFLOW = yaml_reader.GetDouble("HighGainOverflow",false,4094);
    kLOW_GAIN_THRESHOLD = yaml_reader.GetDouble("LowGainThreshold",false,0);
-   kLOW_GAIN_OVERFLOW = yaml_reader.GetDouble("LowGainOverflow",false,65535);
+   kLOW_GAIN_OVERFLOW = yaml_reader.GetDouble("LowGainOverflow",false,65534);
 
    return 0;
 }
@@ -89,202 +89,129 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
       Int_t n_veto = 0;
       Int_t n_ion = 0;
       Int_t n_f11 = 0;
+
+		/* gate functions */
+		const auto &pspmt_gate = [&](const processor_struct::PSPMT &x) {
+			if ((abs(x.time - t0 - kTOFFSET) < kTWINDOW) && !x.invalidTrace)
+				return x;
+			else
+				return processor_struct::PSPMT_DEFAULT_STRUCT;
+		};
+
+		const auto &desi_gate = [&](const processor_struct::PSPMT &x) {
+			if ((abs(x.time - t0 - kTOFFSET_DESI) < kTWINDOW_DESI))
+				return x;
+			else
+				return processor_struct::PSPMT_DEFAULT_STRUCT;
+		};
+
+		const auto &veto_gate = [&](const processor_struct::PSPMT &x) {
+			if ((abs(x.time - t0 - kTOFFSET_VETO) < kTWINDOW_VETO))
+				return x;
+			else
+				return processor_struct::PSPMT_DEFAULT_STRUCT;
+		};
+
+		const auto &ion_gate = [&](const processor_struct::PSPMT &x) {
+			if ((abs(x.time - t0 - kTOFFSET_ION) < kTWINDOW_ION))
+				return x;
+			else
+				return processor_struct::PSPMT_DEFAULT_STRUCT;
+		};
+
+		const auto &f11_gate = [&](const processor_struct::PSPMT &x) {
+			if ((abs(x.time - t0 - kTOFFSET_F11) < kTWINDOW_F11))
+				return x;
+			else
+				return processor_struct::PSPMT_DEFAULT_STRUCT;
+		};
+
+		/* filling output data_ */
       for(const auto &channel: pspmt_vec){
          if((channel.subtype=="dynode_high")&&(channel.tag=="ignore")){
             /* dynode high gain (triple) */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.high_gain_.dynode_.pspmt_ = ch_data;
-               }
-            }
+            data_.high_gain_.dynode_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="dynode_low")&&(channel.tag=="ignore")){
+         else if((channel.subtype=="dynode_low")&&(channel.tag=="ignore")){
             /* dynode low gain */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.dynode_.pspmt_ = ch_data;
-                  ++n_low_gain;
-               }
-            }
+            data_.low_gain_.dynode_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="anode_low")&&(channel.tag=="xa")){
+         else if((channel.subtype=="anode_low")&&(channel.tag=="xa")){
             /* anode low gain xa */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.xa_.pspmt_ = ch_data;
-                  ++n_low_gain;
-               }
-            }
+            data_.low_gain_.xa_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="anode_low")&&(channel.tag=="xb")){
+         else if((channel.subtype=="anode_low")&&(channel.tag=="xb")){
             /* anode low gain xb */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.xb_.pspmt_ = ch_data;
-                  ++n_low_gain;
-               }
-            }
+            data_.low_gain_.xb_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="anode_low")&&(channel.tag=="ya")){
+         else if((channel.subtype=="anode_low")&&(channel.tag=="ya")){
             /* anode low gain ya */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.ya_.pspmt_ = ch_data;
-                  ++n_low_gain;
-               }
-            }
+            data_.low_gain_.ya_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="anode_low")&&(channel.tag=="yb")){
+         else if((channel.subtype=="anode_low")&&(channel.tag=="yb")){
             /* anode low gain yb */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.yb_.pspmt_ = ch_data;
-                  ++n_low_gain;
-               }
-            }
+            data_.low_gain_.yb_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="anode_high")&&(channel.tag=="xa")){
+         else if((channel.subtype=="anode_high")&&(channel.tag=="xa")){
             /* anode high gain xa */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
-                  data_.high_gain_.xa_.pspmt_ = ch_data;
-            }
+            data_.high_gain_.xa_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="anode_high")&&(channel.tag=="xb")){
+         else if((channel.subtype=="anode_high")&&(channel.tag=="xb")){
             /* anode high gain xb */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
-                  data_.high_gain_.xb_.pspmt_ = ch_data;
-            }
+            data_.high_gain_.xb_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="anode_high")&&(channel.tag=="ya")){
+         else if((channel.subtype=="anode_high")&&(channel.tag=="ya")){
             /* anode high gain ya */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
-                  data_.high_gain_.ya_.pspmt_ = ch_data;
-            }
+            data_.high_gain_.ya_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="anode_high")&&(channel.tag=="yb")){
+         else if((channel.subtype=="anode_high")&&(channel.tag=="yb")){
             /* anode high gain yb */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
-               if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
-                  data_.high_gain_.yb_.pspmt_ = ch_data;
-            }
+            data_.high_gain_.yb_.pspmt_ = pspmt_gate(channel);
          }
-         if((channel.subtype=="desi")&&(channel.tag=="top")){
+         else if((channel.subtype=="desi")&&(channel.tag=="top")){
             /* dE Si top */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_DESI;
-               if( tdiff > -kTWINDOW_DESI && tdiff < kTWINDOW_DESI){
-                  data_.desi_top_.pspmt_ = ch_data;
-                  ++n_desi;
-               }
-            }
+            data_.desi_top_.pspmt_ = desi_gate(channel);
          }
-         if((channel.subtype=="desi")&&(channel.tag=="bottom")){
+         else if((channel.subtype=="desi")&&(channel.tag=="bottom")){
             /* dE Si bottom */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_DESI;
-               if( tdiff > -kTWINDOW_DESI && tdiff < kTWINDOW_DESI){
-                  data_.desi_bottom_.pspmt_ = ch_data;
-                  ++n_desi;
-               }
-            }
+            data_.desi_bottom_.pspmt_ = desi_gate(channel);
          }
-         if((channel.subtype=="ion")&&(channel.tag=="white")){
+         else if((channel.subtype=="ion")&&(channel.tag=="white")){
             /* front plastic white */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_ION;
-               if( tdiff > -kTWINDOW_ION && tdiff < kTWINDOW_ION){
-                  data_.ion_white_.pspmt_ = ch_data;
-                  ++n_ion;
-               }
-            }
+            data_.ion_white_.pspmt_ = ion_gate(channel);
          }
          if((channel.subtype=="ion")&&(channel.tag=="green")){
             /* front plastic green */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_ION;
-               if( tdiff > -kTWINDOW_ION && tdiff < kTWINDOW_ION){
-                  data_.ion_green_.pspmt_ = ch_data;
-                  ++n_ion;
-               }
-            }
+            data_.ion_green_.pspmt_ = ion_gate(channel);
          }
          if((channel.subtype=="ion")&&(channel.tag=="blue")){
             /* front plastic blue */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_ION;
-               if( tdiff > -kTWINDOW_ION && tdiff < kTWINDOW_ION){
-                  data_.ion_blue_.pspmt_ = ch_data;
-                  ++n_ion;
-               }
-            }
+            data_.ion_blue_.pspmt_ = ion_gate(channel);
          }
          if((channel.subtype=="ion")&&(channel.tag=="black")){
             /* front plastic black */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_ION;
-               if( tdiff > -kTWINDOW_ION && tdiff < kTWINDOW_ION){
-                  data_.ion_black_.pspmt_ = ch_data;
-                  ++n_ion;
-               }
-            }
+            data_.ion_black_.pspmt_ = ion_gate(channel);
          }
          if((channel.subtype=="veto")&&(channel.tag=="1")){
             /* veto plastic first */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_VETO;
-               if( tdiff > -kTWINDOW_VETO && tdiff < kTWINDOW_VETO){
-                  data_.veto_first_.pspmt_ = ch_data;
-                  ++n_veto;
-               }
-            }
+            data_.veto_first_.pspmt_ = veto_gate(channel);
          }
          if((channel.subtype=="veto")&&(channel.tag=="2")){
             /* veto plastic second */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_VETO;
-               if( tdiff > -kTWINDOW_VETO && tdiff < kTWINDOW_VETO){
-                  data_.veto_second_.pspmt_ = ch_data;
-                  ++n_veto;
-               }
-            }
+            data_.veto_second_.pspmt_ = veto_gate(channel);
          }
          if((channel.subtype=="f11")&&(channel.tag=="left")){
             /* f11 plastic left */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_F11;
-               if( tdiff > -kTWINDOW_F11 && tdiff < kTWINDOW_F11){
-                  data_.f11_left_.pspmt_ = ch_data;
-                  ++n_f11;
-               }
-            }
+            data_.f11_left_.pspmt_ = f11_gate(channel);
          }
          if((channel.subtype=="f11")&&(channel.tag=="right")){
             /* f11 plastic right */
-            for(const auto &ch_data: pspmt_vec){
-               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_F11;
-               if( tdiff > -kTWINDOW_F11 && tdiff < kTWINDOW_F11){
-                  data_.f11_right_.pspmt_ = ch_data;
-                  ++n_f11;
-               }
-            }
+            data_.f11_right_.pspmt_ = f11_gate(channel);
          }
       }
 
       /* position analysis */
-      if(1){
+      {
          /* high gain */
          pspmt_data_.external_ts_high_ = ts;
          pspmt_data_.high_gain_.trace_energy_ = data_.high_gain_.dynode_.pspmt_.traceMaxVal;
@@ -300,7 +227,7 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
          pspmt_data_.high_gain_.valid_= data_.high_gain_.valid_;
 
       }
-      if(n_low_gain){
+      {
          /* low gain */
          data_.external_ts_low_ = ts;
          pspmt_data_.external_ts_low_ = ts;
@@ -316,19 +243,22 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
          pspmt_data_.low_gain_.pos_y_= data_.low_gain_.pos_y_;
          pspmt_data_.low_gain_.valid_= data_.low_gain_.valid_;
       }
-      if(n_desi){
+      {
+			/* dE Si */
          pspmt_data_.desi_top_.energy_ = data_.desi_top_.pspmt_.energy;
          pspmt_data_.desi_bottom_.energy_ = data_.desi_bottom_.pspmt_.energy;
          pspmt_data_.desi_top_.time_ = data_.desi_top_.pspmt_.time;
          pspmt_data_.desi_bottom_.time_ = data_.desi_bottom_.pspmt_.time;
       }
-      if(n_veto){
+      {
+			/* VETO */
          pspmt_data_.veto_first_.energy_ = data_.veto_first_.pspmt_.energy;
          pspmt_data_.veto_second_.energy_ = data_.veto_second_.pspmt_.energy;
          pspmt_data_.veto_first_.time_ = data_.veto_first_.pspmt_.time;
          pspmt_data_.veto_second_.time_ = data_.veto_second_.pspmt_.time;
       }
-      if(n_ion){
+      {
+			/* ION (front plastic) */
          pspmt_data_.ion_white_.energy_ = data_.ion_white_.pspmt_.energy;
          pspmt_data_.ion_green_.energy_ = data_.ion_green_.pspmt_.energy;
          pspmt_data_.ion_blue_.energy_ = data_.ion_blue_.pspmt_.energy;
@@ -338,7 +268,8 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
          pspmt_data_.ion_blue_.time_ = data_.ion_blue_.pspmt_.time;
          pspmt_data_.ion_black_.time_ = data_.ion_black_.pspmt_.time;
       }
-      if(n_f11){
+      {
+			/* F11 plastic */
          pspmt_data_.f11_left_.energy_ = data_.f11_left_.pspmt_.energy;
          pspmt_data_.f11_right_.energy_ = data_.f11_right_.pspmt_.energy;
          pspmt_data_.f11_left_.time_ = data_.f11_left_.pspmt_.time;

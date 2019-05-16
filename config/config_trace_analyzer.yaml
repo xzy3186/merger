@@ -1,5 +1,6 @@
 RunSetting:
     TChainFlag: True
+    PrintFrequency: 100000
     InitalEvent: 0
     #NumEvents: 10000
 
@@ -95,13 +96,13 @@ PspmtAnalyzer:
     TreeName: "pspmt"
     CloverVec: True
     VANDLEVec: True
-    TimeWindow: 20 # in clock ticks (8ns)
+    TimeWindow: 160 # in ns
     TimeOffset: 0
-    TimeWindowDeSi: 20
-    TimeOffsetDeSi: -95
-    TimeWindowIon: 20
-    TimeOffsetIon: -105
-    TimeWindowVeto: 20
-    TimeOffsetVeto: -100
-    TimeWindowF11: 20
-    TimeOffsetF11: -95
+    TimeWindowDeSi: 160
+    TimeOffsetDeSi: -760
+    TimeWindowIon: 160
+    TimeOffsetIon: -840
+    TimeWindowVeto: 160
+    TimeOffsetVeto: -800
+    TimeWindowF11: 160
+    TimeOffsetF11: -760
