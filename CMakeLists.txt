@@ -84,4 +84,4 @@ install(TARGETS merger_beta
         )
 install(TARGETS merger_data_dic
 	LIBRARY DESTINATION lib)
-install(FILES build/libMergerData_rdict.pcm DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libMergerData_rdict.pcm DESTINATION lib)

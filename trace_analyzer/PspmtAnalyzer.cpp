@@ -54,13 +54,24 @@ void PspmtAnalyzer::SetEventData(PixTreeEvent* pixie_event){
    return;
 }
 
-int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec){
+int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const ULong64_t ts){
+
+	/* bad trace rejection */
+	auto itr = pspmt_vec.begin();
+	while (itr!=pspmt_vec.end()){
+		itr = std::find_if(++itr, pspmt_vec.end(),
+			[](const processor_struct::PSPMT & x) {
+				return (x.traceMaxPos > 70 || x.traceMaxPos < 40 || x.invalidTrace);
+			});
+		if (itr != pspmt_vec.end())
+			(*itr).invalidTrace = true;
+	}
 
    /* Get a vector of dynode_high singles events */
-   std::vector<TraceAnalyzerData> dynode_high_vec;
-   for(const auto &channel: channel_data_vec){
-      if((channel.subtype_=="dynode_high")&&(channel.tag_=="singles")){
-         dynode_high_vec = channel.data_vec_;
+   std::vector<processor_struct::PSPMT> dynode_high_vec;
+   for(const auto &channel: pspmt_vec){
+      if((channel.subtype=="dynode_high")&&(channel.tag=="singles")&&abs(channel.preBaseAvg-channel.postBaseAvg)<400){
+		  dynode_high_vec.push_back(channel);
       }
    }
 
@@ -68,9 +79,9 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
    for(const auto &dyn_high: dynode_high_vec){
       data_.Clear();
       pspmt_data_.Clear();
-      const Double_t t0 = dyn_high.pspmt_.time; // reference time
+      const Double_t t0 = dyn_high.time; // reference time
       pspmt_data_.dyn_single_.time_ = t0;
-      pspmt_data_.dyn_single_.energy_ = dyn_high.pspmt_.energy;
+      pspmt_data_.dyn_single_.energy_ = dyn_high.energy;
 
       /* fills data to PspmtAnalyzerData */
       Int_t n_low_gain = 0;
@@ -78,194 +89,194 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
       Int_t n_veto = 0;
       Int_t n_ion = 0;
       Int_t n_f11 = 0;
-      for(const auto &channel: channel_data_vec){
-         if((channel.subtype_=="dynode_high")&&(channel.tag_=="ignore")){
+      for(const auto &channel: pspmt_vec){
+         if((channel.subtype=="dynode_high")&&(channel.tag=="ignore")){
             /* dynode high gain (triple) */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.high_gain_.dynode_ = ch_data;
+                  data_.high_gain_.dynode_.pspmt_ = ch_data;
                }
             }
          }
-         if((channel.subtype_=="dynode_low")&&(channel.tag_=="ignore")){
+         if((channel.subtype=="dynode_low")&&(channel.tag=="ignore")){
             /* dynode low gain */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.dynode_ = ch_data;
+                  data_.low_gain_.dynode_.pspmt_ = ch_data;
                   ++n_low_gain;
                }
             }
          }
-         if((channel.subtype_=="anode_low")&&(channel.tag_=="xa")){
+         if((channel.subtype=="anode_low")&&(channel.tag=="xa")){
             /* anode low gain xa */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.xa_ = ch_data;
+                  data_.low_gain_.xa_.pspmt_ = ch_data;
                   ++n_low_gain;
                }
             }
          }
-         if((channel.subtype_=="anode_low")&&(channel.tag_=="xb")){
+         if((channel.subtype=="anode_low")&&(channel.tag=="xb")){
             /* anode low gain xb */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.xb_ = ch_data;
+                  data_.low_gain_.xb_.pspmt_ = ch_data;
                   ++n_low_gain;
                }
             }
          }
-         if((channel.subtype_=="anode_low")&&(channel.tag_=="ya")){
+         if((channel.subtype=="anode_low")&&(channel.tag=="ya")){
             /* anode low gain ya */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.ya_ = ch_data;
+                  data_.low_gain_.ya_.pspmt_ = ch_data;
                   ++n_low_gain;
                }
             }
          }
-         if((channel.subtype_=="anode_low")&&(channel.tag_=="yb")){
+         if((channel.subtype=="anode_low")&&(channel.tag=="yb")){
             /* anode low gain yb */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW){
-                  data_.low_gain_.yb_ = ch_data;
+                  data_.low_gain_.yb_.pspmt_ = ch_data;
                   ++n_low_gain;
                }
             }
          }
-         if((channel.subtype_=="anode_high")&&(channel.tag_=="xa")){
+         if((channel.subtype=="anode_high")&&(channel.tag=="xa")){
             /* anode high gain xa */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
-                  data_.high_gain_.xa_ = ch_data;
+                  data_.high_gain_.xa_.pspmt_ = ch_data;
             }
          }
-         if((channel.subtype_=="anode_high")&&(channel.tag_=="xb")){
+         if((channel.subtype=="anode_high")&&(channel.tag=="xb")){
             /* anode high gain xb */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
-                  data_.high_gain_.xb_ = ch_data;
+                  data_.high_gain_.xb_.pspmt_ = ch_data;
             }
          }
-         if((channel.subtype_=="anode_high")&&(channel.tag_=="ya")){
+         if((channel.subtype=="anode_high")&&(channel.tag=="ya")){
             /* anode high gain ya */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
-                  data_.high_gain_.ya_ = ch_data;
+                  data_.high_gain_.ya_.pspmt_ = ch_data;
             }
          }
-         if((channel.subtype_=="anode_high")&&(channel.tag_=="yb")){
+         if((channel.subtype=="anode_high")&&(channel.tag=="yb")){
             /* anode high gain yb */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET;
                if( tdiff > -kTWINDOW && tdiff < kTWINDOW)
-                  data_.high_gain_.yb_ = ch_data;
+                  data_.high_gain_.yb_.pspmt_ = ch_data;
             }
          }
-         if((channel.subtype_=="desi")&&(channel.tag_=="top")){
+         if((channel.subtype=="desi")&&(channel.tag=="top")){
             /* dE Si top */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_DESI;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_DESI;
                if( tdiff > -kTWINDOW_DESI && tdiff < kTWINDOW_DESI){
-                  data_.desi_top_ = ch_data;
+                  data_.desi_top_.pspmt_ = ch_data;
                   ++n_desi;
                }
             }
          }
-         if((channel.subtype_=="desi")&&(channel.tag_=="bottom")){
+         if((channel.subtype=="desi")&&(channel.tag=="bottom")){
             /* dE Si bottom */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_DESI;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_DESI;
                if( tdiff > -kTWINDOW_DESI && tdiff < kTWINDOW_DESI){
-                  data_.desi_bottom_ = ch_data;
+                  data_.desi_bottom_.pspmt_ = ch_data;
                   ++n_desi;
                }
             }
          }
-         if((channel.subtype_=="ion")&&(channel.tag_=="white")){
+         if((channel.subtype=="ion")&&(channel.tag=="white")){
             /* front plastic white */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_ION;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_ION;
                if( tdiff > -kTWINDOW_ION && tdiff < kTWINDOW_ION){
-                  data_.ion_white_ = ch_data;
+                  data_.ion_white_.pspmt_ = ch_data;
                   ++n_ion;
                }
             }
          }
-         if((channel.subtype_=="ion")&&(channel.tag_=="green")){
+         if((channel.subtype=="ion")&&(channel.tag=="green")){
             /* front plastic green */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_ION;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_ION;
                if( tdiff > -kTWINDOW_ION && tdiff < kTWINDOW_ION){
-                  data_.ion_green_ = ch_data;
+                  data_.ion_green_.pspmt_ = ch_data;
                   ++n_ion;
                }
             }
          }
-         if((channel.subtype_=="ion")&&(channel.tag_=="blue")){
+         if((channel.subtype=="ion")&&(channel.tag=="blue")){
             /* front plastic blue */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_ION;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_ION;
                if( tdiff > -kTWINDOW_ION && tdiff < kTWINDOW_ION){
-                  data_.ion_blue_ = ch_data;
+                  data_.ion_blue_.pspmt_ = ch_data;
                   ++n_ion;
                }
             }
          }
-         if((channel.subtype_=="ion")&&(channel.tag_=="black")){
+         if((channel.subtype=="ion")&&(channel.tag=="black")){
             /* front plastic black */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_ION;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_ION;
                if( tdiff > -kTWINDOW_ION && tdiff < kTWINDOW_ION){
-                  data_.ion_black_ = ch_data;
+                  data_.ion_black_.pspmt_ = ch_data;
                   ++n_ion;
                }
             }
          }
-         if((channel.subtype_=="veto")&&(channel.tag_=="1")){
+         if((channel.subtype=="veto")&&(channel.tag=="1")){
             /* veto plastic first */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_VETO;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_VETO;
                if( tdiff > -kTWINDOW_VETO && tdiff < kTWINDOW_VETO){
-                  data_.veto_first_ = ch_data;
+                  data_.veto_first_.pspmt_ = ch_data;
                   ++n_veto;
                }
             }
          }
-         if((channel.subtype_=="veto")&&(channel.tag_=="2")){
+         if((channel.subtype=="veto")&&(channel.tag=="2")){
             /* veto plastic second */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_VETO;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_VETO;
                if( tdiff > -kTWINDOW_VETO && tdiff < kTWINDOW_VETO){
-                  data_.veto_second_ = ch_data;
+                  data_.veto_second_.pspmt_ = ch_data;
                   ++n_veto;
                }
             }
          }
-         if((channel.subtype_=="f11")&&(channel.tag_=="left")){
+         if((channel.subtype=="f11")&&(channel.tag=="left")){
             /* f11 plastic left */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_F11;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_F11;
                if( tdiff > -kTWINDOW_F11 && tdiff < kTWINDOW_F11){
-                  data_.f11_left_ = ch_data;
+                  data_.f11_left_.pspmt_ = ch_data;
                   ++n_f11;
                }
             }
          }
-         if((channel.subtype_=="f11")&&(channel.tag_=="right")){
+         if((channel.subtype=="f11")&&(channel.tag=="right")){
             /* f11 plastic right */
-            for(const auto &ch_data: channel.data_vec_){
-               const Double_t tdiff = ch_data.pspmt_.time - t0 - kTOFFSET_F11;
+            for(const auto &ch_data: pspmt_vec){
+               const Double_t tdiff = ch_data.time - t0 - kTOFFSET_F11;
                if( tdiff > -kTWINDOW_F11 && tdiff < kTWINDOW_F11){
-                  data_.f11_right_ = ch_data;
+                  data_.f11_right_.pspmt_ = ch_data;
                   ++n_f11;
                }
             }
@@ -275,14 +286,13 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
       /* position analysis */
       if(1){
          /* high gain */
-         data_.external_ts_high_ = data_.high_gain_.dynode_.external_ts_;
-         pspmt_data_.external_ts_high_ = data_.high_gain_.dynode_.external_ts_;
-         pspmt_data_.high_gain_.trace_energy_ = data_.high_gain_.dynode_.trace_energy_;
+         pspmt_data_.external_ts_high_ = ts;
+         pspmt_data_.high_gain_.trace_energy_ = data_.high_gain_.dynode_.pspmt_.traceMaxVal;
          pspmt_data_.high_gain_.energy_ = data_.high_gain_.dynode_.pspmt_.energy;
          pspmt_data_.high_gain_.time_ = data_.high_gain_.dynode_.pspmt_.time;
-         pspmt_data_.high_gain_.energy_sum_ = data_.high_gain_.xa_.trace_energy_
-            + data_.high_gain_.xb_.trace_energy_ + data_.high_gain_.ya_.trace_energy_
-            + data_.high_gain_.yb_.trace_energy_;
+         pspmt_data_.high_gain_.energy_sum_ = data_.high_gain_.xa_.pspmt_.traceMaxVal
+            + data_.high_gain_.xb_.pspmt_.traceMaxVal + data_.high_gain_.ya_.pspmt_.traceMaxVal
+            + data_.high_gain_.yb_.pspmt_.traceMaxVal;
 
          CalculatePositionH(data_.high_gain_);
          pspmt_data_.high_gain_.pos_x_= data_.high_gain_.pos_x_;
@@ -292,14 +302,14 @@ int PspmtAnalyzer::Process(const std::vector<parameter_struc> &channel_data_vec)
       }
       if(n_low_gain){
          /* low gain */
-         data_.external_ts_low_ = data_.low_gain_.dynode_.external_ts_;
-         pspmt_data_.external_ts_low_ = data_.low_gain_.dynode_.external_ts_;
-         pspmt_data_.low_gain_.trace_energy_ = data_.low_gain_.dynode_.trace_energy_;
+         data_.external_ts_low_ = ts;
+         pspmt_data_.external_ts_low_ = ts;
+         pspmt_data_.low_gain_.trace_energy_ = data_.low_gain_.dynode_.pspmt_.traceMaxVal;
          pspmt_data_.low_gain_.energy_ = data_.low_gain_.dynode_.pspmt_.energy;
          pspmt_data_.low_gain_.time_ = data_.low_gain_.dynode_.pspmt_.time;
-         pspmt_data_.low_gain_.energy_sum_ = data_.low_gain_.xa_.trace_energy_
-            + data_.low_gain_.xb_.trace_energy_ + data_.low_gain_.ya_.trace_energy_
-            + data_.low_gain_.yb_.trace_energy_;
+         pspmt_data_.low_gain_.energy_sum_ = data_.low_gain_.xa_.pspmt_.traceMaxVal
+            + data_.low_gain_.xb_.pspmt_.traceMaxVal + data_.low_gain_.ya_.pspmt_.traceMaxVal
+            + data_.low_gain_.yb_.pspmt_.traceMaxVal;
 
          CalculatePositionL(data_.low_gain_);
          pspmt_data_.low_gain_.pos_x_= data_.low_gain_.pos_x_;
@@ -350,10 +360,10 @@ int PspmtAnalyzer::Terminate(){
 void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
 {
    /* pspmt position calculation */
-   const double xa = data.xa_.trace_energy_;
-   const double xb = data.xb_.trace_energy_;
-   const double ya = data.ya_.trace_energy_;
-   const double yb = data.yb_.trace_energy_;
+   const double xa = data.xa_.pspmt_.traceMaxVal;
+   const double xb = data.xb_.pspmt_.traceMaxVal;
+   const double ya = data.ya_.pspmt_.traceMaxVal;
+   const double yb = data.yb_.pspmt_.traceMaxVal;
    /** check if all four anode signals are good **/
    if(
       xa>kHIGH_GAIN_THRESHOLD &&
@@ -381,10 +391,10 @@ void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
 
 void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
 {
-   const double xa =4096.0*(exp((data.xa_.trace_energy_)/(3000))-1);
-   const double xb =4096.0*(exp((data.xb_.trace_energy_)/(3000))-1);
-   const double ya =4096.0*(exp((data.ya_.trace_energy_)/(3000))-1);
-   const double yb =4096.0*(exp((data.yb_.trace_energy_)/(3000))-1);
+   const double xa =4096.0*(exp((data.xa_.pspmt_.traceMaxVal)/(3000))-1);
+   const double xb =4096.0*(exp((data.xb_.pspmt_.traceMaxVal)/(3000))-1);
+   const double ya =4096.0*(exp((data.ya_.pspmt_.traceMaxVal)/(3000))-1);
+   const double yb =4096.0*(exp((data.yb_.pspmt_.traceMaxVal)/(3000))-1);
    /** check if all four anode signals are good **/
    if(
       xa>kLOW_GAIN_THRESHOLD &&

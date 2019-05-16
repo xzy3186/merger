@@ -25,7 +25,7 @@ public:
 
    virtual int Configure(const std::string &yaml_node_name);
    virtual int Begin();
-   virtual int Process(const std::vector<parameter_struc> &pspmt);
+   virtual int Process(std::vector<processor_struct::PSPMT> &pspmt_vec, const ULong64_t ts);
    virtual int Terminate();
 
    void SetEventId(const TString &file_name, const ULong64_t event_num);

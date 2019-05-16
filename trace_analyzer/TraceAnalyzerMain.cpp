@@ -35,7 +35,8 @@ int main(int argc, char **argv){
    /* Open config file */
    YamlParameter::Create(argv[3]);
    YamlReader yaml_reader("RunSetting");
-   const bool chain_flag = yaml_reader.GetBoolean("TChainFlag",false,0);
+   const bool chain_flag = yaml_reader.GetBoolean("TChainFlag",false,0); /*use TChain or not*/
+   const ULong64_t print_freq = yaml_reader.GetULong64("PrintFrequency",false,10000); /*cout frequency*/
 
    /* create TChain and add input files */
    TChain *chain = new TChain("PixTree");
@@ -81,39 +82,32 @@ int main(int argc, char **argv){
    const uint64_t num_events = yaml_reader.GetULong64("NumEvents",false,
                                                       tree_reader.GetEntries(kTRUE));
 
-   TraceAnalyzer trace_analyzer("TraceAnalyzer");
    PspmtAnalyzer pspmt_analyzer("PspmtAnalyzer");
 
-   trace_analyzer.Begin();
    pspmt_analyzer.Begin();
 
    ULong64_t entry = initial_event;
    if(entry)
-      tree_reader.SetEntry(entry);
+      tree_reader.SetEntry(entry); /* sets first entry if its not zero */
 
    std::cout<<"start sorting from " << initial_event << " to " << num_events
       << "/" << entry << std::endl;
 
    /* main event loop */
    while( tree_reader.Next() && num_events > (entry-initial_event) ){
-      if(!(entry%10000))
+      if(!(entry%print_freq)) /*prints progress in every print_freq events*/
          std::cout<<"entry: "<<entry<<"/"<<total_entry<<" "
             <<(double)entry/(double)total_entry*100.<<"\%"<<std::endl;
 
       ++entry;
       PixTreeEvent* pixie_event = pixie_event_reader_.Get();
-      if(pixie_event->pspmt_vec_.empty())
+      if(pixie_event->pspmt_vec_.empty()) /* skips if there is no pspmt event */
          continue;
-      for(auto pspmt : pixie_event->pspmt_vec_){
-         trace_analyzer.Process(pspmt, pixie_event->externalTS1);
-      }
       pspmt_analyzer.SetEventId(pixie_event->fileName, pixie_event->eventNum);
       pspmt_analyzer.SetEventData(pixie_event);
-      pspmt_analyzer.Process(trace_analyzer.GetChannelVec()); 
-      trace_analyzer.ClearVec();
+      pspmt_analyzer.Process(pixie_event->pspmt_vec_, pixie_event->externalTS1);
    }//end loop through the TTree
 
-   trace_analyzer.Terminate();
    pspmt_analyzer.Terminate();
    output_file_.Close();
    return 0;

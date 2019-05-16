@@ -8,4 +8,4 @@ add_library(AnamergerLib SHARED
 )
 
 install(TARGETS AnamergerLib LIBRARY DESTINATION lib)
-install(FILES ../../build/anamerger/source/libAnamerger_rdict.pcm DESTINATION lib)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libAnamerger_rdict.pcm DESTINATION lib)
