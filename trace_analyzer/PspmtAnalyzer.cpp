@@ -69,8 +69,12 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 
    /* Get a vector of dynode_high singles events */
    std::vector<processor_struct::PSPMT> dynode_high_vec;
+	std::string subtype = "";
+	std::string tag = "";
    for(const auto &channel: pspmt_vec){
-      if((channel.subtype=="dynode_high")&&(channel.tag=="singles")&&abs(channel.preBaseAvg-channel.postBaseAvg)<400){
+		subtype = channel.subtype.Data();
+		tag = channel.tag.Data();
+      if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("singles")){
 		  dynode_high_vec.push_back(channel);
       }
    }
@@ -128,83 +132,83 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 
 		/* filling output data_ */
       for(const auto &channel: pspmt_vec){
-         if((channel.subtype=="dynode_high")&&(channel.tag=="ignore")){
+         if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("ignore")){
             /* dynode high gain (triple) */
             data_.high_gain_.dynode_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="dynode_low")&&(channel.tag=="ignore")){
+         else if(!channel.subtype.CompareTo("dynode_low")&&!channel.tag.CompareTo("ignore")){
             /* dynode low gain */
             data_.low_gain_.dynode_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="anode_low")&&(channel.tag=="xa")){
+         else if(!channel.subtype.CompareTo("anode_low")&&!channel.tag.CompareTo("xa")){
             /* anode low gain xa */
             data_.low_gain_.xa_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="anode_low")&&(channel.tag=="xb")){
+         else if(!channel.subtype.CompareTo("anode_low")&&!channel.tag.CompareTo("xb")){
             /* anode low gain xb */
             data_.low_gain_.xb_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="anode_low")&&(channel.tag=="ya")){
+         else if(!channel.subtype.CompareTo("anode_low")&&!channel.tag.CompareTo("ya")){
             /* anode low gain ya */
             data_.low_gain_.ya_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="anode_low")&&(channel.tag=="yb")){
+         else if(!channel.subtype.CompareTo("anode_low")&&!channel.tag.CompareTo("yb")){
             /* anode low gain yb */
             data_.low_gain_.yb_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="anode_high")&&(channel.tag=="xa")){
+         else if(!channel.subtype.CompareTo("anode_high")&&!channel.tag.CompareTo("xa")){
             /* anode high gain xa */
             data_.high_gain_.xa_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="anode_high")&&(channel.tag=="xb")){
+         else if(!channel.subtype.CompareTo("anode_high")&&!channel.tag.CompareTo("xb")){
             /* anode high gain xb */
             data_.high_gain_.xb_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="anode_high")&&(channel.tag=="ya")){
+         else if(!channel.subtype.CompareTo("anode_high")&&!channel.tag.CompareTo("ya")){
             /* anode high gain ya */
             data_.high_gain_.ya_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="anode_high")&&(channel.tag=="yb")){
+         else if(!channel.subtype.CompareTo("anode_high")&&!channel.tag.CompareTo("yb")){
             /* anode high gain yb */
             data_.high_gain_.yb_.pspmt_ = pspmt_gate(channel);
          }
-         else if((channel.subtype=="desi")&&(channel.tag=="top")){
+         else if(!channel.subtype.CompareTo("desi")&&!channel.tag.CompareTo("top")){
             /* dE Si top */
             data_.desi_top_.pspmt_ = desi_gate(channel);
          }
-         else if((channel.subtype=="desi")&&(channel.tag=="bottom")){
+         else if(!channel.subtype.CompareTo("desi")&&!channel.tag.CompareTo("bottom")){
             /* dE Si bottom */
             data_.desi_bottom_.pspmt_ = desi_gate(channel);
          }
-         else if((channel.subtype=="ion")&&(channel.tag=="white")){
+         else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("white")){
             /* front plastic white */
             data_.ion_white_.pspmt_ = ion_gate(channel);
          }
-         if((channel.subtype=="ion")&&(channel.tag=="green")){
+         else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("green")){
             /* front plastic green */
             data_.ion_green_.pspmt_ = ion_gate(channel);
          }
-         if((channel.subtype=="ion")&&(channel.tag=="blue")){
+         else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("blue")){
             /* front plastic blue */
             data_.ion_blue_.pspmt_ = ion_gate(channel);
          }
-         if((channel.subtype=="ion")&&(channel.tag=="black")){
+         else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("black")){
             /* front plastic black */
             data_.ion_black_.pspmt_ = ion_gate(channel);
          }
-         if((channel.subtype=="veto")&&(channel.tag=="1")){
+         else if(!channel.subtype.CompareTo("veto")&&!channel.tag.CompareTo("1")){
             /* veto plastic first */
             data_.veto_first_.pspmt_ = veto_gate(channel);
          }
-         if((channel.subtype=="veto")&&(channel.tag=="2")){
+         else if(!channel.subtype.CompareTo("veto")&&!channel.tag.CompareTo("2")){
             /* veto plastic second */
             data_.veto_second_.pspmt_ = veto_gate(channel);
          }
-         if((channel.subtype=="f11")&&(channel.tag=="left")){
+         else if(!channel.subtype.CompareTo("f11")&&!channel.tag.CompareTo("left")){
             /* f11 plastic left */
             data_.f11_left_.pspmt_ = f11_gate(channel);
          }
-         if((channel.subtype=="f11")&&(channel.tag=="right")){
+         else if(!channel.subtype.CompareTo("f11")&&!channel.tag.CompareTo("right")){
             /* f11 plastic right */
             data_.f11_right_.pspmt_ = f11_gate(channel);
          }

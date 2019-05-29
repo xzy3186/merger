@@ -47,6 +47,16 @@ public:
       external_ts_low_ = 0;
       high_gain_ = DEFAULT_PSPMT_DATA_STRUC;
       low_gain_ = DEFAULT_PSPMT_DATA_STRUC;
+		desi_top_.Clear();
+		desi_bottom_.Clear();
+		veto_first_.Clear();
+		veto_second_.Clear();
+		ion_white_.Clear();
+		ion_green_.Clear();
+		ion_blue_.Clear();
+		ion_black_.Clear();
+		f11_left_.Clear();
+		f11_right_.Clear();
    }
 
    ULong64_t external_ts_high_;
