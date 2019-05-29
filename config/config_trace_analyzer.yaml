@@ -98,11 +98,11 @@ PspmtAnalyzer:
     VANDLEVec: True
     TimeWindow: 160 # in ns
     TimeOffset: 0
-    TimeWindowDeSi: 160
-    TimeOffsetDeSi: -760
-    TimeWindowIon: 160
+    TimeWindowDeSi: 50
+    TimeOffsetDeSi: -840
+    TimeWindowIon: 50
     TimeOffsetIon: -840
-    TimeWindowVeto: 160
-    TimeOffsetVeto: -800
-    TimeWindowF11: 160
-    TimeOffsetF11: -760
+    TimeWindowVeto: 50
+    TimeOffsetVeto: -840
+    TimeWindowF11: 50
+    TimeOffsetF11: 150

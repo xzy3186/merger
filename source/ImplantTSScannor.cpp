@@ -22,6 +22,7 @@ Bool_t ImplantTSScannor::IsInGate()
     if(!pspmt_low.valid_)
         return false;
     return true;
+	 // Energy gate on pspmt low energy
     //if(pspmt_low.energy_ < 2000 || pspmt_low.energy_ > 8000 )
     //    return false;
 
@@ -31,20 +32,21 @@ Bool_t ImplantTSScannor::IsInGate()
             return false;
     }
     return true;
-    // Gating on dE Si
-    {
-        const Double_t de_top = tree_data_->Get()->desi_top_.energy_;
-        const Double_t de_bottom = tree_data_->Get()->desi_bottom_.energy_;
 
-        if( de_top>5200. && de_top<5600. ) //83Ga
-        //if( de_top>3500. && de_top<4500. ) //78Ni
-            return true;
-        else if ( de_bottom>5600. && de_bottom<6400. ) //83Ga
-        //else if ( de_bottom>4000. && de_bottom<5000. ) //78Ni
-            return true;
-        else
-            return false;
-    }
+    // Gating on dE Si
+    //{
+    //    const Double_t de_top = tree_data_->Get()->desi_top_.energy_;
+    //    const Double_t de_bottom = tree_data_->Get()->desi_bottom_.energy_;
+
+    //    if( de_top>5200. && de_top<5600. ) //83Ga
+    //    //if( de_top>3500. && de_top<4500. ) //78Ni
+    //        return true;
+    //    else if ( de_bottom>5600. && de_bottom<6400. ) //83Ga
+    //    //else if ( de_bottom>4000. && de_bottom<5000. ) //78Ni
+    //        return true;
+    //    else
+    //        return false;
+    //}
 }
 
 const std::string MergedImplantTSScannor::kMsgPrefix("[MergedImplantTSScannor]:");
