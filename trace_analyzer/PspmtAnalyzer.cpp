@@ -32,6 +32,15 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    kLOW_GAIN_THRESHOLD = yaml_reader.GetDouble("LowGainThreshold",false,0);
    kLOW_GAIN_OVERFLOW = yaml_reader.GetDouble("LowGainOverflow",false,65534);
 
+	kHIGH_GAIN_OFFSET_XA = yaml_reader.GetDouble("HighGainOffsetXA", false, 0);
+	kHIGH_GAIN_OFFSET_XB = yaml_reader.GetDouble("HighGainOffsetXB", false, 0);
+	kHIGH_GAIN_OFFSET_YA = yaml_reader.GetDouble("HighGainOffsetYA", false, 0);
+	kHIGH_GAIN_OFFSET_YB = yaml_reader.GetDouble("HighGainOffsetYB", false, 0);
+	kLOW_GAIN_OFFSET_XA = yaml_reader.GetDouble("LowGainOffsetXA", false, 0);
+	kLOW_GAIN_OFFSET_XB = yaml_reader.GetDouble("LowGainOffsetXB", false, 0);
+	kLOW_GAIN_OFFSET_YA = yaml_reader.GetDouble("LowGainOffsetYA", false, 0);
+	kLOW_GAIN_OFFSET_YB = yaml_reader.GetDouble("LowGainOffsetYB", false, 0);
+
    return 0;
 }
 
@@ -295,10 +304,11 @@ int PspmtAnalyzer::Terminate(){
 void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
 {
    /* pspmt position calculation */
-   const double xa = data.xa_.pspmt_.traceMaxVal;
-   const double xb = data.xb_.pspmt_.traceMaxVal;
-   const double ya = data.ya_.pspmt_.traceMaxVal;
-   const double yb = data.yb_.pspmt_.traceMaxVal;
+   const double xa = data.xa_.pspmt_.traceMaxVal + kHIGH_GAIN_OFFSET_XA;
+   const double xb = data.xb_.pspmt_.traceMaxVal + kHIGH_GAIN_OFFSET_XB;
+   const double ya = data.ya_.pspmt_.traceMaxVal + kHIGH_GAIN_OFFSET_YA;
+   const double yb = data.yb_.pspmt_.traceMaxVal + kHIGH_GAIN_OFFSET_YB;
+
    /** check if all four anode signals are good **/
    if(
       xa>kHIGH_GAIN_THRESHOLD &&
@@ -326,10 +336,10 @@ void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
 
 void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
 {
-   const double xa =4096.0*(exp((data.xa_.pspmt_.traceMaxVal)/(3000))-1);
-   const double xb =4096.0*(exp((data.xb_.pspmt_.traceMaxVal)/(3000))-1);
-   const double ya =4096.0*(exp((data.ya_.pspmt_.traceMaxVal)/(3000))-1);
-   const double yb =4096.0*(exp((data.yb_.pspmt_.traceMaxVal)/(3000))-1);
+   const double xa = data.xa_.pspmt_.traceMaxVal + kLOW_GAIN_OFFSET_XA;
+   const double xb = data.xb_.pspmt_.traceMaxVal + kLOW_GAIN_OFFSET_XB;
+   const double ya = data.ya_.pspmt_.traceMaxVal + kLOW_GAIN_OFFSET_YA;
+   const double yb = data.yb_.pspmt_.traceMaxVal + kLOW_GAIN_OFFSET_YB;
    /** check if all four anode signals are good **/
    if(
       xa>kLOW_GAIN_THRESHOLD &&

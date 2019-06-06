@@ -106,3 +106,5 @@ PspmtAnalyzer:
     TimeOffsetVeto: -840
     TimeWindowF11: 50
     TimeOffsetF11: 150
+    HighGainThreshold: -100
+    LowGainThreshold: -900

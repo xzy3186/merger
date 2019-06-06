@@ -7,6 +7,7 @@
 #include "PspmtData.hpp"
 #include "TraceAnalyzer.hpp"
 #include "YamlReader.hpp"
+#include <TH1.h>
 
 struct event_info_struc {
    TString file_name_;
@@ -61,8 +62,19 @@ protected:
    Double_t kHIGH_GAIN_OVERFLOW;
    Double_t kLOW_GAIN_THRESHOLD;
    Double_t kLOW_GAIN_OVERFLOW;
+   /** offset for trace_energy_ **/
+   Double_t kHIGH_GAIN_OFFSET_XA;
+   Double_t kHIGH_GAIN_OFFSET_XB;
+   Double_t kHIGH_GAIN_OFFSET_YA;
+   Double_t kHIGH_GAIN_OFFSET_YB;
+   Double_t kLOW_GAIN_OFFSET_XA;
+   Double_t kLOW_GAIN_OFFSET_XB;
+   Double_t kLOW_GAIN_OFFSET_YA;
+   Double_t kLOW_GAIN_OFFSET_YB;
+
 };
 
 const std::string TraceAnalyzer::kMsgPrefix("[TraceAnalyzer:]");
 const std::string PspmtAnalyzer::kMsgPrefix("[PspmtAnalyzer:]");
+
 #endif
