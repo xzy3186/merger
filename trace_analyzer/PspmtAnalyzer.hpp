@@ -35,7 +35,6 @@ public:
    void CalculatePositionL(pspmt_data_struc &data);
 
 protected:
-   std::fstream pos;
    TTree *output_tree_;
    PspmtAnalyzerData data_;
    PspmtData pspmt_data_;

@@ -11,6 +11,15 @@ struct pspmt_struc{
    Double_t energy_ = 0;
    Double_t time_ = 0;
    Double_t energy_sum_ = 0;
+
+	Double_t xa_energy_ = -999;
+	Double_t xb_energy_ = -999;
+	Double_t ya_energy_ = -999;
+	Double_t yb_energy_ = -999;
+	Double_t xa_trace_energy_ = -999;
+	Double_t xb_trace_energy_ = -999;
+	Double_t ya_trace_energy_ = -999;
+	Double_t yb_trace_energy_ = -999;
 };
 static pspmt_struc DEFAULT_PSPMT_STRUC;
 

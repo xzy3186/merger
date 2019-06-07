@@ -28,9 +28,9 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    kTOFFSET_F11 = yaml_reader.GetDouble("TimeOffsetF11");
 
    kHIGH_GAIN_THRESHOLD = yaml_reader.GetDouble("HighGainThreshold",false,0);
-   kHIGH_GAIN_OVERFLOW = yaml_reader.GetDouble("HighGainOverflow",false,4094);
+   kHIGH_GAIN_OVERFLOW = yaml_reader.GetDouble("HighGainOverflow",false,4095);
    kLOW_GAIN_THRESHOLD = yaml_reader.GetDouble("LowGainThreshold",false,0);
-   kLOW_GAIN_OVERFLOW = yaml_reader.GetDouble("LowGainOverflow",false,65534);
+   kLOW_GAIN_OVERFLOW = yaml_reader.GetDouble("LowGainOverflow",false,65535);
 
 	kHIGH_GAIN_OFFSET_XA = yaml_reader.GetDouble("HighGainOffsetXA", false, 0);
 	kHIGH_GAIN_OFFSET_XB = yaml_reader.GetDouble("HighGainOffsetXB", false, 0);
@@ -45,7 +45,6 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
 }
 
 int PspmtAnalyzer::Begin(){
-// pos.open("pos.txt",std::fstream::out);
    return 0;
 }
 
@@ -67,24 +66,26 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 
 	/* bad trace rejection */
 	auto itr = pspmt_vec.begin();
-	while (itr!=pspmt_vec.end()){
-		itr = std::find_if(++itr, pspmt_vec.end(),
-			[](const processor_struct::PSPMT & x) {
-				return (x.traceMaxPos > 70 || x.traceMaxPos < 40 || x.invalidTrace);
-			});
-		if (itr != pspmt_vec.end())
-			(*itr).invalidTrace = true;
-	}
+	//while (itr!=pspmt_vec.end()){
+	//	itr = std::find_if(++itr, pspmt_vec.end(),
+	//		[](const processor_struct::PSPMT & x) {
+	//			return (x.traceMaxPos > 70 || x.traceMaxPos < 40); //|| x.invalidTrace);
+	//		});
+	//	if (itr != pspmt_vec.end())
+	//		(*itr).invalidTrace = true;
+	//}
 
    /* Get a vector of dynode_high singles events */
    std::vector<processor_struct::PSPMT> dynode_high_vec;
 	std::string subtype = "";
 	std::string tag = "";
    for(const auto &channel: pspmt_vec){
+		//if (channel.invalidTrace)
+		//	continue;
 		subtype = channel.subtype.Data();
 		tag = channel.tag.Data();
       if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("singles")){
-		  dynode_high_vec.push_back(channel);
+		   dynode_high_vec.push_back(channel);
       }
    }
 
@@ -105,7 +106,9 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 
 		/* gate functions */
 		const auto &pspmt_gate = [&](const processor_struct::PSPMT &x) {
-			if ((abs(x.time - t0 - kTOFFSET) < kTWINDOW) && !x.invalidTrace)
+			//if ((abs(x.time - t0 - kTOFFSET) < kTWINDOW) )//&& !x.invalidTrace)
+			//if ((abs(x.time - t0 - kTOFFSET) < kTWINDOW) && x.traceMaxPos<70&&x.traceMaxPos>40)
+			if ((abs(x.time - t0 - kTOFFSET) < kTWINDOW) )
 				return x;
 			else
 				return processor_struct::PSPMT_DEFAULT_STRUCT;
@@ -239,6 +242,15 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
          pspmt_data_.high_gain_.pos_y_= data_.high_gain_.pos_y_;
          pspmt_data_.high_gain_.valid_= data_.high_gain_.valid_;
 
+			pspmt_data_.high_gain_.xa_energy_ = data_.high_gain_.xa_.pspmt_.energy;
+			pspmt_data_.high_gain_.xb_energy_ = data_.high_gain_.xb_.pspmt_.energy;
+			pspmt_data_.high_gain_.ya_energy_ = data_.high_gain_.ya_.pspmt_.energy;
+			pspmt_data_.high_gain_.yb_energy_ = data_.high_gain_.yb_.pspmt_.energy;
+			pspmt_data_.high_gain_.xa_trace_energy_ = data_.high_gain_.xa_.pspmt_.traceMaxVal;
+			pspmt_data_.high_gain_.xb_trace_energy_ = data_.high_gain_.xb_.pspmt_.traceMaxVal;
+			pspmt_data_.high_gain_.ya_trace_energy_ = data_.high_gain_.ya_.pspmt_.traceMaxVal;
+			pspmt_data_.high_gain_.yb_trace_energy_ = data_.high_gain_.yb_.pspmt_.traceMaxVal;
+
       }
       {
          /* low gain */
@@ -255,6 +267,15 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
          pspmt_data_.low_gain_.pos_x_= data_.low_gain_.pos_x_;
          pspmt_data_.low_gain_.pos_y_= data_.low_gain_.pos_y_;
          pspmt_data_.low_gain_.valid_= data_.low_gain_.valid_;
+
+			pspmt_data_.low_gain_.xa_energy_ = data_.low_gain_.xa_.pspmt_.energy;
+			pspmt_data_.low_gain_.xb_energy_ = data_.low_gain_.xb_.pspmt_.energy;
+			pspmt_data_.low_gain_.ya_energy_ = data_.low_gain_.ya_.pspmt_.energy;
+			pspmt_data_.low_gain_.yb_energy_ = data_.low_gain_.yb_.pspmt_.energy;
+			pspmt_data_.low_gain_.xa_trace_energy_ = data_.low_gain_.xa_.pspmt_.traceMaxVal;
+			pspmt_data_.low_gain_.xb_trace_energy_ = data_.low_gain_.xb_.pspmt_.traceMaxVal;
+			pspmt_data_.low_gain_.ya_trace_energy_ = data_.low_gain_.ya_.pspmt_.traceMaxVal;
+			pspmt_data_.low_gain_.yb_trace_energy_ = data_.low_gain_.yb_.pspmt_.traceMaxVal;
       }
       {
 			/* dE Si */
@@ -296,7 +317,6 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 }
 
 int PspmtAnalyzer::Terminate(){
-   pos.close();
    output_tree_->Write();
    return 0;
 }

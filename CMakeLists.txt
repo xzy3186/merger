@@ -6,6 +6,7 @@ project(merger)
 #   - ROOT built with classic configure/make use the provided $ROOTSYS/etc/cmake/FindROOT.cmake
 #   - ROOT built with CMake. Add in CMAKE_PREFIX_PATH the installation prefix for ROOT
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
+set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install/ )
 set(PAASS_DIR_PATH "/home/ryokoyam/vandle/trace_yso/paass/install" CACHE STRING "path to paass directory" )
 set(YAML_CPP_PATH "/home/ryokoyam/opt/yaml-cpp" CACHE STRING "path to yaml-cpp")
 set( YAML_CPP_LIB_DIR ${YAML_CPP_PATH}/lib/ CACHE STRING "path to yaml lib")
