@@ -108,3 +108,7 @@ PspmtAnalyzer:
     TimeOffsetF11: 150
     HighGainThreshold: -100
     LowGainThreshold: -900
+    TraceMaxQDCRatioXA: 8000
+    TraceMaxQDCRatioXB: 8000
+    TraceMaxQDCRatioYA: 8000
+    TraceMaxQDCRatioYB: 8000

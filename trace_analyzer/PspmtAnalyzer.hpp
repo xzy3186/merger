@@ -70,6 +70,10 @@ protected:
    Double_t kLOW_GAIN_OFFSET_XB;
    Double_t kLOW_GAIN_OFFSET_YA;
    Double_t kLOW_GAIN_OFFSET_YB;
+   Double_t kTRACEMAX_QDC_RATIO_XA;
+   Double_t kTRACEMAX_QDC_RATIO_XB;
+   Double_t kTRACEMAX_QDC_RATIO_YA;
+   Double_t kTRACEMAX_QDC_RATIO_YB;
 
 };
 

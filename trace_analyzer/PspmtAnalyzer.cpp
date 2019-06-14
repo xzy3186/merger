@@ -40,6 +40,10 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
 	kLOW_GAIN_OFFSET_XB = yaml_reader.GetDouble("LowGainOffsetXB", false, 0);
 	kLOW_GAIN_OFFSET_YA = yaml_reader.GetDouble("LowGainOffsetYA", false, 0);
 	kLOW_GAIN_OFFSET_YB = yaml_reader.GetDouble("LowGainOffsetYB", false, 0);
+	kTRACEMAX_QDC_RATIO_XA = yaml_reader.GetDouble("TraceMaxQDCRatioXA", false, 0);
+	kTRACEMAX_QDC_RATIO_XB = yaml_reader.GetDouble("TraceMaxQDCRatioXB", false, 0);
+	kTRACEMAX_QDC_RATIO_YA = yaml_reader.GetDouble("TraceMaxQDCRatioYA", false, 0);
+	kTRACEMAX_QDC_RATIO_YB = yaml_reader.GetDouble("TraceMaxQDCRatioYB", false, 0);
 
    return 0;
 }
@@ -272,10 +276,6 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 			pspmt_data_.low_gain_.xb_energy_ = data_.low_gain_.xb_.pspmt_.energy;
 			pspmt_data_.low_gain_.ya_energy_ = data_.low_gain_.ya_.pspmt_.energy;
 			pspmt_data_.low_gain_.yb_energy_ = data_.low_gain_.yb_.pspmt_.energy;
-			pspmt_data_.low_gain_.xa_trace_energy_ = data_.low_gain_.xa_.pspmt_.traceMaxVal;
-			pspmt_data_.low_gain_.xb_trace_energy_ = data_.low_gain_.xb_.pspmt_.traceMaxVal;
-			pspmt_data_.low_gain_.ya_trace_energy_ = data_.low_gain_.ya_.pspmt_.traceMaxVal;
-			pspmt_data_.low_gain_.yb_trace_energy_ = data_.low_gain_.yb_.pspmt_.traceMaxVal;
       }
       {
 			/* dE Si */
@@ -356,10 +356,24 @@ void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
 
 void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
 {
-   const double xa = data.xa_.pspmt_.traceMaxVal + kLOW_GAIN_OFFSET_XA;
-   const double xb = data.xb_.pspmt_.traceMaxVal + kLOW_GAIN_OFFSET_XB;
-   const double ya = data.ya_.pspmt_.traceMaxVal + kLOW_GAIN_OFFSET_YA;
-   const double yb = data.yb_.pspmt_.traceMaxVal + kLOW_GAIN_OFFSET_YB;
+	/* Correction of trace energy vs energy as a linear function of the ratio */
+	/* (trace energy)/energy which express the effect of clipping by the fast amp */
+	const auto CorrectedTraceEnergy = [&](const processor_struct::PSPMT& x,const double a)
+	{
+		//return x.traceMaxVal + kTRACEMAX_QDC_RATIO*x.traceMaxVal/x.energy;
+		return x.traceMaxVal + a*(x.traceMaxVal/x.energy-0.045);
+	};
+
+   const double xa = CorrectedTraceEnergy(data.xa_.pspmt_,kTRACEMAX_QDC_RATIO_XA) + kLOW_GAIN_OFFSET_XA;
+   const double xb = CorrectedTraceEnergy(data.xb_.pspmt_,kTRACEMAX_QDC_RATIO_XB) + kLOW_GAIN_OFFSET_XB;
+   const double ya = CorrectedTraceEnergy(data.ya_.pspmt_,kTRACEMAX_QDC_RATIO_YA) + kLOW_GAIN_OFFSET_YA;
+   const double yb = CorrectedTraceEnergy(data.yb_.pspmt_,kTRACEMAX_QDC_RATIO_YB) + kLOW_GAIN_OFFSET_YB;
+
+	pspmt_data_.low_gain_.xa_trace_energy_ = xa;
+	pspmt_data_.low_gain_.xb_trace_energy_ = xb;
+	pspmt_data_.low_gain_.ya_trace_energy_ = ya;
+	pspmt_data_.low_gain_.yb_trace_energy_ = yb;
+
    /** check if all four anode signals are good **/
    if(
       xa>kLOW_GAIN_THRESHOLD &&
