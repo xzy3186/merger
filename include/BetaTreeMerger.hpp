@@ -81,10 +81,14 @@ bool BetaTreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
     const auto pspmt_beta = in1.high_gain_;
     /* if high gain position is available, use it for correlation */
     if(pspmt_beta.valid_){
-        const double beta_x = 11.9135504*pspmt_beta.pos_x_;
-        const double beta_y = 10.0*pspmt_beta.pos_y_;
-        const double imp_x = 23.664712*pspmt_imp.pos_x_ - 2.862757;
-        const double imp_y = 15.5979*pspmt_imp.pos_y_ - 1.4067;
+        //const double beta_x = 11.9135504*pspmt_beta.pos_x_;
+        //const double beta_y = 10.0*pspmt_beta.pos_y_;
+        //const double imp_x = 23.664712*pspmt_imp.pos_x_ - 2.862757;
+        //const double imp_y = 15.5979*pspmt_imp.pos_y_ - 1.4067;
+        const double beta_x = pspmt_beta.pos_x_;
+        const double beta_y = pspmt_beta.pos_y_;
+        const double imp_x = pspmt_imp.pos_x_;
+        const double imp_y = pspmt_imp.pos_y_;
 
         if(yso_map_->IsInside(beta_x,beta_y,imp_x,imp_y,correlation_radius_))
             return true;
@@ -93,10 +97,14 @@ bool BetaTreeMerger<TOUT,TIN1,TIN2>::IsInGate(const TIN1 &in1, const TIN2 &in2)
     }
     /* otherwise, use low gain position */
     else{
-        const double beta_x = 23.664712*in1.low_gain_.pos_x_ - 2.862757;
-        const double beta_y = 15.5979*in1.low_gain_.pos_y_ - 1.4067;
-        const double imp_x = 23.664712*pspmt_imp.pos_x_ - 2.862757;
-        const double imp_y = 15.5979*pspmt_imp.pos_y_ - 1.4067;
+        //const double beta_x = 23.664712*in1.low_gain_.pos_x_ - 2.862757;
+        //const double beta_y = 15.5979*in1.low_gain_.pos_y_ - 1.4067;
+        //const double imp_x = 23.664712*pspmt_imp.pos_x_ - 2.862757;
+        //const double imp_y = 15.5979*pspmt_imp.pos_y_ - 1.4067;
+        const double beta_x = in1.low_gain_.pos_x_;
+        const double beta_y = in1.low_gain_.pos_y_;
+        const double imp_x = pspmt_imp.pos_x_;
+        const double imp_y = pspmt_imp.pos_y_;
 
         if(TMath::Power(beta_x-imp_x,2)+TMath::Power(beta_y-imp_y,2)<correlation_radius_*correlation_radius_)
             return true;
