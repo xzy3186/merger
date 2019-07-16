@@ -29,6 +29,7 @@ public:
         f11dt=tree_data.f11dt;
         beta=tree_data.beta;
         ts=tree_data.ts;
+        sts=tree_data.sts;
         EventId=tree_data.EventId;
 	RunId=tree_data.RunId;
     }

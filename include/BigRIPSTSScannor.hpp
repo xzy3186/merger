@@ -14,6 +14,7 @@ public:
     BigRIPSTSScannor(){}
     ~BigRIPSTSScannor(){}
     void SetReader();
+	 virtual Bool_t IsInGate();
 
 protected:
     ULong64_t GetTS() const

@@ -68,8 +68,8 @@ Bool_t BetaTSScannor::IsInGate()
         //    return false;
         //if(pspmt_low.energy_>2000)
         //    return false;
-        //if(pspmt_high.valid_ == 0 )
-        //    return false;
+        if(pspmt_high.valid_ == 0 )
+            return false;
     }
 
     //{ /* rejection of beta events within 50us after an implantation event */

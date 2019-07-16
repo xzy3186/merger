@@ -351,6 +351,8 @@ void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
    const double sum = xa + xb + ya + yb;
    data.pos_x_ = 0.5*(yb + xa)/sum;
    data.pos_y_ = 0.5*(xa + xb)/sum;
+   data.pos_x_ = 10.*data.pos_x_;
+   data.pos_y_ = 10.*data.pos_y_;
    return;
 }
 
@@ -361,7 +363,7 @@ void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
 	const auto CorrectedTraceEnergy = [&](const processor_struct::PSPMT& x,const double a)
 	{
 		//return x.traceMaxVal + kTRACEMAX_QDC_RATIO*x.traceMaxVal/x.energy;
-		return x.traceMaxVal + a*(x.traceMaxVal/x.energy-0.045);
+		return x.traceMaxVal + a*(x.traceMaxVal/x.energy);
 	};
 
    const double xa = CorrectedTraceEnergy(data.xa_.pspmt_,kTRACEMAX_QDC_RATIO_XA) + kLOW_GAIN_OFFSET_XA;
@@ -396,6 +398,8 @@ void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
    const double sum = xa + xb + ya + yb;
    data.pos_x_ = 0.5*(yb + xa)/sum;
    data.pos_y_ = 0.5*(xa + xb)/sum;
+   data.pos_x_ = 10*2.76717*data.pos_x_-4.39413551;
+   data.pos_y_ = 10*1.79261*data.pos_y_-1.90999;
    return;
 }
 
