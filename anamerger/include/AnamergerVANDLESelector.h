@@ -26,7 +26,7 @@
 #include "ProcessorRootStruc.hpp"
 #include "OutputTreeData.hpp"
 
-class AnamergerVANDLESelector : public TSelector {
+class AnamergerVandleSelector : public TSelector {
    public :
 
       AnamergerVANDLESelector(TTree * =0);
