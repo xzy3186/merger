@@ -4,5 +4,6 @@ AnamergerMain:
     NumWorkers: 4
     PrintFrequency: 10000
     UseProof: True
+    TimeWindow: 0.2
     #NumEntries: 10000
     #FirstEntry: 0

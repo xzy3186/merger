@@ -24,6 +24,7 @@
 #include "BigRIPSTreeData.h"
 #include "ProcessorRootStruc.hpp"
 #include "OutputTreeData.hpp"
+#include "TParameter.h"
 
 class AnamergerSelector : public TSelector {
 public:
@@ -43,6 +44,7 @@ public:
 	virtual TList* GetOutputList() const { return fOutput; }
 	virtual void    SlaveTerminate() {}
 	virtual void    Terminate();
+	void SetTimeWindow(const Double_t& time_window) { time_window_ = time_window; }
 
 	void SetOutputFileName(const std::string& file_name) {
 		output_file_name_ = file_name;
@@ -62,6 +64,7 @@ protected:
 	TFile* fOutputFile;
 	std::string output_file_name_;
 	TF1* n_correction;
+	Double_t time_window_;
 
 	ClassDef(AnamergerSelector, 1)
 };

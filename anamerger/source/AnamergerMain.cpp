@@ -53,6 +53,7 @@ int main(int argc, char** argv)
 		YamlReader* yaml_reader_ = new YamlReader("AnamergerMain");
 		const std::string tree_name = yaml_reader_->GetString("TreeName");
 		const std::string merger_list_name = yaml_reader_->GetString("MergerListName");
+		const Double_t time_window = yaml_reader_->GetDouble("TimeWindow");
 		const bool use_proof = yaml_reader_->GetBoolean("UseProof", false, false);
 		if (use_proof) {
 			const std::string num_workers = yaml_reader_->GetString("NumWorkers");
@@ -60,11 +61,12 @@ int main(int argc, char** argv)
 			pr = TProof::Open("lite://", proof_arg.c_str());
 			std::vector<std::string> libs =
 			{
-			  getYamlcppLibDir() + "libyaml-cpp.so",
-			  getMergerLibDir() + "libTraceAnalyzerLib.so",
-			  getMergerLibDir() + "libmerger_data_dic.so",
-			  getMergerLibDir() + "libMergerLib.so",
-			  getMergerLibDir() + "libAnamergerLib.so"
+			  getYamlcppLibDir() + "/libyaml-cpp.so",
+			  getMergerLibDir() + "/libTraceAnalyzerLib.so",
+			  getMergerLibDir() + "/libmerger_data_dic.so",
+			  getMergerLibDir() + "/libMergerLib.so",
+			  getMergerLibDir() + "/libAnamergerLib.so",
+			  getPaassLibDir() + "/lib/libSysRootStrucLib.so"
 			};
 			for (const auto& lib : libs) {
 				pr->Load(lib.c_str());
@@ -90,12 +92,14 @@ int main(int argc, char** argv)
 			chain->SetProof();
 			std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
 			pr->AddInput(new TNamed("output_file_name", output_file_name.c_str()));
+			pr->AddInput(new TParameter<Double_t>("TimeWindow", time_window));
 			chain->Process("AnamergerSelector", "", n_entries, first_entry);
 		}
 		else {
 			std::cout << "Start Processing (Proof OFF)..." << std::endl;
 			AnamergerSelector* selector = new AnamergerSelector(chain);
 			selector->SetOutputFileName(output_file_name);
+			selector->SetTimeWindow(time_window);
 			chain->Process(selector, "", n_entries, first_entry);
 		}
 
