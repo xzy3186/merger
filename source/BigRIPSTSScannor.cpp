@@ -14,6 +14,7 @@ void BigRIPSTSScannor::SetReader()
 
 Bool_t BigRIPSTSScannor::IsInGate() {
 	auto sts = tree_data_->Get()->sts;
+	return true;
 	if (sts == 0)
 		return false;
 	else

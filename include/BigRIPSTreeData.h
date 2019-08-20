@@ -31,7 +31,7 @@ public:
         ts=tree_data.ts;
         sts=tree_data.sts;
         EventId=tree_data.EventId;
-	RunId=tree_data.RunId;
+		  RunId=tree_data.RunId;
     }
     virtual ~TreeData(){};
     
@@ -58,8 +58,9 @@ public:
         f11dt=0;
         beta=0;
         ts=0;
+        sts=0;
         EventId=0;
-	RunId=0;
+		  RunId=0;
     }
 };
 
