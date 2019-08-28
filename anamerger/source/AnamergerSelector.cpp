@@ -35,9 +35,12 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
 	fHistArray = new TObjArray();
 
 	fHistArray->Add(new TH2F("Tib_ClvE", "ClvE_Tib", 4000, 0, 4000, 1000, -3, 3));
-	fHistArray->Add(new TH2F("Tib_HighE", "Tib_HighE", 4000, 0, 8000, 1000, -3, 3));
-	fHistArray->Add(new TH2F("Tib_LowE", "Tib_LowE", 4000, 0, 8000, 1000, -3, 3));
+	fHistArray->Add(new TH2F("Tib_HighE", "Tib_HighE", 4000, -1000, 18000, 1000, -3, 3));
+	fHistArray->Add(new TH2F("Tib_LowE", "Tib_LowE", 4000, -1000, 18000, 1000, -3, 3));
+	fHistArray->Add(new TH2F("Tib_DynE", "Tib_DynE", 4000, -1000, 18000, 1000, -3, 3));
+	fHistArray->Add(new TH2F("Tib_Esum", "Tib_DynE", 4000, -1000, 18000, 1000, -3, 3));
 	fHistArray->Add(new TH2F("nQDC_nToF", "nQDC_nToF", 1600, -100, 1500, 1000, 0, 32000));
+	//fHistArray->Add(new TH2F("nQDC_nToF_center", "nQDC_nToF_center", 1600, -100, 1500, 1000, 0, 32000));
 	fHistArray->Add(new TH2F("nQDC_nToF_BG", "nQDC_nToF_BG", 1600, -100, 1500, 1000, 0, 32000));
 	fHistArray->Add(new TH2F("nToF_nQDC", "nTof_nQDC", 1000, 0, 32000, 1600, -100, 1000));
 	fHistArray->Add(new TH2F("BarN_nToF", "BarN_nToF", 1600, -100, 1500, 50, -0.5, 49.5));
@@ -88,6 +91,10 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 		auto beta = beta_.Get();
 		auto clover_vec = clover_vec_.Get();
 		auto vandle_vec = vandle_vec_.Get();
+		if (beta->high_gain_.energy_sum_ < 200)
+			return kTRUE;
+		//if (beta->low_gain_.energy_ > 2000)
+		//	return kTRUE;
 		for (const auto& imp : beta->output_vec_) {
 			if (imp.output_vec_.empty())
 				continue;
@@ -97,41 +104,54 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 			((TH1F*)fHistArray->FindObject("Tib"))->Fill(tib);
 			((TH2F*)fHistArray->FindObject("Tib_HighE"))->Fill(beta->high_gain_.energy_sum_, tib);
 			((TH2F*)fHistArray->FindObject("Tib_LowE"))->Fill(beta->low_gain_.energy_, tib);
+			((TH2F*)fHistArray->FindObject("Tib_DynE"))->Fill(beta->dyn_single_.energy_, tib);
+			((TH2F*)fHistArray->FindObject("Tib_Esum"))->Fill(beta->high_gain_.energy_sum_, tib);
 			for (const auto& clv : *clover_vec) {
-				auto hist = (TH2F*)fHistArray->FindObject("Tib_ClvE");
-				hist->Fill(clv.energy, tib);
+				{
+					auto hist = (TH2F*)fHistArray->FindObject("Tib_ClvE");
+					hist->Fill(clv.energy, tib);
+				}
 			}
 			{
 				auto hist = (TH1F*)fHistArray->FindObject("nMult");
 				hist->Fill(vandle_vec->size());
 			}
 			for (const auto& vandle : *vandle_vec) {
+				const double tdiff_vb = (double)vandle.sTime - (double)beta->dyn_single_.time_;
+				if (tdiff_vb < 200 || tdiff_vb > 250)
+					continue;
 				{
 					auto hist = (TH2F*)fHistArray->FindObject("Tib_nToF");
-					hist->Fill(vandle.tof,tib);
+					hist->Fill(vandle.corTof,tib);
 				}
 				if (tib > 0.01 && tib < time_window_) {
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF");
-						hist->Fill(vandle.tof - n_correction->Eval(vandle.qdc), vandle.qdc);
+						hist->Fill(vandle.corTof - n_correction->Eval(vandle.qdc), vandle.qdc);
 					}
+					//{
+					//	if (beta->high_gain_.pos_x_<2.6&&beta->high_gain_.pos_x_>2.4&&beta->high_gain_.pos_y_<2.6&&beta->high_gain_.pos_y_>2.4) {
+					//		auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_center");
+					//		hist->Fill(vandle.corTof - n_correction->Eval(vandle.qdc), vandle.qdc);
+					//	}
+					//}
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("nToF_nQDC");
 						hist->Fill(vandle.qdc, vandle.tof);
 					}
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("BarN_nToF");
-						hist->Fill(vandle.tof, vandle.barNum);
+						hist->Fill(vandle.corTof, vandle.barNum);
 					}
 					{
 						auto hist = (TH1F*)fHistArray->FindObject("nToF");
-						hist->Fill(vandle.tof);
+						hist->Fill(vandle.corTof);
 					}
 				}
 				if (tib > (0.0 - time_window_) && tib < -0.01) {
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_BG");
-						hist->Fill(vandle.tof - n_correction->Eval(vandle.qdc), vandle.qdc);
+						hist->Fill(vandle.corTof - n_correction->Eval(vandle.qdc), vandle.qdc);
 					}
 				}
 			}
