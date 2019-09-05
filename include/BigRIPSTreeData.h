@@ -18,7 +18,7 @@
 
 class TreeData {
 public:
-    TreeData( ){};
+	TreeData() { clear(); }
     TreeData(const TreeData &tree_data){
         tof=tree_data.tof;
         zet=tree_data.zet;

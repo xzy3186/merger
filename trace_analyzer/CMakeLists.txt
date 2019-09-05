@@ -9,3 +9,4 @@ G__TraceAnalyzerData.cxx
 
 install(TARGETS TraceAnalyzerLib LIBRARY DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libTraceAnalyzerData_rdict.pcm DESTINATION lib)
+#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libTraceAnalyzer_rdict.pcm DESTINATION lib)
