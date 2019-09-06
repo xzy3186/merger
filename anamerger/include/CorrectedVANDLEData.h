@@ -13,11 +13,13 @@ public:
 		vandle_data_ = vandle_data;
 	}
 	virtual ~CorrectedVANDLEData() {};
-	void SetTestData(double test_data) { test_data_ = test_data; }
+	void SetTestData(const double& test_data) { test_data_ = test_data; }
+	void SetCorrectedTof(const double& tof) { corrected_tof_ = tof; }
 
 protected:
 	processor_struct::VANDLES vandle_data_;
 	double test_data_;
+	double corrected_tof_;
 
 	ClassDef(CorrectedVANDLEData,1)
 };

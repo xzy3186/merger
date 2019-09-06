@@ -56,6 +56,15 @@ void CorrectionSelector::Begin(TTree* mergedData)
 		fOutputTree = new TTree("mergedCorrectedBeta", "mergedCorrectedBeta");
 		fOutputTree->Branch("corrected_vandle_vec", "std::vector<CorrectedVANDLEData>", &corrected_vandle_vec_);
 		fOutputTree->SetDirectory(fOutputFile);
+
+		if (corrector_) {
+			delete corrector_;
+			corrector_ = nullptr;
+		}
+		// create an instance of VANDLEToFCorrector
+		std::cout << "[CorrectionSelector::Begin()]: creating VANDLEToFCorrector(" << vandle_corrector_config_ << ")" << std::endl;
+		corrector_ = new VANDLEToFCorrector(vandle_corrector_config_);
+	
 	}
 }
 
@@ -79,6 +88,14 @@ void CorrectionSelector::SlaveBegin(TTree* mergedData)
 			else
 				proof_output_location_ = "./";
 		}
+		{
+			// read corrector config file name
+			TNamed* named = (TNamed*)fInput->FindObject("vandle_corrector_config");
+			if (named)
+				vandle_corrector_config_ = named->GetTitle();
+			else
+				vandle_corrector_config_ = "config_vandle_corrector.yaml";
+		}
 	}
 
 	if (gProofServ) {
@@ -92,6 +109,13 @@ void CorrectionSelector::SlaveBegin(TTree* mergedData)
 		std::cout << "SalveBegin() called. (PROOF OFF) " << std::endl;
 		return;
 	}
+
+	if (corrector_) {
+		delete corrector_;
+		corrector_ = nullptr;
+	}
+	// create an instance of VANDLEToFCorrector
+	corrector_ = new VANDLEToFCorrector(vandle_corrector_config_);
 
 	if (fProofFile) {
 		delete fProofFile;
@@ -168,6 +192,8 @@ Bool_t CorrectionSelector::Process(Long64_t entry) {
 			CorrectedVANDLEData data(vandle);
 			// set vandle.qdc + 1000 as a test
 			data.SetTestData(vandle.qdc + 1000);
+			// set corrected tof
+			data.SetCorrectedTof(corrector_->CorrectToF(*beta, vandle));
 			corrected_vandle_vec_.push_back(data);
 		}
 		beta_data_ = *beta;

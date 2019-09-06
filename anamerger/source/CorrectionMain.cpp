@@ -53,20 +53,13 @@ int main(int argc, char** argv)
 		YamlReader* yaml_reader_ = new YamlReader("AnamergerMain");
 		const std::string tree_name = yaml_reader_->GetString("TreeName");
 		const std::string merger_list_name = yaml_reader_->GetString("MergerListName");
+		const std::string vandle_corrector_config = yaml_reader_->GetString("VANDLECorrectorConfig");
 		const Double_t time_window = yaml_reader_->GetDouble("TimeWindow");
 		const bool use_proof = yaml_reader_->GetBoolean("UseProof", false, false);
 		if (use_proof) {
 			const std::string num_workers = yaml_reader_->GetString("NumWorkers");
 			const std::string proof_arg = "workers=" + num_workers;
 			pr = TProof::Open("lite://", proof_arg.c_str());
-			//auto lib_path = pr->Getenv("LD_LIBRARY_PATH");
-			//std::string new_path = lib_path.Data();
-			//new_path = new_path + ":" + getYamlcppLibDir() + ":" + getMergerLibDir() + ":" + getPaassLibDir();
-			//std::string new_path = "/opt/root/6.18.0/lib/:" + getYamlcppLibDir() + ":" + getMergerLibDir() + ":" + getPaassLibDir();
-			//pr->AddEnvVar("LD_LIBRARY_PATH", new_path.c_str());
-			//std::cout << "LD_LIBRARY_PATH=" << pr->Getenv("LD_LIBRARY_PATH").Data() << std::endl;
-			//std::cout << "NEW_PATH=" << new_path << std::endl;
-			//pr->AddEnvVar("LD_LIBRARY_PATH", new_path.c_str());
 			std::vector<std::string> libs =
 			{
 			  getYamlcppLibDir() + "/libyaml-cpp.so",
@@ -79,9 +72,6 @@ int main(int argc, char** argv)
 			};
 			for (const auto& lib : libs) {
 				pr->Load(lib.c_str());
-				//std::string cmd = "gSystem->Load(\\\"" + lib + "\\\");";
-				//std::cout << "gProof->Exec(" << cmd << ")" << std::endl;
-				//gProof->Exec(cmd.c_str());
 			}
 		}
 		TChain* chain = new TChain(tree_name.c_str());
@@ -101,26 +91,29 @@ int main(int argc, char** argv)
 		const unsigned long long first_entry = yaml_reader_->GetULong64("FirstEntry", false, 0);
 		const std::string proof_output_location = yaml_reader_->GetString("ProofOutputLocation", false, "./");
 
+		/** destroys YamlParameter instance **/
+		YamlParameter::Destroy();
+
 		if (use_proof) {
 			chain->SetProof();
 			std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
 			pr->AddInput(new TParameter<Bool_t>("use_proof", true));
 			pr->AddInput(new TNamed("output_file_prefix", output_file_name.c_str()));
 			pr->AddInput(new TNamed("proof_output_location", proof_output_location.c_str()));
+			pr->AddInput(new TNamed("vandle_corrector_config", vandle_corrector_config.c_str()));
 			chain->Process("CorrectionSelector", "", n_entries, first_entry);
 		}
 		else {
 			std::cout << "Start Processing (Proof OFF)..." << std::endl;
 			CorrectionSelector* selector = new CorrectionSelector(chain);
 			selector->SetFileName(output_file_name);
+			selector->SetCorrectorConfigName(vandle_corrector_config);
 			chain->Process(selector, "", n_entries, first_entry);
 		}
 
 		if (use_proof)
 			pr->Close();
 
-		/** destroys YamlParameter instance **/
-		YamlParameter::Destroy();
 	}
 	catch (std::string msg) {
 		std::cout << msg << std::endl;

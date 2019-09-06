@@ -11,6 +11,7 @@ add_library(AnamergerLib SHARED
 add_library(CorrectionLib SHARED
   G__Correction.cxx
   CorrectionSelector.cpp
+  VANDLEToFCorrector.cpp
 )
 
 install(TARGETS AnamergerLib LIBRARY DESTINATION lib)

@@ -24,6 +24,7 @@
 #include "OutputTreeData.hpp"
 #include "TParameter.h"
 #include "CorrectedVANDLEData.h"
+#include "VANDLEToFCorrector.h"
 
 class CorrectionSelector : public TSelector {
 public:
@@ -45,6 +46,7 @@ public:
 	virtual void    Terminate();
 
 	void SetFileName(const std::string& name) { file_name_ = name; }
+	void SetCorrectorConfigName(const std::string& name) { vandle_corrector_config_ = name; }
 
 protected:
 
@@ -66,7 +68,9 @@ protected:
 	Long64_t n_events = 0;
 	std::string file_name_;
 	std::string proof_output_location_;
+	std::string vandle_corrector_config_;
 	Bool_t use_proof_;
+	VANDLEToFCorrector* corrector_ = nullptr;
 	
 	void SetBranch();
 
