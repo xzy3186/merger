@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 		const std::string tree_name = yaml_reader_->GetString("TreeName");
 		const std::string merger_list_name = yaml_reader_->GetString("MergerListName");
 		const std::string vandle_corrector_config = yaml_reader_->GetString("VANDLECorrectorConfig");
-		const Double_t time_window = yaml_reader_->GetDouble("TimeWindow");
+		const Double_t time_window = yaml_reader_->GetDouble("TimeWindow", false, 0);
 		const bool use_proof = yaml_reader_->GetBoolean("UseProof", false, false);
 		if (use_proof) {
 			const std::string num_workers = yaml_reader_->GetString("NumWorkers");
