@@ -32,7 +32,7 @@ static beamline_detector_struc DEFAULT_BEAMLINE_DETECTOR_STRUC;
 class PspmtData : public TObject {
 public:
 
-   PspmtData(){}
+	PspmtData() :TObject() { Clear(); }
    virtual ~PspmtData(){}
 
    PspmtData(const PspmtData &obj):TObject(obj)

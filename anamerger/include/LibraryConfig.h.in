@@ -13,4 +13,9 @@ std::string getYamlcppLibDir()
     return "@YAML_CPP_LIB_DIR@";
 }
 
+std::string getPaassLibDir()
+{
+    return "@PAASS_DIR_PATH@";
+}
+
 #endif

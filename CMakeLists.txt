@@ -20,6 +20,7 @@ find_package(ROOT REQUIRED COMPONENTS RIO Net Proof)
 #---Define useful ROOT functions and macros (e.g. ROOT_GENERATE_DICTIONARY)
 include(${ROOT_USE_FILE})
 
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/anamerger/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tree_dump2)
@@ -49,6 +50,7 @@ add_executable(merger_pid MergerImpPid.cpp)
 add_executable(merger_beta MergerImpBeta.cpp)
 #add_executable(merger_imp_beta MergerBetaImp.cpp)
 add_executable(anamerger_main anamerger/source/AnamergerMain.cpp)
+add_executable(correction_main anamerger/source/CorrectionMain.cpp)
 add_executable(trace_analyzer_main trace_analyzer/TraceAnalyzerMain.cpp)
 
 target_link_libraries(merger_main ${ROOT_LIBRARIES} yaml-cpp MergerLib
@@ -61,6 +63,8 @@ target_link_libraries(merger_beta ${ROOT_LIBRARIES} yaml-cpp MergerLib
 #   MergerLib tree_dump_dic)
 target_link_libraries(anamerger_main ${ROOT_LIBRARIES} yaml-cpp MergerLib merger_data_dic
    SysRootStrucLib TraceAnalyzerLib AnamergerLib )
+target_link_libraries(correction_main ${ROOT_LIBRARIES} yaml-cpp MergerLib merger_data_dic
+   SysRootStrucLib TraceAnalyzerLib AnamergerLib CorrectionLib )
 target_link_libraries(trace_analyzer_main ${ROOT_LIBRARIES} yaml-cpp TraceAnalyzerLib SysRootStrucLib MergerLib merger_data_dic)
 
 install(TARGETS trace_analyzer_main
@@ -68,6 +72,10 @@ install(TARGETS trace_analyzer_main
         LIBRARY DESTINATION lib
         )
 install(TARGETS anamerger_main
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        )
+install(TARGETS correction_main
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )

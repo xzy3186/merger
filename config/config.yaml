@@ -70,4 +70,5 @@ BetaImplantMerger:
 
 BetaTreeMerger:
   YSOMapFile: "./yso_map.txt"
-  CorrelationRadius: 0.4
+  NumberOfDivisions: 10
+  CorrelationRadius: 0.2

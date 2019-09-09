@@ -11,8 +11,11 @@ class OutputTreeData : public T
 public:
     std::vector<U> output_vec_;
 
-    OutputTreeData(){}
+	 OutputTreeData():T() {}
     OutputTreeData( const T &input_event ):T(input_event){}
+	 OutputTreeData(const OutputTreeData<T, U>& obj) :T(obj) {
+		 output_vec_ = obj.output_vec_;
+	 }
     virtual ~OutputTreeData(){}
 
     void Clear()

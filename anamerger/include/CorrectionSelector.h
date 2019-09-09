@@ -1,7 +1,7 @@
-// AnamergerSelector for PROOF created by Rin Yokoyama on 7/21/2017
+// CorrectionSelector for PROOF created by Rin Yokoyama on 8/29/2019
 
-#ifndef ANAMERGER_SELECTOR_H
-#define ANAMERGER_SELECTOR_H
+#ifndef CORRECTION_SELECTOR_H
+#define CORRECTION_SELECTOR_H
 
 #include <iostream>
 #include <vector>
@@ -11,13 +11,11 @@
 #include <map>
 
 #include "TFile.h"
-#include "TH1.h"
-#include "TH2.h"
-#include "TF1.h"
 #include "TTree.h"
 #include "TTreeReader.h"
 #include "TTreeReaderValue.h"
 #include "TSelector.h"
+#include "TProofOutputFile.h"
 #include "TProofServ.h"
 #include "TMath.h"
 #include "PspmtData.hpp"
@@ -25,12 +23,14 @@
 #include "ProcessorRootStruc.hpp"
 #include "OutputTreeData.hpp"
 #include "TParameter.h"
+#include "CorrectedVANDLEData.h"
+#include "VANDLEToFCorrector.h"
 
-class AnamergerSelector : public TSelector {
+class CorrectionSelector : public TSelector {
 public:
 
-	AnamergerSelector(TTree* = 0);
-	virtual ~AnamergerSelector();
+	CorrectionSelector(TTree* = 0);
+	virtual ~CorrectionSelector();
 
 	virtual Int_t   Version() const { return 2; }
 	virtual void    Init(TTree* mergedData);
@@ -42,13 +42,11 @@ public:
 	virtual void    SetObject(TObject* obj) { fObject = obj; }
 	virtual void    SetInputList(TList* input) { fInput = input; }
 	virtual TList* GetOutputList() const { return fOutput; }
-	virtual void    SlaveTerminate() {}
+	virtual void    SlaveTerminate();
 	virtual void    Terminate();
-	void SetTimeWindow(const Double_t& time_window) { time_window_ = time_window; }
 
-	void SetOutputFileName(const std::string& file_name) {
-		output_file_name_ = file_name;
-	}
+	void SetFileName(const std::string& name) { file_name_ = name; }
+	void SetCorrectorConfigName(const std::string& name) { vandle_corrector_config_ = name; }
 
 protected:
 
@@ -56,17 +54,27 @@ protected:
 	TTreeReaderValue <OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>> beta_;
 	TTreeReaderValue <std::vector<processor_struct::CLOVERS>> clover_vec_;
 	TTreeReaderValue <std::vector<processor_struct::VANDLES>> vandle_vec_;
+	std::vector<CorrectedVANDLEData> corrected_vandle_vec_;
 	ULong64_t total_entry_;
 
-	// array for histograms
-	TObjArray* fHistArray;
 	// output file
-	TFile* fOutputFile;
-	std::string output_file_name_;
-	TF1* n_correction;
-	Double_t time_window_;
+	TFile* fOutputFile = nullptr;
+	TProofOutputFile* fProofFile = nullptr;
+	TTree* fOutputTree = nullptr;
+	OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>> beta_data_;
+	TBranch* fBetaBranch;
+	TBranch* fCloverBranch;
+	TBranch* fVandleBranch;
+	Long64_t n_events = 0;
+	std::string file_name_;
+	std::string proof_output_location_;
+	std::string vandle_corrector_config_;
+	Bool_t use_proof_;
+	VANDLEToFCorrector* corrector_ = nullptr;
+	
+	void SetBranch();
 
-	ClassDef(AnamergerSelector, 1)
+	ClassDef(CorrectionSelector, 1)
 };
 
 #endif

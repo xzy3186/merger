@@ -6,19 +6,19 @@
 #include "TROOT.h"
 #include "YamlParameter.hpp"
 #include "YamlReader.hpp"
-#include "AnamergerSelector.h"
+#include "CorrectionSelector.h"
 #include "LibraryConfig.h"
 
 void usage(char const* arg)
 {
-	std::cout << arg << "-c [yaml_file]" << std::endl;
+	std::cout << arg << "-c [yaml_file] -o [output_file]" << std::endl;
 }
 
 int main(int argc, char** argv)
 {
 	std::string input_file_name;
 	std::string config_file_name;
-	std::string output_file_name = "anamerger_output.root";
+	std::string output_file_name = "correction_output.root";
 
 	/** parsing commandline arguments **/
 	if (argc < 3) {
@@ -53,6 +53,7 @@ int main(int argc, char** argv)
 		YamlReader* yaml_reader_ = new YamlReader("AnamergerMain");
 		const std::string tree_name = yaml_reader_->GetString("TreeName");
 		const std::string merger_list_name = yaml_reader_->GetString("MergerListName");
+		const std::string vandle_corrector_config = yaml_reader_->GetString("VANDLECorrectorConfig");
 		const Double_t time_window = yaml_reader_->GetDouble("TimeWindow");
 		const bool use_proof = yaml_reader_->GetBoolean("UseProof", false, false);
 		if (use_proof) {
@@ -66,7 +67,8 @@ int main(int argc, char** argv)
 			  getMergerLibDir() + "/libmerger_data_dic.so",
 			  getMergerLibDir() + "/libMergerLib.so",
 			  getMergerLibDir() + "/libAnamergerLib.so",
-			  getPaassLibDir() + "/lib/libSysRootStrucLib.so"
+			  getMergerLibDir() + "/libCorrectionLib.so",
+			  getPaassLibDir() + "/lib/libSysRootStrucLib.so",
 			};
 			for (const auto& lib : libs) {
 				pr->Load(lib.c_str());
@@ -83,40 +85,44 @@ int main(int argc, char** argv)
 		}
 
 		mergerListFiles.close();
-		std::cout << "[AnamergerMain]: Number of TTrees added to the chain: " << chain->GetNtrees() << std::endl;
+		std::cout << "[CorrectionMain]: Number of TTrees added to the chain: " << chain->GetNtrees() << std::endl;
 
 		const unsigned long long n_entries = yaml_reader_->GetULong64("NumEntries", false, chain->GetEntries());
 		const unsigned long long first_entry = yaml_reader_->GetULong64("FirstEntry", false, 0);
+		const std::string proof_output_location = yaml_reader_->GetString("ProofOutputLocation", false, "./");
+
+		/** destroys YamlParameter instance **/
+		YamlParameter::Destroy();
 
 		if (use_proof) {
 			chain->SetProof();
 			std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
-			pr->AddInput(new TNamed("output_file_name", output_file_name.c_str()));
-			pr->AddInput(new TParameter<Double_t>("TimeWindow", time_window));
-			chain->Process("AnamergerSelector", "", n_entries, first_entry);
+			pr->AddInput(new TParameter<Bool_t>("use_proof", true));
+			pr->AddInput(new TNamed("output_file_prefix", output_file_name.c_str()));
+			pr->AddInput(new TNamed("proof_output_location", proof_output_location.c_str()));
+			pr->AddInput(new TNamed("vandle_corrector_config", vandle_corrector_config.c_str()));
+			chain->Process("CorrectionSelector", "", n_entries, first_entry);
 		}
 		else {
 			std::cout << "Start Processing (Proof OFF)..." << std::endl;
-			AnamergerSelector* selector = new AnamergerSelector(chain);
-			selector->SetOutputFileName(output_file_name);
-			selector->SetTimeWindow(time_window);
+			CorrectionSelector* selector = new CorrectionSelector(chain);
+			selector->SetFileName(output_file_name);
+			selector->SetCorrectorConfigName(vandle_corrector_config);
 			chain->Process(selector, "", n_entries, first_entry);
 		}
 
 		if (use_proof)
 			pr->Close();
 
-		/** destroys YamlParameter instance **/
-		YamlParameter::Destroy();
 	}
 	catch (std::string msg) {
 		std::cout << msg << std::endl;
-		std::cout << "[AnamergerMain]: exiting from main() due to the error" << std::endl;
+		std::cout << "[CorrectionMain]: exiting from main() due to the error" << std::endl;
 		return 1;
 	}
 	catch (std::bad_alloc) {
-		std::cout << "[AnamergerMain]: bad_alloc occured while setting up." << std::endl;
-		std::cout << "[AnamergerMain]: exiting from main() due to the error" << std::endl;
+		std::cout << "[CorrectionMain]: bad_alloc occured while setting up." << std::endl;
+		std::cout << "[CorrectionMain]: exiting from main() due to the error" << std::endl;
 		return 1;
 	}
 

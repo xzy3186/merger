@@ -44,7 +44,7 @@ BetaTreeMerger<TOUT,TIN1,TIN2>::BetaTreeMerger(TSScannorBase<TIN1> *input1, TSSc
 {
     YamlReader yaml_reader("BetaTreeMerger");
     yso_map_ = new YSOMap(yaml_reader.GetString("YSOMapFile"));
-    yso_map_->GenerateMap(10);
+    yso_map_->GenerateMap(yaml_reader.GetULong64("NumberOfDivisions",false,10));
     correlation_radius_ = yaml_reader.GetDouble("CorrelationRadius");
 }
 
