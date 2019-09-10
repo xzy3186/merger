@@ -36,20 +36,21 @@ protected:
 class VANDLEToFCorrector {
 public:
 	VANDLEToFCorrector() {}
-	VANDLEToFCorrector(const std::string &config_file) {
+	VANDLEToFCorrector(const std::string& config_file) {
 		pspmt_x_correction_ = nullptr;
 		pspmt_y_correction_ = nullptr;
 		Configure(config_file);
 	}
 	virtual ~VANDLEToFCorrector() {}
 
-	void Configure(const std::string &config_file);
-	double CorrectToF(const PspmtData &pspmt_data, const processor_struct::VANDLES &vandle , CorrectedVANDLEData& correctedData) const;
+	void Configure(const std::string& config_file);
+	double CorrectToF(const PspmtData& pspmt_data, const processor_struct::VANDLES& vandle, CorrectedVANDLEData& correctedData) const;
 
 protected:
 	std::map<int, VANDLEBar> vandle_bar_map_;
 	TF1* pspmt_x_correction_;
 	TF1* pspmt_y_correction_;
+	TF1* vandle_walk_correction_;
 	double pspmt_rotation_angle_;
 	double speed_of_light_medium_;
 
