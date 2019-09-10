@@ -10,6 +10,7 @@
 #include "YamlReader.hpp"
 #include "PspmtData.hpp"
 #include "ProcessorRootStruc.hpp"
+#include "CorrectedVANDLEData.h"
 
 class VANDLEBar {
 public:
@@ -43,7 +44,7 @@ public:
 	virtual ~VANDLEToFCorrector() {}
 
 	void Configure(const std::string &config_file);
-	double CorrectToF(const PspmtData &pspmt_data, const processor_struct::VANDLES &vandle ) const;
+	double CorrectToF(const PspmtData &pspmt_data, const processor_struct::VANDLES &vandle , CorrectedVANDLEData& correctedData) const;
 
 protected:
 	std::map<int, VANDLEBar> vandle_bar_map_;
