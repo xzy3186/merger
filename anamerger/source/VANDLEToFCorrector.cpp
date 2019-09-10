@@ -70,7 +70,6 @@ const TVector3* VANDLEToFCorrector::GetBetaPosition(const PspmtData& pspmt_data)
     const double y = pspmt_y_correction_->Eval(pspmt_data.high_gain_.pos_y_);
     TVector3* vector3 = new TVector3(x, y, 0);
     vector3->RotateZ(pspmt_rotation_angle_);
-	 vector3->SetY(-vector3->Y());
     return vector3;
 }
 
