@@ -51,6 +51,7 @@ protected:
 	TF1* pspmt_x_correction_;
 	TF1* pspmt_y_correction_;
 	double pspmt_rotation_angle_;
+	double speed_of_light_medium_;
 
 	const TVector3* GetBetaPosition(const PspmtData& pspmt_data) const;
 	const TVector3* GetVandlePosition(const processor_struct::VANDLES& vandle) const;
