@@ -44,6 +44,7 @@ void VANDLEToFCorrector::Configure(const std::string& config_file) {
             const double angle = TMath::Pi() * bar["Angle"].as<double>() / 180.0;
             vandle_bar_map_.emplace(bar_num, VANDLEBar(bar_num, z_off, angle, lr_off));
         }
+		  speed_of_light_medium_ = yaml_reader.GetDouble("SpeedOfLightMedium",false,13.4414);
     }
     YamlParameter::Destroy();
 
@@ -57,10 +58,11 @@ double VANDLEToFCorrector::CorrectToF(const PspmtData& pspmt_data, const process
     correctedData.SetTranformedX((*beta_pos).X());
     correctedData.SetTranformedY((*beta_pos).Y());
 
-    const double corrected_tof = vandle.tof * 10;  //test
     delete beta_pos;
     delete vandle_pos;
-    return corrected_tof;
+
+	 const double z0 = vandle_bar_map_.at(vandle.barNum).GetZZero();
+    return (z0/flight_length)*vandle.tof;
 }
 
 const TVector3* VANDLEToFCorrector::GetBetaPosition(const PspmtData& pspmt_data) const {
@@ -73,10 +75,11 @@ const TVector3* VANDLEToFCorrector::GetBetaPosition(const PspmtData& pspmt_data)
 
 const TVector3* VANDLEToFCorrector::GetVandlePosition(const processor_struct::VANDLES& vandle) const {
     const double angle = vandle_bar_map_.at(vandle.barNum).GetAngle();
-    const double zoffset = vandle_bar_map_.at(vandle.barNum).GetZOffset();
+    const double z0 = vandle_bar_map_.at(vandle.barNum).GetZZero();
     const double lrffset = vandle_bar_map_.at(vandle.barNum).GetLROffset();
-    const double z = vandle.tdiff;
-    const double x = 0;  // TODO: implement calculation
-    const double y = 0;  // TODO: implement calculation
+
+	 const double z = speed_of_light_medium_*0.5*vandle.tdiff; // 
+    const double x = z0*TMath::Cos(angle);
+    const double y = z0*TMath::Sin(angle);
     return new TVector3(x, y, z);
 }

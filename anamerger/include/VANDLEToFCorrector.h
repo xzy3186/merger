@@ -15,20 +15,20 @@
 class VANDLEBar {
 public:
 	VANDLEBar(){}
-	VANDLEBar(const int& bar_num, const double& z_offset, const double& angle, const double& lr_offset) :
+	VANDLEBar(const int& bar_num, const double& z_zero, const double& angle, const double& lr_offset) :
 		bar_num_(bar_num),
-		z_offset_(z_offset),
+		z_zero_(z_zero),
 		angle_(angle),
 		lr_offset_(lr_offset) {}
 	virtual ~VANDLEBar() {}
 
-	double GetZOffset() const { return z_offset_; }
+	double GetZZero() const { return z_zero_; }
 	double GetAngle() const { return angle_; }
 	double GetLROffset() const { return lr_offset_; }
 
 protected:
 	int bar_num_;
-	double z_offset_;
+	double z_zero_;
 	double angle_;
 	double lr_offset_;
 };
