@@ -112,7 +112,7 @@ void CorrectionSelector::SlaveBegin(TTree* mergedData) {
     }
     // open a TProofOutputFile
     std::string fullname = proof_output_location_ + filename;
-    fProofFile = new TProofOutputFile(fullname.c_str(), "M");
+    fProofFile = new TProofOutputFile(fullname.c_str(), "");
     fProofFile->SetOutputFileName(fullname.c_str());
 
     if (fOutputFile) {

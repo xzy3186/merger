@@ -12,7 +12,7 @@
 #pragma link C++ class vector<PspmtAnalyzerData>+;
 #pragma link C++ class event_info+;
 #pragma link C++ class vector<PspmtData>+;
-#pragma link C++ class vector<OutputTreeData<PspmtData,TreeData>>+:
+#pragma link C++ class vector<OutputTreeData<PspmtData,TreeData>>+;
 #pragma link C++ class CorrectionSelector+;
 #pragma link C++ class CorrectedVANDLEData+;
 #pragma link C++ class vector<CorrectedVANDLEData>+;

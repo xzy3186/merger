@@ -113,8 +113,10 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 				auto hist = (TH1F*)fHistArray->FindObject("nMult");
 				hist->Fill(vandle_vec->size());
 			}
-			for (const auto& vandle : *vandle_vec) {
-				const double tdiff_vb = (double)vandle.GetVandleData().sTime - (double)beta->dyn_single_.time_;
+			for (auto& vandle : *vandle_vec) {
+				if (!vandle.GetVandleData())
+					continue;
+				const double tdiff_vb = (double)vandle.GetVandleData()->sTime - (double)beta->dyn_single_.time_;
 				if (tdiff_vb < 200 || tdiff_vb > 250)
 					continue;
 				{
@@ -124,7 +126,7 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 				if (tib > 0.01 && tib < time_window_) {
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF");
-						hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData().qdc);
+						hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData()->qdc);
 					}
 					//{
 					//	if (beta->high_gain_.pos_x_<2.6&&beta->high_gain_.pos_x_>2.4&&beta->high_gain_.pos_y_<2.6&&beta->high_gain_.pos_y_>2.4) {
@@ -134,11 +136,11 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 					//}
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("nToF_nQDC");
-						hist->Fill(vandle.GetVandleData().qdc, vandle.GetCorrectedToF());
+						hist->Fill(vandle.GetVandleData()->qdc, vandle.GetCorrectedToF());
 					}
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("BarN_nToF");
-						hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData().barNum);
+						hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData()->barNum);
 					}
 					{
 						auto hist = (TH1F*)fHistArray->FindObject("nToF");
@@ -148,7 +150,7 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 				if (tib > (0.0 - time_window_) && tib < -0.01) {
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_BG");
-						hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData().qdc);
+						hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData()->qdc);
 					}
 				}
 			}
