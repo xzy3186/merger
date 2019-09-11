@@ -17,6 +17,8 @@ class CorrectedVANDLEData : public TObject {
     void SetCorrectedTof(const double& tof) { corrected_tof_ = tof; }
 	void SetTranformedX(const double& X) { transformed_X = X; }
 	void SetTranformedY(const double& Y) { transformed_Y = Y; }
+	processor_struct::VANDLES GetVandleData() const { return vandle_data_; }
+	double GetCorrectedToF() const { return corrected_tof_; }
 
    protected:
     processor_struct::VANDLES vandle_data_;
