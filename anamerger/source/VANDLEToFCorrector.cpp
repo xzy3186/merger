@@ -45,6 +45,7 @@ void VANDLEToFCorrector::Configure(const std::string& config_file) {
             vandle_bar_map_.emplace(bar_num, VANDLEBar(bar_num, z_off, angle, lr_off));
         }
 		  speed_of_light_medium_ = yaml_reader.GetDouble("SpeedOfLightMedium",false,13.4414);
+		  ideal_flight_path_ = yaml_reader.GetDouble("IdealFlightPath",false,100.);
 		  if (vandle_walk_correction_)
 			  delete vandle_walk_correction_;
 		  vandle_walk_correction_ = new TF1("WalkCorrection", yaml_reader.GetString("WalkFunction").c_str(), -100000, 100000);
@@ -71,7 +72,7 @@ double VANDLEToFCorrector::CorrectToF(const PspmtData& pspmt_data, const process
     delete vandle_pos;
 
 	 const double z0 = vandle_bar_map_.at(vandle.barNum).GetZZero();
-	 const double cor_tof = (z0 / flight_length) * vandle.tof; // vandle tof correction by flight length
+	 const double cor_tof = (ideal_flight_path_ / flight_length) * vandle.tof; // vandle tof correction by flight length
 	 const double walk_cor_tof = cor_tof - vandle_walk_correction_->Eval(vandle.qdc); // vandle tof walk correction
 	 return walk_cor_tof;
 }
