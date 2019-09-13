@@ -71,6 +71,7 @@ int main(int argc, char** argv)
 			  getPaassLibDir() + "/lib/libSysRootStrucLib.so",
 			};
 			for (const auto& lib : libs) {
+				std::cout << "loading libraries to proofserv: " << lib << std::endl;
 				pr->Load(lib.c_str());
 			}
 		}

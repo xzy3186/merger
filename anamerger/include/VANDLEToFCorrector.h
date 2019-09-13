@@ -39,6 +39,7 @@ public:
 	VANDLEToFCorrector(const std::string& config_file) {
 		pspmt_x_correction_ = nullptr;
 		pspmt_y_correction_ = nullptr;
+		vandle_walk_correction_ = nullptr;
 		Configure(config_file);
 	}
 	virtual ~VANDLEToFCorrector() {}

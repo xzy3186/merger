@@ -25,6 +25,7 @@
 #include "ProcessorRootStruc.hpp"
 #include "OutputTreeData.hpp"
 #include "TParameter.h"
+#include "CorrectedVANDLEData.h"
 
 class AnamergerSelector : public TSelector {
 public:
@@ -55,7 +56,7 @@ protected:
 	TTreeReader tree_reader_;
 	TTreeReaderValue <OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>> beta_;
 	TTreeReaderValue <std::vector<processor_struct::CLOVERS>> clover_vec_;
-	TTreeReaderValue <std::vector<processor_struct::VANDLES>> vandle_vec_;
+	TTreeReaderValue <std::vector<CorrectedVANDLEData>> vandle_vec_;
 	ULong64_t total_entry_;
 
 	// array for histograms
