@@ -200,7 +200,7 @@ void CorrectionSelector::SlaveTerminate() {
                 fOutputFile->cd();
                 fOutputTree->Write();
                 fProofFile->Print();
-                fOutput->Add(fProofFile);
+                //fOutput->Add(fProofFile);
                 fOutputTree->SetDirectory(0);
                 gDirectory = savedir;
                 std::cout << "File written " << fProofFile->GetDir() << fProofFile->GetFileName() << std::endl;
