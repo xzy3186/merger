@@ -66,6 +66,7 @@ int main(int argc, char** argv)
 			  getMergerLibDir() + "/libmerger_data_dic.so",
 			  getMergerLibDir() + "/libMergerLib.so",
 			  getMergerLibDir() + "/libAnamergerLib.so",
+			  getMergerLibDir() + "/libCorrectionLib.so",
 			  getPaassLibDir() + "/lib/libSysRootStrucLib.so"
 			};
 			for (const auto& lib : libs) {
