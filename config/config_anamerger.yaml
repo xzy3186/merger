@@ -1,8 +1,9 @@
 AnamergerMain:
-    TreeName: mergedBeta
-    MergerListName: "/home/msingh9/vandle18/YSO_trace_analysis/vandleDump/Ni78.txt"
+    TreeName: mergedCorrectedBeta
+    MergerListName: "./anamergerListGa84.txt"
     NumWorkers: 20
     PrintFrequency: 10000
     UseProof: True
-    #NumEntries: 10000
+    NumEntries: 30000000
     #FirstEntry: 0
+    TimeWindow: 1.0
