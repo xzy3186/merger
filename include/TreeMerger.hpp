@@ -194,7 +194,8 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
         }
         output_object_ = o_obj;
         input_scannor_1_->GetTree()->GetEntry(entry.second);
-        tree_->Fill();
+		  if(!output_object_.output_vec_.empty())
+				tree_->Fill();
     }
 
     return;
