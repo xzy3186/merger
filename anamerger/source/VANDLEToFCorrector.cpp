@@ -45,8 +45,11 @@ void VANDLEToFCorrector::Configure(const std::string& config_file) {
             vandle_bar_map_.emplace(bar_num, VANDLEBar(bar_num, z_off, angle, lr_off));
         }
 		  speed_of_light_medium_ = yaml_reader.GetDouble("SpeedOfLightMedium",false,13.4414);
+<<<<<<< HEAD
 		  ideal_flight_path_ = yaml_reader.GetDouble("IdealFlightPath",false,100.);
 		  tof_offset_ = yaml_reader.GetDouble("ToFOffset",false,1.48);
+=======
+>>>>>>> afcac116e438b7eb7edea9b1866aaf467bfff674
 		  if (vandle_walk_correction_)
 			  delete vandle_walk_correction_;
 		  vandle_walk_correction_ = new TF1("WalkCorrection", yaml_reader.GetString("WalkFunction").c_str(), -100000, 100000);
@@ -73,10 +76,16 @@ double VANDLEToFCorrector::CorrectToF(const PspmtData& pspmt_data, const process
     delete vandle_pos;
 
 	 const double z0 = vandle_bar_map_.at(vandle.barNum).GetZZero();
+<<<<<<< HEAD
 	 const double cor_tof = (ideal_flight_path_ / flight_length) * (vandle.tof+tof_offset_); // vandle tof correction by flight length
 	 //const double walk_cor_tof = cor_tof - vandle_walk_correction_->Eval(vandle.qdc); // vandle tof walk correction
 	 //std::cout << "tof (corrected/raw/FL/IFL/Offset) = (" << cor_tof << " / " << vandle.tof << " / " << flight_length << "/" << ideal_flight_path_ << "/" << tof_offset_ << ")" << std::endl;
 	 return cor_tof;
+=======
+	 const double cor_tof = (z0 / flight_length) * vandle.tof; // vandle tof correction by flight length
+	 const double walk_cor_tof = cor_tof - vandle_walk_correction_->Eval(vandle.qdc); // vandle tof walk correction
+	 return walk_cor_tof;
+>>>>>>> afcac116e438b7eb7edea9b1866aaf467bfff674
 }
 
 const TVector3* VANDLEToFCorrector::GetBetaPosition(const PspmtData& pspmt_data) const {
@@ -92,8 +101,8 @@ const TVector3* VANDLEToFCorrector::GetVandlePosition(const processor_struct::VA
     const double z0 = vandle_bar_map_.at(vandle.barNum).GetZZero();
     const double lrffset = vandle_bar_map_.at(vandle.barNum).GetLROffset();
 
-	 const double z = speed_of_light_medium_*0.5*vandle.tdiff; // 
-    const double x = z0*TMath::Cos(angle);
-    const double y = z0*TMath::Sin(angle);
+    const double z = speed_of_light_medium_ * 0.5 * vandle.tdiff;  //
+    const double x = z0 * TMath::Cos(angle);
+    const double y = z0 * TMath::Sin(angle);
     return new TVector3(x, y, z);
 }

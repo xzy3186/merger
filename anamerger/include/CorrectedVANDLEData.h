@@ -21,6 +21,9 @@ class CorrectedVANDLEData : public TObject {
 	double GetTranformedY() const { return transformed_Y; }
 	processor_struct::VANDLES *GetVandleData() { return &vandle_data_; }
 	double GetCorrectedToF() const { return corrected_tof_; }
+    double GetTransformedX() const {return transformed_X; }
+    double GetTransformedY() const {return transformed_Y; }
+
 
    protected:
     processor_struct::VANDLES vandle_data_;

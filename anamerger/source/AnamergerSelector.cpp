@@ -1,18 +1,15 @@
 #include "AnamergerSelector.h"
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <string>
 
 ClassImp(AnamergerSelector);
 
-AnamergerSelector::AnamergerSelector(TTree* mergedData) :
-	tree_reader_(mergedData),
-	beta_(tree_reader_, "mergedBeta"),
-	clover_vec_(tree_reader_, "clover_vec_"),
-	vandle_vec_(tree_reader_, "corrected_vandle_vec"),
-	output_file_name_("anamerger_output.root")
-{
-
+AnamergerSelector::AnamergerSelector(TTree* mergedData) : tree_reader_(mergedData),
+                                                          beta_(tree_reader_, "mergedBeta"),
+                                                          clover_vec_(tree_reader_, "clover_vec_"),
+                                                          vandle_vec_(tree_reader_, "corrected_vandle_vec"),
+                                                          output_file_name_("anamerger_output.root") {
 }
 
 AnamergerSelector::~AnamergerSelector()
@@ -27,14 +24,13 @@ AnamergerSelector::~AnamergerSelector()
 	}
 }
 
-void AnamergerSelector::Begin(TTree* mergedData)
-{
-	GetOutputList()->Clear();
-	if (fInput) {
-		TNamed* named = (TNamed*)fInput->FindObject("output_file_name");
-		if (named)
-			output_file_name_ = named->GetTitle();
-	}
+void AnamergerSelector::Begin(TTree* mergedData) {
+    GetOutputList()->Clear();
+    if (fInput) {
+        TNamed* named = (TNamed*)fInput->FindObject("output_file_name");
+        if (named)
+            output_file_name_ = named->GetTitle();
+    }
 }
 
 void AnamergerSelector::SlaveBegin(TTree* mergedData)
@@ -92,10 +88,9 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
 	return;
 }
 
-void AnamergerSelector::Init(TTree* mergedData)
-{
-	tree_reader_.SetTree(mergedData);
-	return;
+void AnamergerSelector::Init(TTree* mergedData) {
+    tree_reader_.SetTree(mergedData);
+    return;
 }
 
 Bool_t AnamergerSelector::Process(Long64_t entry) {
@@ -197,6 +192,14 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 }
 
 void AnamergerSelector::Terminate() {
+    fOutputFile = new TFile(output_file_name_.c_str(), "recreate");
+    std::cout << "[AnamergerSelector::Terminate()]: output file: " << output_file_name_ << std::endl;
+    // write the histograms
+    TIter next(GetOutputList());
+    while (TObject* obj = next()) {
+        std::cout << "[AnamergerSelector::Terminate]: writing " << obj->GetName() << " to file." << std::endl;
+        obj->Write();
+    }
 
 	if (fOutputFile) {
 		delete fOutputFile;
@@ -212,6 +215,5 @@ void AnamergerSelector::Terminate() {
 	}
 
 	fOutputFile->Close();
-
-	return;
+    return;
 }
