@@ -46,6 +46,7 @@ void VANDLEToFCorrector::Configure(const std::string& config_file) {
         }
 		  speed_of_light_medium_ = yaml_reader.GetDouble("SpeedOfLightMedium",false,13.4414);
 		  ideal_flight_path_ = yaml_reader.GetDouble("IdealFlightPath",false,100.);
+		  tof_offset_ = yaml_reader.GetDouble("ToFOffset",false,1.48);
 		  if (vandle_walk_correction_)
 			  delete vandle_walk_correction_;
 		  vandle_walk_correction_ = new TF1("WalkCorrection", yaml_reader.GetString("WalkFunction").c_str(), -100000, 100000);
@@ -67,14 +68,15 @@ double VANDLEToFCorrector::CorrectToF(const PspmtData& pspmt_data, const process
     const double flight_length = ((*beta_pos) - (*vandle_pos)).Mag();
     correctedData.SetTranformedX((*beta_pos).X());
     correctedData.SetTranformedY((*beta_pos).Y());
-
+	 //std::cout << "beta(" << (*beta_pos).X() << ", " << (*beta_pos).Y() << "), vandle(" << (*vandle_pos).X() << ", " << (*vandle_pos).Y() << ", " << (*vandle_pos).Z() << "), length: " << flight_length << std::endl;
     delete beta_pos;
     delete vandle_pos;
 
 	 const double z0 = vandle_bar_map_.at(vandle.barNum).GetZZero();
-	 const double cor_tof = (ideal_flight_path_ / flight_length) * vandle.tof; // vandle tof correction by flight length
-	 const double walk_cor_tof = cor_tof - vandle_walk_correction_->Eval(vandle.qdc); // vandle tof walk correction
-	 return walk_cor_tof;
+	 const double cor_tof = (ideal_flight_path_ / flight_length) * (vandle.tof+tof_offset_); // vandle tof correction by flight length
+	 //const double walk_cor_tof = cor_tof - vandle_walk_correction_->Eval(vandle.qdc); // vandle tof walk correction
+	 //std::cout << "tof (corrected/raw/FL/IFL/Offset) = (" << cor_tof << " / " << vandle.tof << " / " << flight_length << "/" << ideal_flight_path_ << "/" << tof_offset_ << ")" << std::endl;
+	 return cor_tof;
 }
 
 const TVector3* VANDLEToFCorrector::GetBetaPosition(const PspmtData& pspmt_data) const {

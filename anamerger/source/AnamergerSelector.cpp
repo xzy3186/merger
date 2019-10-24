@@ -17,7 +17,14 @@ AnamergerSelector::AnamergerSelector(TTree* mergedData) :
 
 AnamergerSelector::~AnamergerSelector()
 {
-
+	if (fHistArray) {
+		delete fHistArray;
+		fHistArray = nullptr;
+	}
+	if (fOutputFile) {
+		delete fOutputFile;
+		fOutputFile = nullptr;
+	}
 }
 
 void AnamergerSelector::Begin(TTree* mergedData)
@@ -32,6 +39,10 @@ void AnamergerSelector::Begin(TTree* mergedData)
 
 void AnamergerSelector::SlaveBegin(TTree* mergedData)
 {
+	if (fHistArray) {
+		delete fHistArray;
+		fHistArray = nullptr;
+	}
 	fHistArray = new TObjArray();
 
 	fHistArray->Add(new TH2F("Tib_ClvE", "ClvE_Tib", 4000, 0, 4000, 1000, -3, 3));
@@ -39,14 +50,14 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
 	fHistArray->Add(new TH2F("Tib_LowE", "Tib_LowE", 4000, -1000, 18000, 1000, -3, 3));
 	fHistArray->Add(new TH2F("Tib_DynE", "Tib_DynE", 4000, -1000, 18000, 1000, -3, 3));
 	fHistArray->Add(new TH2F("Tib_Esum", "Tib_DynE", 4000, -1000, 18000, 1000, -3, 3));
-	fHistArray->Add(new TH2F("nQDC_nToF", "nQDC_nToF", 1600, -100, 1500, 1000, 0, 32000));
-	fHistArray->Add(new TH2F("nQDC_nToF_center", "nQDC_nToF_center", 1600, -100, 1500, 1000, 0, 32000));
-	fHistArray->Add(new TH2F("nQDC_nToF_center_orig", "nQDC_nToF_center_orig", 1600, -100, 1500, 1000, 0, 32000));
-	fHistArray->Add(new TH2F("nQDC_nToF_BG", "nQDC_nToF_BG", 1600, -100, 1500, 1000, 0, 32000));
-	fHistArray->Add(new TH2F("nQDC_nToF_BG_center", "nQDC_nToF_BG_center", 1600, -100, 1500, 1000, 0, 32000));
-	fHistArray->Add(new TH2F("nQDC_nToF_BG_center_orig", "nQDC_nToF_BG_center_orig", 1600, -100, 1500, 1000, 0, 32000));
+	fHistArray->Add(new TH2F("nQDC_nToF", "nQDC_nToF", 3200, -100, 1500, 1000, 0, 32000));
+	fHistArray->Add(new TH2F("nQDC_nToF_orig", "nQDC_nToF_orig", 3200, -100, 1500, 1000, 0, 32000));
+	fHistArray->Add(new TH2F("nQDC_nToF_BG", "nQDC_nToF_BG", 3200, -100, 1500, 1000, 0, 32000));
+	fHistArray->Add(new TH2F("nQDC_nToF_BG_orig", "nQDC_nToF_BG_orig", 3200, -100, 1500, 1000, 0, 32000));
 	fHistArray->Add(new TH2F("nToF_nQDC", "nTof_nQDC", 1000, 0, 32000, 1600, -100, 1000));
 	fHistArray->Add(new TH2F("BarN_nToF", "BarN_nToF", 1600, -100, 1500, 50, -0.5, 49.5));
+	fHistArray->Add(new TH2F("BarN_ntdiff_top", "BarN_ntdiff_top", 1600, -20, 20, 50, -0.5, 49.5));
+	fHistArray->Add(new TH2F("BarN_ntdiff_bottom", "BarN_ntdiff_bottom", 1600, -20, 20, 50, -0.5, 49.5));
 	fHistArray->Add(new TH1F("Tib", "Tib", 1000, -3, 3));
 	fHistArray->Add(new TH2F("Tib_nToF", "Tib_nToF", 1600, -100, 1500, 1000, -3, 3));
 	fHistArray->Add(new TH1F("nMult", "nMult", 50, -0.5, 49.5));
@@ -57,6 +68,9 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
 	while (auto hist = next()) {
 		GetOutputList()->Add(hist);
 	}
+
+	n_correction = new TF1("n_correction", "[0]+[1]*pow(x,2)", 0, 65536);
+	n_correction->SetParameters(0.0, 6.5E-9);
 
 	if (fInput) {
 		TParameter<Double_t>* time_window = (TParameter<Double_t>*)fInput->FindObject("TimeWindow");
@@ -135,17 +149,10 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 						hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData()->qdc);
 					}
 					{
-						if (beta->high_gain_.pos_x_<3.&&beta->high_gain_.pos_x_>2.&&beta->high_gain_.pos_y_<3.&&beta->high_gain_.pos_y_>2.) {
-							{
-								auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_center");
-								hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData()->qdc);
-							}
-							{
-								auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_center_orig");
-								hist->Fill(vandle.GetVandleData()->corTof, vandle.GetVandleData()->qdc);
-							}
-						}
+						auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_orig");
+						hist->Fill(vandle.GetVandleData()->corTof-n_correction->Eval(vandle.GetVandleData()->qdc), vandle.GetVandleData()->qdc);
 					}
+
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("nToF_nQDC");
 						hist->Fill(vandle.GetVandleData()->qdc, vandle.GetCorrectedToF());
@@ -153,6 +160,18 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 					{
 						auto hist = (TH2F*)fHistArray->FindObject("BarN_nToF");
 						hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData()->barNum);
+					}
+					{
+						if (vandle.GetTranformedY() < -2) {
+							auto hist = (TH2F*)fHistArray->FindObject("BarN_ntdiff_bottom");
+							hist->Fill(vandle.GetVandleData()->tdiff, vandle.GetVandleData()->barNum);
+						}
+					}
+					{
+						if (vandle.GetTranformedY() > 2) {
+							auto hist = (TH2F*)fHistArray->FindObject("BarN_ntdiff_top");
+							hist->Fill(vandle.GetVandleData()->tdiff, vandle.GetVandleData()->barNum);
+						}
 					}
 					{
 						auto hist = (TH1F*)fHistArray->FindObject("nToF");
@@ -164,15 +183,9 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 						auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_BG");
 						hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData()->qdc);
 					}
-					if (beta->high_gain_.pos_x_<3.&&beta->high_gain_.pos_x_>2.&&beta->high_gain_.pos_y_<3.&&beta->high_gain_.pos_y_>2.) {
-						{
-							auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_center");
-							hist->Fill(vandle.GetCorrectedToF(), vandle.GetVandleData()->qdc);
-						}
-						{
-							auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_center_orig");
-							hist->Fill(vandle.GetVandleData()->corTof, vandle.GetVandleData()->qdc);
-						}
+					{
+						auto hist = (TH2F*)fHistArray->FindObject("nQDC_nToF_BG_orig");
+						hist->Fill(vandle.GetVandleData()->corTof-n_correction->Eval(vandle.GetVandleData()->qdc), vandle.GetVandleData()->qdc);
 					}
 				}
 			}
@@ -185,6 +198,10 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 
 void AnamergerSelector::Terminate() {
 
+	if (fOutputFile) {
+		delete fOutputFile;
+		fOutputFile = nullptr;
+	}
 	fOutputFile = new TFile(output_file_name_.c_str(), "recreate");
 	std::cout << "[AnamergerSelector::Terminate()]: output file: " << output_file_name_ << std::endl;
 	// write the histograms
