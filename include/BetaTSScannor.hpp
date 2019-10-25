@@ -4,7 +4,7 @@
 #define VANDLE_MERGER_BETATSSCANNOR_HPP_
 
 #include "TSScannorBase.hpp"
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "PspmtData.hpp"
 
 /** timestamp scannor class for beta events **/

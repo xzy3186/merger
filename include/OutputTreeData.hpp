@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <TObject.h>
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 
 template <class T, class U>
 class OutputTreeData : public T

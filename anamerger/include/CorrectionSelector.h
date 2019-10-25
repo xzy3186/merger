@@ -20,7 +20,7 @@
 #include "TMath.h"
 #include "PspmtData.hpp"
 #include "BigRIPSTreeData.h"
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "OutputTreeData.hpp"
 #include "TParameter.h"
 #include "CorrectedVANDLEData.h"

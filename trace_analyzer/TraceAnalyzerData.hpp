@@ -1,7 +1,7 @@
 #ifndef TRACE_ANALYZER_DATA_HPP
 #define TRACE_ANALYZER_DATA_HPP
 
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 
 class TraceAnalyzerData : public TObject {
 public:

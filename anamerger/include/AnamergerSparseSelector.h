@@ -18,7 +18,7 @@
 #include "BigRIPSTreeData.h"
 #include "CorrectedVANDLEData.h"
 #include "OutputTreeData.hpp"
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "PspmtData.hpp"
 #include "TF1.h"
 #include "TFile.h"

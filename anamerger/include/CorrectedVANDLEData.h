@@ -4,7 +4,7 @@
 #define CORRECTED_VANDLE_DATA_H
 
 #include <iostream>
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 
 class CorrectedVANDLEData : public TObject {
    public:

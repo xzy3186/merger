@@ -4,7 +4,7 @@
 #define VANDLE_MERGER_IMPLANTTSSCANNOR_HPP_
 
 #include "TSScannorBase.hpp"
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
 #include "PspmtData.hpp"

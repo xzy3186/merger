@@ -62,12 +62,12 @@ target_link_libraries(merger_beta ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} Merger
 #target_link_libraries(merger_imp_beta ${ROOT_LIBRARIES} yaml-cpp MergerData
 #   MergerLib tree_dump_dic)
 target_link_libraries(correction_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
-   SysRootStrucLib TraceAnalyzerLib AnamergerLib CorrectionLib )
+   PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
 target_link_libraries(anamerger_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
-   SysRootStrucLib TraceAnalyzerLib AnamergerLib CorrectionLib )
+   PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
 target_link_libraries(anamerger_sparse_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
-   SysRootStrucLib TraceAnalyzerLib AnamergerLib CorrectionLib )
-target_link_libraries(trace_analyzer_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} TraceAnalyzerLib SysRootStrucLib MergerLib merger_data_dic)
+   PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
+target_link_libraries(trace_analyzer_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} TraceAnalyzerLib PaassRootStruct MergerLib merger_data_dic)
 
 install(TARGETS trace_analyzer_main
         RUNTIME DESTINATION bin

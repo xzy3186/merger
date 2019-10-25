@@ -1,7 +1,7 @@
 #ifndef PSPMT__DATA_HPP
 #define PSPMT__DATA_HPP
 
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 
 struct pspmt_struc{
    Double_t pos_x_ = -999;

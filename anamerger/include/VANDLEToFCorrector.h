@@ -9,7 +9,7 @@
 #include "TVector3.h"
 #include "YamlReader.hpp"
 #include "PspmtData.hpp"
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "CorrectedVANDLEData.h"
 
 class VANDLEBar {
@@ -55,6 +55,7 @@ protected:
 	double pspmt_rotation_angle_;
 	double speed_of_light_medium_;
 	double ideal_flight_path_;
+	double tof_offset_;
 
 	const TVector3* GetBetaPosition(const PspmtData& pspmt_data) const;
 	const TVector3* GetVandlePosition(const processor_struct::VANDLES& vandle) const;

@@ -2,7 +2,7 @@
 #define TRACE_ANALYZER_HPP
 
 #include <TTree.h>
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "TraceAnalyzerData.hpp"
 #include "YamlReader.hpp"
 

@@ -2,7 +2,7 @@
 #define PSPMT_ANALYZER_HPP
 #include <fstream>
 #include <TTree.h>
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "PspmtAnalyzerData.hpp"
 #include "PspmtData.hpp"
 #include "TraceAnalyzer.hpp"

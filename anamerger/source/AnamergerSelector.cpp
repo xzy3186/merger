@@ -159,13 +159,13 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 					{
 						if (vandle.GetTranformedY() < -2) {
 							auto hist = (TH2F*)fHistArray->FindObject("BarN_ntdiff_bottom");
-							hist->Fill(vandle.GetVandleData()->tdiff, vandle.GetVandleData()->barNum);
+							hist->Fill(vandle.GetVandleData()->tDiff, vandle.GetVandleData()->barNum);
 						}
 					}
 					{
 						if (vandle.GetTranformedY() > 2) {
 							auto hist = (TH2F*)fHistArray->FindObject("BarN_ntdiff_top");
-							hist->Fill(vandle.GetVandleData()->tdiff, vandle.GetVandleData()->barNum);
+							hist->Fill(vandle.GetVandleData()->tDiff, vandle.GetVandleData()->barNum);
 						}
 					}
 					{
@@ -201,19 +201,12 @@ void AnamergerSelector::Terminate() {
         obj->Write();
     }
 
+	fOutputFile->Close();
+
 	if (fOutputFile) {
 		delete fOutputFile;
 		fOutputFile = nullptr;
 	}
-	fOutputFile = new TFile(output_file_name_.c_str(), "recreate");
-	std::cout << "[AnamergerSelector::Terminate()]: output file: " << output_file_name_ << std::endl;
-	// write the histograms
-	TIter next(GetOutputList());
-	while (TObject * obj = next()) {
-		std::cout << "[AnamergerSelector::Terminate]: writing " << obj->GetName() << " to file." << std::endl;
-		obj->Write();
-	}
 
-	fOutputFile->Close();
     return;
 }

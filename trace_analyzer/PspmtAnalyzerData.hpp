@@ -1,7 +1,7 @@
 #ifndef PSPMT_ANALYZER_DATA_HPP
 #define PSPMT_ANALYZER_DATA_HPP
 
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "TraceAnalyzerData.hpp"
 
 struct pspmt_data_struc{

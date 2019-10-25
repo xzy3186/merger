@@ -14,7 +14,7 @@
 #include "TSelector.h"
 #include "Rtypes.h"
 #include "TMath.h"
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "TraceAnalyzer.hpp"
 #include "PspmtAnalyzer.hpp"
 #include "YamlParameter.hpp"

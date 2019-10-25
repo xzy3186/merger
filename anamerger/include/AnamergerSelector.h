@@ -22,7 +22,7 @@
 #include "TMath.h"
 #include "PspmtData.hpp"
 #include "BigRIPSTreeData.h"
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "OutputTreeData.hpp"
 #include "TParameter.h"
 #include "CorrectedVANDLEData.h"
@@ -43,7 +43,7 @@ public:
 	virtual void    SetObject(TObject* obj) { fObject = obj; }
 	virtual void    SetInputList(TList* input) { fInput = input; }
 	virtual TList* GetOutputList() const { return fOutput; }
-	virtual void    SlaveTerminate() {}
+	virtual void    SlaveTerminate() { tree_reader_.SetTree((TTree*)nullptr); }
 	virtual void    Terminate();
 	void SetTimeWindow(const Double_t& time_window) { time_window_ = time_window; }
 
@@ -60,11 +60,11 @@ protected:
 	ULong64_t total_entry_;
 
 	// array for histograms
-	TObjArray* fHistArray;
+	TObjArray* fHistArray = nullptr;
 	// output file
-	TFile* fOutputFile;
+	TFile* fOutputFile = nullptr;
 	std::string output_file_name_;
-	TF1* n_correction;
+	TF1* n_correction = nullptr;
 	Double_t time_window_;
 
 	ClassDef(AnamergerSelector, 1)

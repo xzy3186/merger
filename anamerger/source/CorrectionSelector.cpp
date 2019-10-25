@@ -154,6 +154,8 @@ void CorrectionSelector::SetBranch() {
         count++;
         if (!count)
             continue;
+		  if (count == 2)
+			  continue;
         TClass* tclass = (TClass*)gROOT->GetListOfClasses()->FindObject(br->GetClassName());
         auto addr = tclass->New();                                     //new instance of the class object filled in the branch
         br->SetAddress(addr);                                          // SetBranchAddress to the input tree
@@ -208,6 +210,7 @@ void CorrectionSelector::SlaveTerminate() {
             }
         }
     }
+	 tree_reader_.SetTree((TTree*)nullptr);
     return;
 }
 

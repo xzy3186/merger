@@ -14,6 +14,6 @@ add_library(MergerLib SHARED
 )
 
 #target_link_libraries(MergerLib SysRootStrucLib)
-target_link_libraries(MergerLib merger_data_dic SysRootStrucLib ${ROOT_LIBRARIES})
+target_link_libraries(MergerLib merger_data_dic PaassRootStruct ${ROOT_LIBRARIES})
 
 install(TARGETS MergerLib DESTINATION lib)

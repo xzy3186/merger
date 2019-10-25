@@ -5,7 +5,7 @@
 #include "BetaTSScannor.hpp"
 #include "BigRIPSTSScannor.hpp"
 #include "ImplantTSScannor.hpp"
-#include "ProcessorRootStruc.hpp"
+#include "PaassRootStruct.hpp"
 #include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
 #include "TreeMerger.hpp"
