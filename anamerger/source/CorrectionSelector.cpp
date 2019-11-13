@@ -8,6 +8,7 @@ ClassImp(CorrectionSelector);
 CorrectionSelector::CorrectionSelector(TTree* mergedData) : tree_reader_(mergedData),
                                                             beta_(tree_reader_, "mergedBeta"),
                                                             clover_vec_(tree_reader_, "clover_vec_"),
+                                                            gammascint_vec_(tree_reader_, "gamma_scint_vec_"),
                                                             vandle_vec_(tree_reader_, "vandle_vec_") {
 }
 
@@ -154,8 +155,8 @@ void CorrectionSelector::SetBranch() {
         count++;
         if (!count)
             continue;
-		  if (count == 2)
-			  continue;
+		  if (count == 3)
+				continue;
         TClass* tclass = (TClass*)gROOT->GetListOfClasses()->FindObject(br->GetClassName());
         auto addr = tclass->New();                                     //new instance of the class object filled in the branch
         br->SetAddress(addr);                                          // SetBranchAddress to the input tree
@@ -175,6 +176,7 @@ Bool_t CorrectionSelector::Process(Long64_t entry) {
     {
         auto beta = beta_.Get();
         auto clover_vec = clover_vec_.Get();
+        auto gamma_scint_vec = gammascint_vec_.Get();
         auto vandle_vec = vandle_vec_.Get();
         for (auto const& vandle : *vandle_vec) {
             CorrectedVANDLEData data(vandle);

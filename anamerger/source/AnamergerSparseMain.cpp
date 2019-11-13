@@ -67,7 +67,7 @@ int main(int argc, char** argv)
 			  getMergerLibDir() + "/libMergerLib.so",
 			  getMergerLibDir() + "/libAnamergerLib.so",
 			  getMergerLibDir() + "/libCorrectionLib.so",
-			  getPaassLibDir() + "/lib/libSysRootStrucLib.so"
+			  getPaassLibDir() + "/lib/libPaassRootStruct.so"
 			};
 			for (const auto& lib : libs) {
 				pr->Load(lib.c_str());

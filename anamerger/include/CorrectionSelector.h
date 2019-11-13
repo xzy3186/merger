@@ -53,6 +53,7 @@ protected:
 	TTreeReader tree_reader_;
 	TTreeReaderValue <OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>> beta_;
 	TTreeReaderValue <std::vector<processor_struct::CLOVERS>> clover_vec_;
+	TTreeReaderValue <std::vector<processor_struct::GAMMASCINT>> gammascint_vec_;
 	TTreeReaderValue <std::vector<processor_struct::VANDLES>> vandle_vec_;
 	std::vector<CorrectedVANDLEData> corrected_vandle_vec_;
 	ULong64_t total_entry_;
