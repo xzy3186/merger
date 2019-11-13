@@ -21,17 +21,16 @@ Bool_t ImplantTSScannor::IsInGate()
     auto pspmt_low = tree_data_->Get()->low_gain_;
     if(!pspmt_low.valid_)
         return false;
-    return true;
+
 	 // Energy gate on pspmt low energy
-    //if(pspmt_low.energy_ < 2000 || pspmt_low.energy_ > 8000 )
-    //    return false;
+    if(pspmt_low.energy_ < 2000 || pspmt_low.energy_ > 8000 )
+        return false;
 
     // Anti-gating on veto
-    {
-        if(tree_data_->Get()->veto_first_.energy_>10. && tree_data_->Get()->veto_second_.energy_>10.)
-            return false;
-    }
-    return true;
+    //{
+    //    if(tree_data_->Get()->veto_first_.energy_>10. && tree_data_->Get()->veto_second_.energy_>10.)
+    //        return false;
+    //}
 
     // Gating on dE Si
     //{
@@ -47,6 +46,7 @@ Bool_t ImplantTSScannor::IsInGate()
     //    else
     //        return false;
     //}
+    return true;
 }
 
 const std::string MergedImplantTSScannor::kMsgPrefix("[MergedImplantTSScannor]:");
