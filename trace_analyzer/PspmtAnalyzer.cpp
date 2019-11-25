@@ -6,7 +6,7 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    const std::string tree_name = yaml_reader.GetString("TreeName");
    output_tree_ = new TTree(tree_name.c_str(),tree_name.c_str());
    output_tree_->Branch("pspmt_compressed","PspmtData",&pspmt_data_);
-   output_tree_->Branch("event_info","event_info_struc",&event_info_);
+   output_tree_->Branch("event_info_","event_info_struc",&event_info_);
    if(yaml_reader.GetBoolean("CloverVec",false,false))
       output_tree_->Branch("clover_vec_","std::vector<processor_struct::CLOVERS>",&clover_data_);
    if(yaml_reader.GetBoolean("VANDLEVec",false,false))
@@ -309,6 +309,7 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
          pspmt_data_.f11_left_.time_ = data_.f11_left_.pspmt_.time;
          pspmt_data_.f11_right_.time_ = data_.f11_right_.pspmt_.time;
       }
+		
       output_tree_->Fill();
 
    } // end of dynode high events loop

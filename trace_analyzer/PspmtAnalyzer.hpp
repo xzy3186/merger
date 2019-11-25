@@ -9,10 +9,6 @@
 #include "YamlReader.hpp"
 #include <TH1.h>
 
-struct event_info_struc {
-   TString file_name_;
-   ULong64_t pixie_event_num_;
-};
 
 class PspmtAnalyzer {
 public:

@@ -57,6 +57,7 @@ protected:
 	TTreeReaderValue <OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>> beta_;
 	TTreeReaderValue <std::vector<processor_struct::CLOVERS>> clover_vec_;
 	TTreeReaderValue <std::vector<CorrectedVANDLEData>> vandle_vec_;
+	TTreeReaderValue <std::vector<processor_struct::GAMMASCINT>> gamma_scint_vec_;
 	ULong64_t total_entry_;
 
 	// array for histograms
@@ -66,6 +67,10 @@ protected:
 	std::string output_file_name_;
 	TF1* n_correction = nullptr;
 	Double_t time_window_;
+
+	TF1* n_banana_up = nullptr;
+	TF1* n_banana_low = nullptr;
+	ULong64_t t_entry_;
 
 	ClassDef(AnamergerSelector, 1)
 };

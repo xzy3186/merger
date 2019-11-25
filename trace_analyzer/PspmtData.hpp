@@ -29,6 +29,11 @@ struct beamline_detector_struc{
 };
 static beamline_detector_struc DEFAULT_BEAMLINE_DETECTOR_STRUC;
 
+struct event_info_struc {
+   TString file_name_;
+   ULong64_t pixie_event_num_ = -1;
+};
+
 class PspmtData : public TObject {
 public:
 

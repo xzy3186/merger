@@ -6,6 +6,7 @@
 
 #pragma link C++ class vector<processor_struct::CLOVERS>+;
 #pragma link C++ class vector<processor_struct::VANDLES>+;
+#pragma link C++ class vector<processor_struct::GAMMASCINT>+;
 #pragma link C++ class vector<TreeData>+;
 #pragma link C++ class pspmt_data_struc+;
 #pragma link C++ class PspmtAnalyzerData+;
