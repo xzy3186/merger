@@ -46,6 +46,7 @@ public:
 
 	void Configure(const std::string& config_file);
 	double CorrectToF(const PspmtData& pspmt_data, const processor_struct::VANDLES& vandle, CorrectedVANDLEData& correctedData) const;
+	double GetIdealFL() const { return ideal_flight_path_; }
 
 protected:
 	std::map<int, VANDLEBar> vandle_bar_map_;

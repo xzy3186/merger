@@ -72,6 +72,8 @@ protected:
 	std::string vandle_corrector_config_;
 	Bool_t use_proof_;
 	VANDLEToFCorrector* corrector_ = nullptr;
+	const Double_t kSpeedOfLight = 299792458.;
+	const Double_t kNeutronMassMeV = 939.5654133;
 	
 	void SetBranch();
 
