@@ -19,6 +19,7 @@
 #include "PspmtAnalyzer.hpp"
 #include "YamlParameter.hpp"
 #include "YamlReader.hpp"
+#include "Compression.h"
 
 int main(int argc, char **argv){
    /* print usage */
@@ -76,7 +77,7 @@ int main(int argc, char **argv){
 
    /* Open output file */
    std::cout<<"output file: "<<argv[2]<<std::endl;
-   TFile output_file_(argv[2],"RECREATE");
+   TFile output_file_(argv[2],"RECREATE","",ROOT::CompressionSettings(ROOT::kLZMA,8));
 
    const uint64_t initial_event = yaml_reader.GetULong64("InitialEvent",false,0);
    const uint64_t num_events = yaml_reader.GetULong64("NumEvents",false,
@@ -103,7 +104,6 @@ int main(int argc, char **argv){
       PixTreeEvent* pixie_event = pixie_event_reader_.Get();
       if(pixie_event->pspmt_vec_.empty()) /* skips if there is no pspmt event */
          continue;
-      pspmt_analyzer.SetEventId(pixie_event->fileName, pixie_event->eventNum);
       pspmt_analyzer.SetEventData(pixie_event);
       pspmt_analyzer.Process(pixie_event->pspmt_vec_, pixie_event->externalTS1);
    }//end loop through the TTree

@@ -7,6 +7,7 @@
 #include "YamlReader.hpp"
 #include "RemainTime.h"
 #include "TSScannorBase.hpp"
+#include "Compression.h"
 
 /** merger class **/
 // input_2 events will be merged to a vector in input_1
@@ -99,7 +100,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
         delete tree_file_;
         tree_file_ = nullptr;
     }
-    tree_file_ = new TFile(output_file_name.c_str(),file_option.c_str());
+    tree_file_ = new TFile(output_file_name.c_str(),file_option.c_str(),"",ROOT::CompressionSettings(ROOT::kLZMA, 8));
     std::cout << kMsgPrefix << "output file open \"" << output_file_name << "\"" << std::endl;
 
     /** output tree **/

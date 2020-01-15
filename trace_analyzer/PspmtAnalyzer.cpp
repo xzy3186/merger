@@ -52,13 +52,9 @@ int PspmtAnalyzer::Begin(){
    return 0;
 }
 
-void PspmtAnalyzer::SetEventId(const TString &file_name, const ULong64_t event_num){
-   event_info_.file_name_ = file_name;
-   event_info_.pixie_event_num_ = event_num;
-   return;
-}
-
 void PspmtAnalyzer::SetEventData(PixTreeEvent* pixie_event){
+	event_info_.file_name_ = pixie_event->fileName;
+	event_info_.pixie_event_num_ = pixie_event->eventNum;
    clover_data_ = pixie_event->clover_vec_;
    vandle_data_ = pixie_event->vandle_vec_;
    gamma_scint_data_ = pixie_event->gamma_scint_vec_;
@@ -100,6 +96,8 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
       const Double_t t0 = dyn_high.time; // reference time
       pspmt_data_.dyn_single_.time_ = t0;
       pspmt_data_.dyn_single_.energy_ = dyn_high.energy;
+		pspmt_data_.event_number_ = event_info_.pixie_event_num_;
+		pspmt_data_.file_name_ = event_info_.file_name_;
 
       /* fills data to PspmtAnalyzerData */
       Int_t n_low_gain = 0;
@@ -109,129 +107,147 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
       Int_t n_f11 = 0;
 
 		/* gate functions */
-		const auto &pspmt_gate = [&](const processor_struct::PSPMT &x) {
-			//if ((abs(x.time - t0 - kTOFFSET) < kTWINDOW) )//&& !x.invalidTrace)
-			//if ((abs(x.time - t0 - kTOFFSET) < kTWINDOW) && x.traceMaxPos<70&&x.traceMaxPos>40)
+		const auto pspmt_gate = [&](const processor_struct::PSPMT &x) {
 			if ((abs(x.time - t0 - kTOFFSET) < kTWINDOW) )
-				return x;
+				return true;
 			else
-				return processor_struct::PSPMT_DEFAULT_STRUCT;
+				return false;
 		};
 
-		const auto &desi_gate = [&](const processor_struct::PSPMT &x) {
+		const auto desi_gate = [&](const processor_struct::PSPMT &x) {
 			if ((abs(x.time - t0 - kTOFFSET_DESI) < kTWINDOW_DESI))
-				return x;
+				return true;
 			else
-				return processor_struct::PSPMT_DEFAULT_STRUCT;
+				return false;
 		};
 
-		const auto &veto_gate = [&](const processor_struct::PSPMT &x) {
+		const auto veto_gate = [&](const processor_struct::PSPMT &x) {
 			if ((abs(x.time - t0 - kTOFFSET_VETO) < kTWINDOW_VETO))
-				return x;
+				return true;
 			else
-				return processor_struct::PSPMT_DEFAULT_STRUCT;
+				return false;
 		};
 
-		const auto &ion_gate = [&](const processor_struct::PSPMT &x) {
+		const auto ion_gate = [&](const processor_struct::PSPMT &x) {
 			if ((abs(x.time - t0 - kTOFFSET_ION) < kTWINDOW_ION))
-				return x;
+				return true;
 			else
-				return processor_struct::PSPMT_DEFAULT_STRUCT;
+				return false;
 		};
 
-		const auto &f11_gate = [&](const processor_struct::PSPMT &x) {
+		const auto f11_gate = [&](const processor_struct::PSPMT &x) {
 			if ((abs(x.time - t0 - kTOFFSET_F11) < kTWINDOW_F11))
-				return x;
+				return true;
 			else
-				return processor_struct::PSPMT_DEFAULT_STRUCT;
+				return false;
 		};
 
 		/* filling output data_ */
       for(const auto &channel: pspmt_vec){
          if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("ignore")){
             /* dynode high gain (triple) */
-            data_.high_gain_.dynode_.pspmt_ = pspmt_gate(channel);
+				if (pspmt_gate(channel))
+					data_.high_gain_.dynode_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("dynode_low")&&!channel.tag.CompareTo("ignore")){
             /* dynode low gain */
-            data_.low_gain_.dynode_.pspmt_ = pspmt_gate(channel);
+				if(pspmt_gate(channel))
+					data_.low_gain_.dynode_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("anode_low")&&!channel.tag.CompareTo("xa")){
             /* anode low gain xa */
-            data_.low_gain_.xa_.pspmt_ = pspmt_gate(channel);
+				if(pspmt_gate(channel))
+					data_.low_gain_.xa_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("anode_low")&&!channel.tag.CompareTo("xb")){
             /* anode low gain xb */
-            data_.low_gain_.xb_.pspmt_ = pspmt_gate(channel);
+				if(pspmt_gate(channel))
+					data_.low_gain_.xb_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("anode_low")&&!channel.tag.CompareTo("ya")){
             /* anode low gain ya */
-            data_.low_gain_.ya_.pspmt_ = pspmt_gate(channel);
+				if(pspmt_gate(channel))
+	            data_.low_gain_.ya_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("anode_low")&&!channel.tag.CompareTo("yb")){
             /* anode low gain yb */
-            data_.low_gain_.yb_.pspmt_ = pspmt_gate(channel);
+				if(pspmt_gate(channel))
+					data_.low_gain_.yb_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("anode_high")&&!channel.tag.CompareTo("xa")){
             /* anode high gain xa */
-            data_.high_gain_.xa_.pspmt_ = pspmt_gate(channel);
+				if(pspmt_gate(channel))
+	            data_.high_gain_.xa_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("anode_high")&&!channel.tag.CompareTo("xb")){
             /* anode high gain xb */
-            data_.high_gain_.xb_.pspmt_ = pspmt_gate(channel);
+				if(pspmt_gate(channel))
+					data_.high_gain_.xb_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("anode_high")&&!channel.tag.CompareTo("ya")){
             /* anode high gain ya */
-            data_.high_gain_.ya_.pspmt_ = pspmt_gate(channel);
+				if(pspmt_gate(channel))
+					data_.high_gain_.ya_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("anode_high")&&!channel.tag.CompareTo("yb")){
             /* anode high gain yb */
-            data_.high_gain_.yb_.pspmt_ = pspmt_gate(channel);
+				if(pspmt_gate(channel))
+					data_.high_gain_.yb_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("desi")&&!channel.tag.CompareTo("top")){
             /* dE Si top */
-            data_.desi_top_.pspmt_ = desi_gate(channel);
+				if(desi_gate(channel))
+					data_.desi_top_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("desi")&&!channel.tag.CompareTo("bottom")){
             /* dE Si bottom */
-            data_.desi_bottom_.pspmt_ = desi_gate(channel);
+				if(desi_gate(channel))
+					data_.desi_bottom_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("white")){
             /* front plastic white */
-            data_.ion_white_.pspmt_ = ion_gate(channel);
+				if(ion_gate(channel))
+					data_.ion_white_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("green")){
             /* front plastic green */
-            data_.ion_green_.pspmt_ = ion_gate(channel);
+				if(ion_gate(channel))
+					data_.ion_green_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("blue")){
             /* front plastic blue */
-            data_.ion_blue_.pspmt_ = ion_gate(channel);
+				if(ion_gate(channel))
+					data_.ion_blue_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("black")){
             /* front plastic black */
-            data_.ion_black_.pspmt_ = ion_gate(channel);
+				if(ion_gate(channel))
+					data_.ion_black_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("veto")&&!channel.tag.CompareTo("1")){
             /* veto plastic first */
-            data_.veto_first_.pspmt_ = veto_gate(channel);
+				if(veto_gate(channel))
+					data_.veto_first_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("veto")&&!channel.tag.CompareTo("2")){
             /* veto plastic second */
-            data_.veto_second_.pspmt_ = veto_gate(channel);
+				if(veto_gate(channel))
+					data_.veto_second_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("f11")&&!channel.tag.CompareTo("left")){
             /* f11 plastic left */
-            data_.f11_left_.pspmt_ = f11_gate(channel);
+				if(f11_gate(channel))
+	            data_.f11_left_.pspmt_ = channel;
          }
          else if(!channel.subtype.CompareTo("f11")&&!channel.tag.CompareTo("right")){
             /* f11 plastic right */
-            data_.f11_right_.pspmt_ = f11_gate(channel);
+				if(f11_gate(channel))
+					data_.f11_right_.pspmt_ = channel;
          }
       }
 
       /* position analysis */
-      {
+		{
          /* high gain */
          pspmt_data_.external_ts_high_ = ts;
          pspmt_data_.high_gain_.trace_energy_ = data_.high_gain_.dynode_.pspmt_.traceMaxVal;
@@ -256,7 +272,7 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 			pspmt_data_.high_gain_.yb_trace_energy_ = data_.high_gain_.yb_.pspmt_.traceMaxVal;
 
       }
-      {
+		{
          /* low gain */
          data_.external_ts_low_ = ts;
          pspmt_data_.external_ts_low_ = ts;

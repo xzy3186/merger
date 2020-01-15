@@ -30,8 +30,8 @@ struct beamline_detector_struc{
 static beamline_detector_struc DEFAULT_BEAMLINE_DETECTOR_STRUC;
 
 struct event_info_struc {
-   TString file_name_;
-   ULong64_t pixie_event_num_ = -1;
+   std::string file_name_;
+   ULong64_t pixie_event_num_ = 0;
 };
 
 class PspmtData : public TObject {
@@ -42,6 +42,8 @@ public:
 
    PspmtData(const PspmtData &obj):TObject(obj)
    {
+		event_number_ = obj.event_number_;
+		file_name_ = obj.file_name_;
       external_ts_high_ = obj.external_ts_high_;
       external_ts_low_ = obj.external_ts_low_;
       desi_top_ = obj.desi_top_;
@@ -60,6 +62,8 @@ public:
    }
 
    void Clear(){
+		event_number_ = 0;
+		file_name_ = "";
       external_ts_high_ = 0;
       external_ts_low_ = 0;
       desi_top_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
@@ -80,6 +84,8 @@ public:
       low_gain_ = DEFAULT_PSPMT_STRUC;
    }
 
+	ULong64_t event_number_;
+	std::string file_name_;
    ULong64_t external_ts_high_;
    ULong64_t external_ts_low_;
    beamline_detector_struc desi_top_;
