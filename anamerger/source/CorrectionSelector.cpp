@@ -45,7 +45,7 @@ void CorrectionSelector::Begin(TTree* mergedData) {
             delete fOutputTree;
             fOutputTree = nullptr;
         }
-        fOutputFile = new TFile(file_name_.c_str(), "RECREATE");
+        fOutputFile = new TFile(file_name_.c_str(), "RECREATE", "", ROOT::CompressionSettings(ROOT::kLZMA, 8));
         fOutputTree = new TTree("mergedCorrectedBeta", "mergedCorrectedBeta");
         fOutputTree->Branch("corrected_vandle_vec", "std::vector<CorrectedVANDLEData>", &corrected_vandle_vec_);
         fOutputTree->SetDirectory(fOutputFile);
@@ -125,6 +125,7 @@ void CorrectionSelector::SlaveBegin(TTree* mergedData) {
     if (!fOutputFile)
         std::cout << "Failed to open output file. " << std::endl;
     std::cout << "File opened at " << fProofFile->GetDir() << fProofFile->GetFileName() << std::endl;
+	 fOutputFile->SetCompressionSettings(ROOT::CompressionSettings(ROOT::kLZMA, 8));
 
     if (fOutputTree) {
         delete fOutputTree;

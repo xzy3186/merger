@@ -25,6 +25,7 @@
 #include "TParameter.h"
 #include "CorrectedVANDLEData.h"
 #include "VANDLEToFCorrector.h"
+#include "Compression.h"
 
 class CorrectionSelector : public TSelector {
 public:
