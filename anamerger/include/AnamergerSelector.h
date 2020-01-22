@@ -46,6 +46,7 @@ public:
 	virtual void    SlaveTerminate() { tree_reader_.SetTree((TTree*)nullptr); }
 	virtual void    Terminate();
 	void SetTimeWindow(const Double_t& time_window) { time_window_ = time_window; }
+	double CalculateNEnergy(const Double_t& tof) const;
 
 	void SetOutputFileName(const std::string& file_name) {
 		output_file_name_ = file_name;
