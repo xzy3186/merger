@@ -19,6 +19,7 @@ public:
 			return false;
 		return true;
 	}
+	const std::map<std::string, std::vector<ULong64_t>>& GetMap() const { return map_; }
 
 protected:
 	std::map<std::string, std::vector<ULong64_t>> map_;

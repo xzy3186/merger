@@ -96,6 +96,7 @@ int main(int argc, char** argv) {
 		}
 	}
 	
+	std::cout << e.GetMap().size() << " events have been added to the list." << std::endl;
 	std::cout << "writing event list to a file: " << output_file << std::endl;
 	TFile outputFile(output_file.c_str(),"update");
 	e.Write(file_name.c_str());
