@@ -9,6 +9,7 @@
 #include "PaassRootStruct.hpp"
 #include "BigRIPSTreeData.h"
 #include "CorrectedVANDLEData.h"
+#include "BetaEventSelector.h"
 
 void usage(char const* arg)
 {
@@ -57,11 +58,18 @@ int main(int argc, char** argv) {
 	for (int i = 0; i < n_workers; ++i) {
 		std::ostringstream oss;
 		oss << input_path << "0." << i << "/" << file_name;
-		chain->Add(oss.str().c_str());
-		std::cout << "Input file: " << oss.str() << " added to TChain." << std::endl;
+		TChain tmp_chain("mergedCorrectedBeta");
+		tmp_chain.Add(oss.str().c_str());
+		if (!tmp_chain.GetEntries()) {
+			std::cout << oss.str() << " has no entry. skipping..." << std::endl;
+		}
+		else {
+			chain->Add(oss.str().c_str());
+			std::cout << "Input file: " << oss.str() << " added to TChain." << std::endl;
+		}
 	}
 
-	TBetaEventList e;
+	TBetaEventList* e = new TBetaEventList();
 	TTreeReader tree_reader(chain);
 	TTreeReaderValue <OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>> beta(tree_reader,"mergedBeta");
 	TTreeReaderValue <std::vector<CorrectedVANDLEData>> vandle_vec(tree_reader,"corrected_vandle_vec");
@@ -69,39 +77,15 @@ int main(int argc, char** argv) {
 	TTreeReaderValue <std::vector<processor_struct::GAMMASCINT>> gamma_scint_vec(tree_reader,"gamma_scint_vec_");
 
 	std::cout << "starting an event loop " << std::endl;
-	while (tree_reader.Next()) {
-		auto b = beta.Get();
-		if (!b)
-			continue;
-		auto vandles = vandle_vec.Get();
-		if (!vandles)
-			continue;
-		for (const auto& imp : b->output_vec_) {
-			if (imp.output_vec_.empty())
-				continue;
-			if (imp.output_vec_.at(0).sts != 6)
-				continue;
-			const Double_t tib = (((double)beta->dyn_single_.time_ - (double)imp.dyn_single_.time_)) / 1.E+9;
-			if (tib > 0.01 && tib < time_window) {
-				Bool_t banana = false;
-				for (auto& vandle : *vandles) {
-					const double tdiff_vb = (double)vandle.GetVandleData()->sTime - (double)b->dyn_single_.time_;
-					if (tdiff_vb < 200 || tdiff_vb > 250)
-						continue;
-					if (vandle.GetCorrectedToF() > 25 && vandle.GetCorrectedToF() < 800 ) {
-						banana = true;
-					}
-				}
-				if(banana)
-					e.AddEvent(b->file_name_,b->event_number_);
-			}
-		}
-	}
+	BetaEventSelector* selector = new BetaEventSelector();
+	selector->SetEventList(e);
+	selector->SetTimeWindow(time_window);
+	chain->Process(selector);
 	
-	std::cout << e.GetMap().size() << " events have been added to the list." << std::endl;
+	std::cout << e->GetMap().size() << " events have been added to the list." << std::endl;
 	std::cout << "writing event list to a file: " << output_file << std::endl;
 	TFile outputFile(output_file.c_str(),"update");
-	e.Write(file_name.c_str());
+	e->Write(file_name.c_str());
 	outputFile.Close();
 
 	return 0;

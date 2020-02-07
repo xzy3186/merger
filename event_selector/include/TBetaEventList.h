@@ -1,3 +1,6 @@
+#ifndef TBETA_EVENT_LIST_H
+#define TBETA_EVENT_LIST_H
+
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -26,3 +29,5 @@ protected:
 
 	ClassDef(TBetaEventList,1)
 };
+
+#endif
