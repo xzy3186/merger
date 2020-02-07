@@ -65,6 +65,8 @@ int main(int argc, char** argv) {
 	TTreeReader tree_reader(chain);
 	TTreeReaderValue <OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>> beta(tree_reader,"mergedBeta");
 	TTreeReaderValue <std::vector<CorrectedVANDLEData>> vandle_vec(tree_reader,"corrected_vandle_vec");
+	TTreeReaderValue <std::vector<processor_struct::CLOVERS>> clover_vec(tree_reader,"clover_vec_");
+	TTreeReaderValue <std::vector<processor_struct::GAMMASCINT>> gamma_scint_vec(tree_reader,"gamma_scint_vec_");
 
 	std::cout << "starting an event loop " << std::endl;
 	while (tree_reader.Next()) {
