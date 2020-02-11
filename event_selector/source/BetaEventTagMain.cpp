@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
 	TFile* file = new TFile(input_file.c_str(), "UPDATE");
 	TTree* tree = (TTree*)file->Get("mergedCorrectedBeta");
 
-	std::string nucl_name = input_file.substr(20, 4);
+	std::string nucl_name = input_file.substr(input_file.find("mergedCorrectedBeta")+20, 4);
 	std::cout << "Nucl Name: " << nucl_name << std::endl;
 
 	TTreeReader tree_reader(tree);
