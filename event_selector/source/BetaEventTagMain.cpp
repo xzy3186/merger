@@ -60,24 +60,24 @@ int main(int argc, char** argv) {
 
 	std::string tag;
 	auto branch = tree->Branch("tag",&tag);
-	Bool_t is_ni78_n = false;
-	auto br2 = tree->Branch("IsNi78n", &is_ni78_n);
+	Bool_t is_nucl_n = false;
+	auto br2 = tree->Branch("IsNuclN", &is_nucl_n, "IsNuclN/O");
 
 	std::cout << "starting an event loop " << std::endl;
 	while (tree_reader.Next()) {
 		auto b = beta.Get();
 		tag = b_tag.GetTag(b->file_name_, b->event_number_);
 		if (tag.find(nucl_name) != std::string::npos) {
-			is_ni78_n = true;
+			is_nucl_n = true;
 		}
 		else {
-			is_ni78_n = false;
+			is_nucl_n = false;
 		}
 		branch->Fill();
 		br2->Fill();
 	}
 	
-	tree->Write();
+	tree->Write("",TObject::kOverwrite);
 	file->Close();
 	return 0;
 }
