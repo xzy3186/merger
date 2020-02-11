@@ -49,6 +49,9 @@ int main(int argc, char** argv) {
 	TFile* file = new TFile(input_file.c_str(), "UPDATE");
 	TTree* tree = (TTree*)file->Get("mergedCorrectedBeta");
 
+	std::string nucl_name = input_file.substr(20, 4);
+	std::cout << "Nucl Name: " << nucl_name << std::endl;
+
 	TTreeReader tree_reader(tree);
 	TTreeReaderValue <OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>> beta(tree_reader,"mergedBeta");
 	TTreeReaderValue <std::vector<CorrectedVANDLEData>> vandle_vec(tree_reader,"corrected_vandle_vec");
@@ -57,12 +60,21 @@ int main(int argc, char** argv) {
 
 	std::string tag;
 	auto branch = tree->Branch("tag",&tag);
+	Bool_t is_ni78_n = false;
+	auto br2 = tree->Branch("IsNi78n", &is_ni78_n);
 
 	std::cout << "starting an event loop " << std::endl;
 	while (tree_reader.Next()) {
 		auto b = beta.Get();
 		tag = b_tag.GetTag(b->file_name_, b->event_number_);
+		if (tag.find(nucl_name) != std::string::npos) {
+			is_ni78_n = true;
+		}
+		else {
+			is_ni78_n = false;
+		}
 		branch->Fill();
+		br2->Fill();
 	}
 	
 	tree->Write();
