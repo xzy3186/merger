@@ -1,11 +1,15 @@
 ROOT_GENERATE_DICTIONARY(G__TBetaEventList
-../include/TBetaEventList.h ../include/BetaEventSelector.h LINKDEF ../include/BetaEventListLinkDef.h)
+../include/TBetaEventList.h
+../include/BetaEventSelector.h
+../include/AnamergerBetaTagSelector.h
+LINKDEF ../include/BetaEventListLinkDef.h)
 
 add_library(BetaEventListLib SHARED
 	G__TBetaEventList.cxx
 	TBetaEventList.cpp
 	BetaEventSelector.cpp
 	BetaEventTag.cpp
+	AnamergerBetaTagSelector.cpp
 )
 target_link_libraries(BetaEventListLib ${ROOT_LIBRARIES})
 install(TARGETS BetaEventListLib LIBRARY DESTINATION lib)
@@ -17,6 +21,10 @@ target_link_libraries(event_list BetaEventListLib TraceAnalyzerLib CorrectionLib
 add_executable(event_tag BetaEventTagMain.cpp)
 target_link_libraries(event_tag BetaEventListLib TraceAnalyzerLib CorrectionLib PaassRootStruct MergerLib ${YAML_CPP_LIBRARIES} ${ROOT_LIBRARIES})
 
+add_executable(anamerger_beta_tag AnamergerBetaTagMain.cpp)
+target_link_libraries(anamerger_beta_tag BetaEventListLib TraceAnalyzerLib CorrectionLib PaassRootStruct MergerLib ${YAML_CPP_LIBRARIES} ${ROOT_LIBRARIES})
+
 install(TARGETS event_list RUNTIME DESTINATION bin)
 install(TARGETS event_tag RUNTIME DESTINATION bin)
+install(TARGETS anamerger_beta_tag RUNTIME DESTINATION bin)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libTBetaEventList_rdict.pcm DESTINATION lib)
