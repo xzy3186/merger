@@ -86,6 +86,10 @@ void AnamergerBetaTagSelector::SlaveBegin(TTree* mergedData)
 			time_window_ = time_window->GetVal();
 		else
 			time_window_ = 1.0;
+
+      TNamed* named = (TNamed*)fInput->FindObject("nucl_name");
+      if (named)
+          nucl_name_ = named->GetTitle();
 	}
 
 	if (gProofServ) {
@@ -112,7 +116,7 @@ Bool_t AnamergerBetaTagSelector::Process(Long64_t entry) {
 		auto beta = beta_.Get();
 		if (!beta)
 			return kTRUE;
-		if ((*tag_) != "" && (*tag_) != "Ni78")
+		if ((*tag_) != "" && (*tag_) != nucl_name_)
 			return kTRUE;
 
 		auto clover_vec = clover_vec_.Get();

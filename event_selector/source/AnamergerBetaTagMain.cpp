@@ -84,6 +84,14 @@ int main(int argc, char** argv)
 			std::cout << tempName.c_str() << std::endl;
 		}
 
+		std::string nucl_name = "empty";
+		{
+			auto tlist = chain->GetListOfFiles();
+			if (tlist->GetEntries())
+				nucl_name = ((TFile*)tlist->At(0))->GetName();
+		}
+		std::cout << "[AnamergerMain]: Nucl name: " << nucl_name << std::endl;
+
 		mergerListFiles.close();
 		std::cout << "[AnamergerMain]: Number of TTrees added to the chain: " << chain->GetNtrees() << std::endl;
 
@@ -94,6 +102,7 @@ int main(int argc, char** argv)
 			chain->SetProof();
 			std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
 			pr->AddInput(new TNamed("output_file_name", output_file_name.c_str()));
+			pr->AddInput(new TNamed("nucl_name", nucl_name.c_str()));
 			pr->AddInput(new TParameter<Double_t>("TimeWindow", time_window));
 			chain->Process("AnamergerBetaTagSelector", "", n_entries, first_entry);
 		}
@@ -101,6 +110,7 @@ int main(int argc, char** argv)
 			std::cout << "Start Processing (Proof OFF)..." << std::endl;
 			AnamergerBetaTagSelector* selector = new AnamergerBetaTagSelector(chain);
 			selector->SetOutputFileName(output_file_name);
+			selector->SetNuclName(nucl_name);
 			selector->SetTimeWindow(time_window);
 			chain->Process(selector, "", n_entries, first_entry);
 		}

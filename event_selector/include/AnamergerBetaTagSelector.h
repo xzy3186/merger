@@ -51,6 +51,9 @@ public:
 	void SetOutputFileName(const std::string& file_name) {
 		output_file_name_ = file_name;
 	}
+	void SetNuclName(const std::string& nucl_name) {
+		nucl_name_ = nucl_name;
+	}
 
 protected:
 
@@ -74,6 +77,8 @@ protected:
 	TF1* n_banana_up = nullptr;
 	TF1* n_banana_low = nullptr;
 	ULong64_t t_entry_;
+
+	std::string nucl_name_;
 
 	ClassDef(AnamergerBetaTagSelector, 1)
 };
