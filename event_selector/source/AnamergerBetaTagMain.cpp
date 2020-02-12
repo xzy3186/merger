@@ -95,7 +95,7 @@ int main(int argc, char** argv)
 			std::cout << "SetProof to the chain: " << chain->GetName() << std::endl;
 			pr->AddInput(new TNamed("output_file_name", output_file_name.c_str()));
 			pr->AddInput(new TParameter<Double_t>("TimeWindow", time_window));
-			chain->Process("AnamergerSelector", "", n_entries, first_entry);
+			chain->Process("AnamergerBetaTagSelector", "", n_entries, first_entry);
 		}
 		else {
 			std::cout << "Start Processing (Proof OFF)..." << std::endl;
