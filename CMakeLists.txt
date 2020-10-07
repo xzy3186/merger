@@ -9,6 +9,8 @@ list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/install/ CACHE PATH "install dir" FORCE)
 set(PAASS_DIR_PATH $ENV{PAASSSYS} CACHE STRING "path to paass directory" )
 set( MERGER_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib/ CACHE STRING "path to install lib")
+option(BUILD_ANAMERGER "Build and install anamerger" OFF)
+option(BUILD_EVENTSELECTOR "Build and install event_selector" OFF)
 configure_file( anamerger/include/LibraryConfig.h.in ${CMAKE_BINARY_DIR}/generated/LibraryConfig.h)
 
 #---Locate the ROOT package and defines a number of variables (e.g. ROOT_INCLUDE_DIRS)
@@ -21,19 +23,27 @@ include(${ROOT_USE_FILE})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/anamerger/include)
+if(BUILD_ANAMERGER)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/anamerger/include)
+endif()
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/tree_dump2)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/trace_analyzer)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/event_selector/include)
+if(BUILD_EVENTSELECTOR)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/event_selector/include)
+endif()
 include_directories(${YAML_CPP_INCLUDE_DIR})
 include_directories(${PAASS_DIR_PATH}/include)
 include_directories(${CMAKE_BINARY_DIR}/generated)
 link_directories(${PAASS_DIR_PATH}/lib)
 link_directories(${YAML_CPP_LIB_DIR})
-link_directories(${PWD}/anamerger/source)
+if(BUILD_ANAMERGER)
+    link_directories(${PWD}/anamerger/source)
+endif()
 link_directories(${PWD}/tree_dump)
 link_directories(${PWD}/trace_analyzer)
-link_directories(${PWD}/event_selector/source)
+if(BUILD_EVENTSELECTOR)
+    link_directories(${PWD}/event_selector/source)
+endif()
 link_directories(${ROOTSYS}/lib)
 ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp 
         trace_analyzer/PspmtAnalyzerData.hpp trace_analyzer/PspmtData.hpp LINKDEF include/TreeDataLinkDef.h)
@@ -43,39 +53,48 @@ add_library(merger_data_dic SHARED G__MergerData.cxx)
 
 #---Create  a main program using the library
 add_subdirectory(source)
-add_subdirectory(anamerger)
+if(BUILD_ANAMERGER)
+    add_subdirectory(anamerger)
+endif()
 add_subdirectory(trace_analyzer)
 add_subdirectory(share)
-add_subdirectory(event_selector)
+if(BUILD_EVENTSELECTOR)
+    add_subdirectory(event_selector)
+endif()
 add_executable(merger_main MergerMain.cpp)
-add_executable(merger_pid MergerImpPid.cpp)
-add_executable(merger_beta MergerImpBeta.cpp)
+#add_executable(merger_pid MergerImpPid.cpp)
+#add_executable(merger_beta MergerImpBeta.cpp)
 #add_executable(merger_imp_beta MergerBetaImp.cpp)
-add_executable(anamerger_main anamerger/source/AnamergerMain.cpp)
-add_executable(anamerger_sparse_main anamerger/source/AnamergerSparseMain.cpp)
-add_executable(correction_main anamerger/source/CorrectionMain.cpp)
+if(BUILD_ANAMERGER)
+    add_executable(anamerger_main anamerger/source/AnamergerMain.cpp)
+    add_executable(anamerger_sparse_main anamerger/source/AnamergerSparseMain.cpp)
+    #add_executable(correction_main anamerger/source/CorrectionMain.cpp)
+endif()
 add_executable(trace_analyzer_main trace_analyzer/TraceAnalyzerMain.cpp)
 
 target_link_libraries(merger_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
    TraceAnalyzerLib merger_data_dic)
-target_link_libraries(merger_pid ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
-   TraceAnalyzerLib merger_data_dic)
-target_link_libraries(merger_beta ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
-   TraceAnalyzerLib merger_data_dic)
+#target_link_libraries(merger_pid ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
+#   TraceAnalyzerLib merger_data_dic)
+#target_link_libraries(merger_beta ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
+#   TraceAnalyzerLib merger_data_dic)
 #target_link_libraries(merger_imp_beta ${ROOT_LIBRARIES} yaml-cpp MergerData
 #   MergerLib tree_dump_dic)
-target_link_libraries(correction_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
-   PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
-target_link_libraries(anamerger_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
-   PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
-target_link_libraries(anamerger_sparse_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
-   PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
+if(BUILD_ANAMERGER)
+    target_link_libraries(correction_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
+       PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
+    target_link_libraries(anamerger_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
+       PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
+    target_link_libraries(anamerger_sparse_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
+       PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
+endif()
 target_link_libraries(trace_analyzer_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} TraceAnalyzerLib PaassRootStruct MergerLib merger_data_dic)
 
 install(TARGETS trace_analyzer_main
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )
+if(BUILD_ANAMERGER)
 install(TARGETS anamerger_main
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
@@ -88,18 +107,19 @@ install(TARGETS correction_main
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )
+endif()
 install(TARGETS merger_main
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )
-install(TARGETS merger_pid
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        )
-install(TARGETS merger_beta
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        )
+#install(TARGETS merger_pid
+#        RUNTIME DESTINATION bin
+#        LIBRARY DESTINATION lib
+#        )
+#install(TARGETS merger_beta
+#        RUNTIME DESTINATION bin
+#        LIBRARY DESTINATION lib
+#        )
 install(TARGETS merger_data_dic
 	LIBRARY DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libMergerData_rdict.pcm DESTINATION lib)

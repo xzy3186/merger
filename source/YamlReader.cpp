@@ -142,3 +142,28 @@ double YamlReader::GetBoolean(const std::string &attr, const bool &throw_error, 
     }
     return yaml_[attr].as<bool>();
 }
+
+std::vector<double> YamlReader::GetDoubleVec(const std::string& attr, const bool& throw_error, const std::vector<double>& default_val) const
+{
+    try {
+       if( !yaml_[attr] ) {
+           if(throw_error) {
+               throw kMsgPrefix + "No node named \"" + attr + "\" found in the config file.";
+           } else {
+               std::cout << kMsgPrefix << "Loaded default value" << std::endl;
+               return default_val;
+           }
+       }
+       std::cout << kMsgPrefix << "Loaded " << attr << " = " << yaml_[attr].as<double>() << std::endl;
+    }
+    catch (YAML::Exception& e) {
+      std::cout << kMsgPrefix << "exception " << e.what() << std::endl;
+      throw;
+    }
+    catch (std::string msg){
+      std::cout << msg << std::endl;
+      throw;
+    }
+    return yaml_[attr].as<std::vector<double>>();
+}
+

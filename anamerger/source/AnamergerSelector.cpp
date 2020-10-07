@@ -83,6 +83,8 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
 	fHistArray->Add(new TH2F("Tib_nEnergy_banana", "Tib_nEnergy_banana", 4000, 0, 10, 1000, -3, 3));
 	fHistArray->Add(new TH1F("nMult", "nMult", 50, -0.5, 49.5));
 	fHistArray->Add(new TH1F("nToF", "nToF", 2500, -500, 2000));
+	fHistArray->Add(new TH2F("ToF_corr", "ToFvsCorrection_lowQDC", 1600, -100, 1500, 600, -150, 150));
+	fHistArray->Add(new TH2F("TDiff_nQDCpos", "TDiffvsQDCpos_lowQDC", 2000, -100, 100, 2000, -100, 100));
 
 	//adding histograms to output list
 	TIter next(fHistArray);
@@ -396,6 +398,16 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 							}
 					}
 					*/
+					if (vandle.GetVandleData()->qdc < 500) {
+						{
+							auto hist = (TH2F*)fHistArray->FindObject("ToF_corr");
+							hist->Fill(vandle.GetCorrectedToF(), vandle.GetCorrectedToF() - vandle.GetVandleData()->tof);
+						}
+						{
+							auto hist = (TH2F*)fHistArray->FindObject("TDiff_nQDCpos");
+							hist->Fill(vandle.GetVandleData()->tDiff, vandle.GetVandleData()->qdcPos);
+						}
+					}
 				}
 				if (tib > (0.0 - time_window_) && tib < -0.01) {
 					{

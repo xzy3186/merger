@@ -77,9 +77,12 @@ int main(int argc, char **argv){
 
    /* Open output file */
    std::cout<<"output file: "<<argv[2]<<std::endl;
-   TFile output_file_(argv[2],"RECREATE","",ROOT::CompressionSettings(ROOT::kLZMA,8));
+   TFile output_file_(argv[2],"RECREATE");
+   //TFile output_file_(argv[2],"RECREATE","",ROOT::CompressionSettings(ROOT::kZSTD,5));
 
+   /* event number to start scanning from */
    const uint64_t initial_event = yaml_reader.GetULong64("InitialEvent",false,0);
+   /* preset number of event to scan */
    const uint64_t num_events = yaml_reader.GetULong64("NumEvents",false,
                                                       tree_reader.GetEntries(kTRUE));
 
@@ -96,19 +99,22 @@ int main(int argc, char **argv){
 
    /* main event loop */
    while( tree_reader.Next() && num_events > (entry-initial_event) ){
-      if(!(entry%print_freq)) /*prints progress in every print_freq events*/
+      /* prints progress in every print_freq events */
+      if(!(entry%print_freq))
          std::cout<<"entry: "<<entry<<"/"<<total_entry<<" "
             <<(double)entry/(double)total_entry*100.<<"\%"<<std::endl;
 
       ++entry;
       PixTreeEvent* pixie_event = pixie_event_reader_.Get();
-      if(pixie_event->pspmt_vec_.empty()) /* skips if there is no pspmt event */
+      /* skips if there is no pspmt event */
+      if(pixie_event->pspmt_vec_.empty()) 
          continue;
       pspmt_analyzer.SetEventData(pixie_event);
       pspmt_analyzer.Process(pixie_event->pspmt_vec_, pixie_event->externalTS1);
-   }//end loop through the TTree
+   } // end main loop
 
    pspmt_analyzer.Terminate();
    output_file_.Close();
+
    return 0;
 }

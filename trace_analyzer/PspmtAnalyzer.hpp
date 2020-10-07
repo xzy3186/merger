@@ -8,6 +8,7 @@
 #include "TraceAnalyzer.hpp"
 #include "YamlReader.hpp"
 #include <TH1.h>
+#include <TF1.h>
 
 
 class PspmtAnalyzer {
@@ -18,57 +19,61 @@ public:
    PspmtAnalyzer(const std::string &yaml_node_name){
       Configure(yaml_node_name);
    }
-   virtual ~PspmtAnalyzer(){};
+   virtual ~PspmtAnalyzer() { ResetConfig(); };
 
    virtual int Configure(const std::string &yaml_node_name);
+   virtual int ResetConfig();
    virtual int Begin();
    virtual int Process(std::vector<processor_struct::PSPMT> &pspmt_vec, const ULong64_t ts);
    virtual int Terminate();
 
-   void SetEventData(PixTreeEvent* pixie_event);
-   void CalculatePositionH(pspmt_data_struc &data);
-   void CalculatePositionL(pspmt_data_struc &data);
+   virtual void SetEventData(PixTreeEvent* pixie_event);
+   virtual void CalculatePositionH(pspmt_data_struc &data);
+   virtual void CalculatePositionL(pspmt_data_struc &data);
+   void Correct(double &val, TF1* func);
 
 protected:
    TTree *output_tree_;
    PspmtAnalyzerData data_;
    PspmtData pspmt_data_;
    event_info_struc event_info_;
-   std::vector<processor_struct::CLOVERS> clover_data_;
-   std::vector<processor_struct::VANDLES> vandle_data_;
-   std::vector<processor_struct::GAMMASCINT> gamma_scint_data_;
-   std::vector<processor_struct::DOUBLEBETA> double_beta_data_;
+   std::vector<processor_struct::BATO> bato_data_;
+   std::vector<processor_struct::CLOVER> clover_data_;
+   std::vector<processor_struct::DOUBLEBETA> doublebeta_data_;
+   std::vector<processor_struct::GAMMASCINT> gammascint_data_;
+   std::vector<processor_struct::LOGIC> logic_data_;
+   std::vector<processor_struct::NEXT> next_data_;
+   std::vector<processor_struct::PID> pid_data_;
+   std::vector<processor_struct::ROOTDEV> rootdev_data_;
+   std::vector<processor_struct::SINGLEBETA> singlebeta_data_;
+   std::vector<processor_struct::VANDLE> vandle_data_;
 
    /* time window parameters relative to the high gain dynode signal */
    /* in clock ticks (8ns) */
    Double_t kTWINDOW; 
    Double_t kTOFFSET; 
-   Double_t kTWINDOW_DESI; 
-   Double_t kTOFFSET_DESI; 
    Double_t kTWINDOW_ION; 
    Double_t kTOFFSET_ION; 
    Double_t kTWINDOW_VETO; 
    Double_t kTOFFSET_VETO; 
-   Double_t kTWINDOW_F11;
-   Double_t kTOFFSET_F11;
    /** energy thresholds and overflow thresholds for anode signals **/
    Double_t kHIGH_GAIN_THRESHOLD;
    Double_t kHIGH_GAIN_OVERFLOW;
    Double_t kLOW_GAIN_THRESHOLD;
    Double_t kLOW_GAIN_OVERFLOW;
    /** offset for trace_energy_ **/
-   Double_t kHIGH_GAIN_OFFSET_XA;
-   Double_t kHIGH_GAIN_OFFSET_XB;
-   Double_t kHIGH_GAIN_OFFSET_YA;
-   Double_t kHIGH_GAIN_OFFSET_YB;
-   Double_t kLOW_GAIN_OFFSET_XA;
-   Double_t kLOW_GAIN_OFFSET_XB;
-   Double_t kLOW_GAIN_OFFSET_YA;
-   Double_t kLOW_GAIN_OFFSET_YB;
-   Double_t kTRACEMAX_QDC_RATIO_XA;
-   Double_t kTRACEMAX_QDC_RATIO_XB;
-   Double_t kTRACEMAX_QDC_RATIO_YA;
-   Double_t kTRACEMAX_QDC_RATIO_YB;
+   TF1* fCorrectionHighGainXA = nullptr;
+   TF1* fCorrectionHighGainXB = nullptr;
+   TF1* fCorrectionHighGainYA = nullptr;
+   TF1* fCorrectionHighGainYB = nullptr;
+   TF1* fCorrectionLowGainXA = nullptr;
+   TF1* fCorrectionLowGainXB = nullptr;
+   TF1* fCorrectionLowGainYA = nullptr;
+   TF1* fCorrectionLowGainYB = nullptr;
+   TF1* fCorrectionHighGainPosX = nullptr;
+   TF1* fCorrectionHighGainPosY = nullptr;
+   TF1* fCorrectionLowGainPosX = nullptr;
+   TF1* fCorrectionLowGainPosY = nullptr;
 
 };
 
