@@ -14,5 +14,8 @@
 #pragma link C++ class TTreeReaderValue<OutputTreeData<PspmtData, OutputTreeData<PspmtData,TreeData>>>+;
 #pragma link C++ class TTreeReaderValue<OutputTreeData<OutputTreeData<PspmtData,TreeData>, PspmtData>>+;
 
+#pragma link C++ class OutputTreeData<PspmtData, PspmtData>+;
+#pragma link C++ class std::vector<OutputTreeData<PspmtData, PspmtData>>+;
+
 #endif
 

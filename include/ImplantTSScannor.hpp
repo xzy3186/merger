@@ -28,6 +28,7 @@ protected:
         if(!tree_data_) throw kMsgPrefix + "in GetTS(), three_data is null";
         if(!tree_data_->Get()) throw kMsgPrefix + "in GetTS(), three_data->Get() returned null";
         return tree_data_->Get()->external_ts_low_;
+        //return tree_data_->Get()->dyn_single_.time_;
     }
 
     Bool_t IsInGate(); // gate conditions

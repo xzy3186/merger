@@ -7,9 +7,11 @@ add_library(MergerLib SHARED
   YamlParameter.cpp
   YamlReader.cpp
   YSOMap.cxx
-  BetaTSScannor.cpp
+  #BetaTSScannor.cpp
+  E19044BetaTSScanor.cpp
   BigRIPSTSScannor.cpp
   ImplantTSScannor.cpp
+  E19044BetaTreeMerger.cpp
 #  G__TreeData.cxx
 )
 

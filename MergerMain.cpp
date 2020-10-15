@@ -1,15 +1,18 @@
+///@file MergerMain.cpp
+///@brief beta-implant merger for E19044 experiment
+///@author Rin Yokoyama
+///@date October,15 2020
+
 #include <iostream>
 #include "OutputTreeData.hpp"
 #include "TreeDataLinkDef.h"
 #include "YamlParameter.hpp"
-#include "BetaTSScannor.hpp"
-#include "BigRIPSTSScannor.hpp"
+#include "E19044BetaTSScanor.hpp"
 #include "ImplantTSScannor.hpp"
 #include "PaassRootStruct.hpp"
-#include "BigRIPSTreeData.h"
 #include "OutputTreeData.hpp"
 #include "TreeMerger.hpp"
-#include "BetaTreeMerger.hpp"
+#include "E19044BetaTreeMerger.hpp"
 #include "PspmtAnalyzerData.hpp"
 
 /** prints usage **/
@@ -51,78 +54,43 @@ int main(int argc, char **argv)
     }
    
     try {
-	/** creates YamlParameter instance **/
+	 /** creates YamlParameter instance **/
         YamlParameter::Create(config_file_name);
-
-        /** merges BigRIPS events to implant events **/
-        {
-            std::cout << "[MergerMain]: merging BigRIPS events to implants events..." << std::endl;
-
-            /** timestamp scanors **/
-            BigRIPSTSScannor brips_ts_scannor;
-            ImplantTSScannor implant_ts_scannor;
-
-	    /** configures timestamp scannors with the yaml file **/
-            brips_ts_scannor.Configure("BigRIPSTSScannor");
-            implant_ts_scannor.Configure("ImplantTSScannor");
-
-	    /** sets TTreeReaderValue objects **/
-            brips_ts_scannor.SetReader();
-            implant_ts_scannor.SetReader();
-
-	    /** scans timestamps through the tree **/
-            std::cout << "[MergerMain]: scanning BigRIPS events..." << std::endl;
-            brips_ts_scannor.Scan();
-            std::cout << "[MergerMain]: scanning Implant events..." << std::endl;
-            implant_ts_scannor.Scan();
-
-            std::cout << "[MergerMain]: BigRIPS map size: " << brips_ts_scannor.GetIEntryMap().size() << std::endl;
-            std::cout << "[MergerMain]: Implant map size: " << implant_ts_scannor.GetIEntryMap().size() << std::endl;
-
-	    /** runs merger **/
-            TreeMerger<OutputTreeData<PspmtData, TreeData>, PspmtData, TreeData> brips_imp_merger(&implant_ts_scannor,&brips_ts_scannor);
-            brips_imp_merger.Configure("BigRIPSImplantMerger");
-            brips_imp_merger.Merge();
-            brips_imp_merger.Write();
-
-            std::cout << std::endl;
-            std::cout << std::endl;
-        }
 
         /** merges implant events to beta events **/
         {
             std::cout << "[MergerMain]: merging implant events to beta events..." << std::endl;
+
             /** timestamp scanors **/
-            MergedImplantTSScannor mimp_ts_scannor;
-            BetaTSScannor beta_ts_scannor;
+            E19044BetaTSScanor beta_ts_scannor;
+            ImplantTSScannor implant_ts_scannor;
 
-	    /** configures timestamp scannors with the yaml file **/
-            mimp_ts_scannor.Configure("MergedImplantTSScannor");
-            beta_ts_scannor.Configure("BetaTSScannor");
+	         /** configures timestamp scannors with the yaml file **/
+            beta_ts_scannor.Configure("E19044BetaTSScannor");
+            implant_ts_scannor.Configure("ImplantTSScannor");
 
-	    /** sets TTreeReaderValue objects **/
-            mimp_ts_scannor.SetReader();
+	         /** sets TTreeReaderValue objects **/
             beta_ts_scannor.SetReader();
+            implant_ts_scannor.SetReader();
 
-	    /** scans timestamps through the tree **/
-            std::cout << "[MergerMain]: scanning MergedImplant events..." << std::endl;
-            mimp_ts_scannor.Scan();
+	         /** scans timestamps through the tree **/
             std::cout << "[MergerMain]: scanning Beta events..." << std::endl;
             beta_ts_scannor.Scan();
+            std::cout << "[MergerMain]: scanning Implant events..." << std::endl;
+            implant_ts_scannor.Scan();
 
-            std::cout << "[MergerMain]: MergedImplant map size: " << mimp_ts_scannor.GetIEntryMap().size() << std::endl;
             std::cout << "[MergerMain]: Beta map size: " << beta_ts_scannor.GetIEntryMap().size() << std::endl;
+            std::cout << "[MergerMain]: Implant map size: " << implant_ts_scannor.GetIEntryMap().size() << std::endl;
 
-    	    /** runs merger **/
-            BetaTreeMerger<OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>, PspmtData, OutputTreeData<PspmtData, TreeData>> imp_beta_merger(&beta_ts_scannor,&mimp_ts_scannor);
-            imp_beta_merger.Configure("ImplantBetaMerger");
-            imp_beta_merger.Merge();
-            imp_beta_merger.Write();
+	         /** runs merger **/
+            E19044BetaTreeMerger beta_imp_merger(&implant_ts_scannor,&beta_ts_scannor);
+            beta_imp_merger.Configure("BetaImplantMerger");
+            beta_imp_merger.Merge();
+            beta_imp_merger.Write();
+
+            std::cout << std::endl;
+            std::cout << std::endl;
         }
-
-	/** destroys YamlParameter instance **/
-        //YamlParameter::Destroy();
-
     }
     catch (std::string msg) {
         std::cout << msg << std::endl;

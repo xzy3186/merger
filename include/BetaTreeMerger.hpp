@@ -40,11 +40,15 @@ BetaTreeMerger<TOUT,TIN1,TIN2>::BetaTreeMerger() : TreeMerger<TOUT,TIN1,TIN2>()
 
 template <class TOUT, class TIN1, class TIN2>
 BetaTreeMerger<TOUT,TIN1,TIN2>::BetaTreeMerger(TSScannorBase<TIN1> *input1, TSScannorBase<TIN2> *input2)
-   : TreeMerger<TOUT,TIN1,TIN2>(input1,input2)
+    : TreeMerger<TOUT,TIN1,TIN2>(input1,input2)
 {
     YamlReader yaml_reader("BetaTreeMerger");
-    yso_map_ = new YSOMap(yaml_reader.GetString("YSOMapFile"));
-    yso_map_->GenerateMap(yaml_reader.GetULong64("NumberOfDivisions",false,10));
+    std::string map_file_name = yaml_reader.GetString("YSOMapFile", false, "default");
+    if (map_file_name != "default") {
+        yso_map_ = new YSOMap(yaml_reader.GetString("YSOMapFile"));
+        yso_map_->GenerateMap(yaml_reader.GetULong64("NumberOfDivisions",false,10));
+
+    }
     correlation_radius_ = yaml_reader.GetDouble("CorrelationRadius");
 }
 
