@@ -45,7 +45,7 @@ if(BUILD_EVENTSELECTOR)
     link_directories(${PWD}/event_selector/source)
 endif()
 link_directories(${ROOTSYS}/lib)
-ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp 
+ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp include/E19044Data.hpp
         trace_analyzer/PspmtAnalyzerData.hpp trace_analyzer/PspmtData.hpp LINKDEF include/TreeDataLinkDef.h)
 
 #---Create a shared library with geneated dictionary
@@ -62,9 +62,7 @@ if(BUILD_EVENTSELECTOR)
     add_subdirectory(event_selector)
 endif()
 add_executable(merger_main MergerMain.cpp)
-#add_executable(merger_pid MergerImpPid.cpp)
-#add_executable(merger_beta MergerImpBeta.cpp)
-#add_executable(merger_imp_beta MergerBetaImp.cpp)
+add_executable(next_merger_main NextMergerMain.cpp)
 if(BUILD_ANAMERGER)
     add_executable(anamerger_main anamerger/source/AnamergerMain.cpp)
     add_executable(anamerger_sparse_main anamerger/source/AnamergerSparseMain.cpp)
@@ -74,12 +72,8 @@ add_executable(trace_analyzer_main trace_analyzer/TraceAnalyzerMain.cpp)
 
 target_link_libraries(merger_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
    TraceAnalyzerLib merger_data_dic)
-#target_link_libraries(merger_pid ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
-#   TraceAnalyzerLib merger_data_dic)
-#target_link_libraries(merger_beta ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
-#   TraceAnalyzerLib merger_data_dic)
-#target_link_libraries(merger_imp_beta ${ROOT_LIBRARIES} yaml-cpp MergerData
-#   MergerLib tree_dump_dic)
+target_link_libraries(next_merger_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
+   TraceAnalyzerLib merger_data_dic)
 if(BUILD_ANAMERGER)
     target_link_libraries(correction_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
        PaassRootStruct TraceAnalyzerLib AnamergerLib CorrectionLib )
@@ -112,14 +106,10 @@ install(TARGETS merger_main
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )
-#install(TARGETS merger_pid
-#        RUNTIME DESTINATION bin
-#        LIBRARY DESTINATION lib
-#        )
-#install(TARGETS merger_beta
-#        RUNTIME DESTINATION bin
-#        LIBRARY DESTINATION lib
-#        )
+install(TARGETS next_merger_main
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        )
 install(TARGETS merger_data_dic
 	LIBRARY DESTINATION lib)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/libMergerData_rdict.pcm DESTINATION lib)

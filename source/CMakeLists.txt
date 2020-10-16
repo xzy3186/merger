@@ -9,6 +9,7 @@ add_library(MergerLib SHARED
   YSOMap.cxx
   #BetaTSScannor.cpp
   E19044BetaTSScanor.cpp
+  E19044NEXTTSScanor.cpp
   BigRIPSTSScannor.cpp
   ImplantTSScannor.cpp
   E19044BetaTreeMerger.cpp

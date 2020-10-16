@@ -48,14 +48,6 @@ TraceAnalyzer:
           SubtypeName: "anode_low"
           TagName: "yb"
       - Channel:
-          TreeName: "desi_top"
-          SubtypeName: "desi"
-          TagName: "top"
-      - Channel:
-          TreeName: "desi_bottom"
-          SubtypeName: "desi"
-          TagName: "bottom"
-      - Channel:
           TreeName: "veto_first"
           SubtypeName: "veto"
           TagName: "1"
@@ -80,35 +72,33 @@ TraceAnalyzer:
           SubtypeName: "ion"
           TagName: "black"
       - Channel:
-          TreeName: "f11_left"
-          SubtypeName: "f11"
-          TagName: "left"
-      - Channel:
-          TreeName: "f11_right"
-          SubtypeName: "f11"
-          TagName: "right"
-      - Channel:
           TreeName: "dynode_singles"
           SubtypeName: "dynode_high"
           TagName: "singles"
 
 PspmtAnalyzer:
     TreeName: "pspmt"
-    CloverVec: True
-    VANDLEVec: True
+
+    ### Output branches (False by default)
+    
+    #BATO:       True
+    #CLOVER:     True
+    #DOUBLEBETA: True
+    #GAMMASCINT: True
+    #LOGIC:      True
+    #NEXT:       True
+    PID:        True
+    #ROOTDEV:    True
+    #SINGLEBETA: True
+    VANDLE:     True
+
     TimeWindow: 160 # in ns
     TimeOffset: 0
-    TimeWindowDeSi: 50
-    TimeOffsetDeSi: -840
     TimeWindowIon: 50
     TimeOffsetIon: -840
     TimeWindowVeto: 50
     TimeOffsetVeto: -840
-    TimeWindowF11: 50
-    TimeOffsetF11: 150
     HighGainThreshold: -100
+    HighGainOverflow:  65535
     LowGainThreshold: -900
-    TraceMaxQDCRatioXA: 8000
-    TraceMaxQDCRatioXB: 8000
-    TraceMaxQDCRatioYA: 8000
-    TraceMaxQDCRatioYB: 8000
+    LowGainOverflow: 65535
