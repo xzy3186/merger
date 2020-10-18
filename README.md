@@ -31,7 +31,7 @@ There will be a module file for Environment Modules installed in install/share/m
 
 #### TraceAnalyzer
 
-TraceAnalyzer will rebuild events based on pspmt_vec_ in the PixTreeData class.
+TraceAnalyzer will rebuild events based on pspmt_vec_ in the PixTreeEvent class.
 Channel event with the subtype="dynode_high" and tag="single" will be stored as one event in the output tree.
 Other channles will be stored if it's within the time gate provided in the input yaml file.
 
@@ -45,9 +45,9 @@ Example yaml file is found at config/config_trace_analyzer.yaml
 * PrintFrequency sets how often the program prints progress.
 * You can set InitalEvent and NumEvents to scan. It will scan all the events if these options are not provided.
 * You can select which vectors in the paass output to output. When you want to output vandle_vec_ for example, set VANDLE option to True
-* TimeWindow and TimeOffset are the time gate for pspmt channels.
-* TimeWindowIon and TimeOffsetIon are the time gate for the front plastic.
-* TimeWindowVeto and TimeOffsetVeto are the time gate for the veto detector.
+* TimeWindow and TimeOffset are the time gate for pspmt channels relative to the dynode single.
+* TimeWindowIon and TimeOffsetIon are the time gate for the front plastic relative to the dynode single.
+* TimeWindowVeto and TimeOffsetVeto are the time gate for the veto detector relative to the dynode single.
 * High/LowGainThreshold are the qdc threshold for the pspmt __anode__ channels.
 * High/LowGainOverflow are the qdc upper limit for the pspmt __anode__ channels.
 * You can apply calibration to the pspmt anode channels and calulated positions as a formular expression for the ROOT::TF1 class.
@@ -66,13 +66,13 @@ merger_main -c [config yaml file]
 
 Example yaml file is found at config/config.yaml
 * E19044BetaTSScannor is a timestamp scannor for the beta events. It takes the TraceAnalyzer output as an input.
-	* MinHighGainDynEnergy and MaxHighGainDynEnergy defines the energy range to identify the pspmt event is a beta event
+	* MinHighGainDynEnergy and MaxHighGainDynEnergy defines the energy range to identify the pspmt event as a beta event
 	* MinLowGainDynEnergy and MaxLowGainDynEnergy defines the energy range in low gain channel. Both the low gain and high gain ranges have to be satisfied to be filled.
 	* OtherBranches is a list of branches to output to the merged root file. If there is no event in the branch, it will be ignored.
 * ImplantTSScannor is a timestamp scannor for the implant events. It takes the same rootfile as E19044BetaTSScannor
-	* MinLowGainDynEnergy and MaxLowGainDynEnergy defines the energy range to identify the pspmt event is an implant event
+	* MinLowGainDynEnergy and MaxLowGainDynEnergy defines the energy range to identify the pspmt event as an implant event
 	* OtherBranches is a list of branches to output to the merged root file. If there is no event in the branch, it will be ignored.
-* E19044BetaTreeMerger is a TreeMerger calss for beta-ion correlation
+* E19044BetaTreeMerger is a TreeMerger class for beta-ion correlation
 	* TimeWindowLow and TimeWindowHigh defines the correlation window of T_beta - T_implant in ns.
 * BetaTreeMerger is a base class of E19044BetaTreeMerger.
 	* CorrelationRadius is the radius of the position gate for beta-implant correlation in YSO.
