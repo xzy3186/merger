@@ -66,16 +66,16 @@ merger_main -c [config yaml file]
 
 Example yaml file is found at config/config.yaml
 * E19044BetaTSScannor is a timestamp scannor for the beta events. It takes the TraceAnalyzer output as an input.
-	** MinHighGainDynEnergy and MaxHighGainDynEnergy defines the energy range to identify the pspmt event is a beta event
-	** MinLowGainDynEnergy and MaxLowGainDynEnergy defines the energy range in low gain channel. Both the low gain and high gain ranges have to be satisfied to be filled.
-	** OtherBranches is a list of branches to output to the merged root file. If there is no event in the branch, it will be ignored.
+	* MinHighGainDynEnergy and MaxHighGainDynEnergy defines the energy range to identify the pspmt event is a beta event
+	* MinLowGainDynEnergy and MaxLowGainDynEnergy defines the energy range in low gain channel. Both the low gain and high gain ranges have to be satisfied to be filled.
+	* OtherBranches is a list of branches to output to the merged root file. If there is no event in the branch, it will be ignored.
 * ImplantTSScannor is a timestamp scannor for the implant events. It takes the same rootfile as E19044BetaTSScannor
-	** MinLowGainDynEnergy and MaxLowGainDynEnergy defines the energy range to identify the pspmt event is an implant event
-	** OtherBranches is a list of branches to output to the merged root file. If there is no event in the branch, it will be ignored.
+	* MinLowGainDynEnergy and MaxLowGainDynEnergy defines the energy range to identify the pspmt event is an implant event
+	* OtherBranches is a list of branches to output to the merged root file. If there is no event in the branch, it will be ignored.
 * E19044BetaTreeMerger is a TreeMerger calss for beta-ion correlation
-	** TimeWindowLow and TimeWindowHigh defines the correlation window of T_beta - T_implant in ns.
+	* TimeWindowLow and TimeWindowHigh defines the correlation window of T_beta - T_implant in ns.
 * BetaTreeMerger is a base class of E19044BetaTreeMerger.
-	** CorrelationRadius is the radius of the position gate for beta-implant correlation in YSO.
+	* CorrelationRadius is the radius of the position gate for beta-implant correlation in YSO.
 
 Following are the settings for next_merger_main.
 * E19044NEXTTSScannor is a timestamp scannor for the NEXT events. It takes the paass output directly.
