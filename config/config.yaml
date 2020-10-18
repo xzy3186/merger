@@ -1,74 +1,60 @@
-BigRIPSTSScannor:
-  InputFileName: jul18vandle/syncTest0012.root
-  TreeName: tree
-  BranchName: bigrips
-#  FirstEntry: 0
-#  LastEntry: 10000
-
-ImplantTSScannor:
-  InputFileName: pixie_rootfiles/extTS_DD.root
+E19044BetaTSScannor:
+  InputFileName: output.root
   TreeName: pspmt
-  PixieBranchName: pspmt
-  MinLowGainDynEnergy: 2000
-  MaxLowGainDynEnergy: 65535
-  OtherBranches:
-    - "clover_vec_"
-    - "event_info"
-#  FirstEntry: 0
-#  LastEntry: 10000
-
-BigRIPSImplantMerger:
-  OutputFileName: mergedImp.root
-  TreeName: mergedImp
-  BranchName: mergedImp
-  ClassName: OutputTreeData<PspmtAnalyzerData, TreeData>
-  TimeWindowLow: 1000
-  TimeWindowUp: 1000
-  TimeStampScale: 40
-  ScanWindow: 1E+9
-
-MergedImplantTSScannor:
-  InputFileName: mergedImp.root
-  TreeName: mergedImp
-  PixieBranchName: mergedImp
-#  FirstEntry: 0
-#  LastEntry: 1000
-
-BetaTSScannor:
-  InputFileName: pixie_rootfiles/extTS_DD.root
-  TreeName: pspmt
-  PixieBranchName: pspmt
+  PixieBranchName: pspmt_compressed
   MinHighGainDynEnergy: 10
   MaxHighGainDynEnergy: 30000
   MinLowGainDynEnergy: -2000
   MaxLowGainDynEnergy: 2000
   OtherBranches:
-    - "clover_vec_"
     - "vandle_vec_"
-    - "event_info"
+#  FirstEntry: 0
+#  LastEntry: 10000
+
+ImplantTSScannor:
+  InputFileName: output.root
+  TreeName: pspmt
+  PixieBranchName: pspmt_compressed
+  MinLowGainDynEnergy: 2000
+  MaxLowGainDynEnergy: 65535
+  OtherBranches:
+    - "clover_vec_"
+#  FirstEntry: 0
+#  LastEntry: 10000
+
+E19044NEXTTSScannor:
+  InputFileName: 252cf_test_DD.root
+  TreeName: PixTree
+  PixieBranchName: PixTreeEvent
 #  FirstEntry: 0
 #  LastEntry: 1000
 
-ImplantBetaMerger:
+E19044VANDLETSScannor:
+  InputFileName: mergedBeta.root
+  TreeName: mergedBeta
+  PixieBranchName: mergedBeta
+#  FirstEntry: 0
+#  LastEntry: 1000
+
+E19044BetaTreeMerger:
   OutputFileName: mergedBeta.root
   TreeName: mergedBeta
   BranchName: mergedBeta
-  ClassName: OutputTreeData<PspmtAnalyzerData,OutputTreeData<PspmtAnalyzerData, TreeData>>
+  ClassName: E19044Output
   PrintFrequency: 1000
-  TimeWindowLow: 500000000
-  TimeWindowUp: 500000000
-  ScanWindow: 10
 
-BetaImplantMerger:
-  OutputFileName: mergedImpBeta.root
-  TreeName: mergedImpBeta
-  BranchName: mergedImpBeta
-  ClassName: OutputTreeData<OutputTreeData<PspmtAnalyzerData, TreeData>,PspmtAnalyzerData>
-  PrintFrequency: 1000
+  # +-5 sec
   TimeWindowLow: 500000000
   TimeWindowUp: 500000000
+
+NEXTMerger:
+  OutputFileName: mergedNEXTBeta.root
+  TreeName: mergedNEXTBeta
+  BranchName: mergedNEXTBeta
+  ClassName: NEXTOutput
+  PrintFrequency: 1000
 
 BetaTreeMerger:
-  YSOMapFile: "./yso_map.txt"
-  NumberOfDivisions: 10
+  #YSOMapFile: "./yso_map.txt"
+  #NumberOfDivisions: 10
   CorrelationRadius: 0.2

@@ -100,6 +100,10 @@ template <class T> void TSScannorBase<T>::Configure(const std::string &yaml_node
         tree_file_ = nullptr;
     }
     tree_file_ = new TFile(input_file_name.c_str());
+    if (!tree_file_) {
+       std::cout << kMsgPrefix << "Cannot open file: \"" << input_file_name << "\"" << std::endl;
+       return;
+    }
     std::cout << kMsgPrefix << "file open \"" << input_file_name << "\"" << std::endl;
 
     /** creates TTreeReader **/
@@ -108,6 +112,10 @@ template <class T> void TSScannorBase<T>::Configure(const std::string &yaml_node
         tree_reader_ = nullptr;
     }
     tree_reader_ = new TTreeReader(tree_name.c_str(),tree_file_);
+    if (!tree_reader_) {
+       std::cout << kMsgPrefix << "Cannot create TTreeReader with a tree \"" << tree_name << "\"" << std::endl;
+       return;
+    }
 
     /** generates a map of branch addresses for branch outputs **/
     {
@@ -115,6 +123,10 @@ template <class T> void TSScannorBase<T>::Configure(const std::string &yaml_node
         for(int i=0; i<doc.size(); ++i) {
             std::string name = doc[i].as<std::string>();
             TBranch* branch =(TBranch*)tree_reader_->GetTree()->FindBranch(name.c_str()); 
+            if (!branch) {
+               std::cout << "Branch named " << name << " is not found. Skipping the branch setup." << std::endl;
+               continue;
+            }
             std::string class_name(branch->GetClassName());
             for(ULong64_t i=0; !branch->GetEntry(i)&&i<tree_reader_->GetEntries(true); ++i){} // loop until the first entry of the branch
             TClass* tclass = (TClass*)gROOT->GetListOfClasses()->FindObject(class_name.c_str());

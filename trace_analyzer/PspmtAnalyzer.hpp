@@ -19,7 +19,7 @@ public:
    PspmtAnalyzer(const std::string &yaml_node_name){
       Configure(yaml_node_name);
    }
-   virtual ~PspmtAnalyzer() { ResetConfig(); };
+   virtual ~PspmtAnalyzer() {};
 
    virtual int Configure(const std::string &yaml_node_name);
    virtual int ResetConfig();
@@ -33,7 +33,7 @@ public:
    void Correct(double &val, TF1* func);
 
 protected:
-   TTree *output_tree_;
+   TTree *output_tree_ = nullptr;
    PspmtAnalyzerData data_;
    PspmtData pspmt_data_;
    event_info_struc event_info_;

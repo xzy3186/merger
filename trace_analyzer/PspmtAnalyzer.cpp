@@ -65,16 +65,11 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    fCorrectionLowGainPosX = get_correction("LowGainPosX");
    fCorrectionLowGainPosY = get_correction("LowGainPosY");
 
-   fCorrectionHighGainPosX->Print();
    return 0;
 }
 
 int PspmtAnalyzer::ResetConfig() {
 
-   if (output_tree_) {
-      delete output_tree_;
-      output_tree_ = nullptr;
-   }
    auto delete_tf1 = [](TF1* f) {
       if (f) {
          delete f;
@@ -131,7 +126,7 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
    for(const auto &channel: pspmt_vec){
 		subtype = channel.subtype.Data();
 		tag = channel.tag.Data();
-      if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("singles")){
+      if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("ignore")){
 		   dynode_high_vec.emplace_back(channel);
       }
    }

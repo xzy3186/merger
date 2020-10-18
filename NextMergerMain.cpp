@@ -78,7 +78,7 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: VANDLE map size: " << vandle_ts_scannor.GetIEntryMap().size() << std::endl;
 
 	         /** runs merger **/
-            TreeMerger<NEXTOutput, processor_struct::NEXT, E19044Output> next_merger(&next_ts_scannor,&vandle_ts_scannor);
+            TreeMerger<NEXTOutput, PixTreeEvent, E19044Output> next_merger(&next_ts_scannor,&vandle_ts_scannor);
             next_merger.Configure("NEXTMerger");
             next_merger.Merge();
             next_merger.Write();

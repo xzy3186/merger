@@ -11,6 +11,6 @@
 #include "PspmtData.hpp"
 
 typedef OutputTreeData<PspmtData, PspmtData> E19044Output;
-typedef OutputTreeData<processor_struct::NEXT, E19044Output> NEXTOutput;
+typedef OutputTreeData<PixTreeEvent, E19044Output> NEXTOutput;
 
 #endif /* E19044_DATA_HPP_ */

@@ -1,6 +1,7 @@
 #include "E19044BetaTreeMerger.hpp"
 
 bool E19044BetaTreeMerger::IsInGate(const PspmtData& in1, const PspmtData& in2) {
+
 	const auto pspmt_imp = in2.low_gain_;
 	const auto pspmt_beta = in1.high_gain_;
    /* if high gain position is available, use it for correlation */

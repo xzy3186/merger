@@ -1,5 +1,5 @@
 RunSetting:
-    TChainFlag: True
+    TChainFlag: False
     PrintFrequency: 100000
     InitalEvent: 0
     #NumEvents: 10000
@@ -102,3 +102,17 @@ PspmtAnalyzer:
     HighGainOverflow:  65535
     LowGainThreshold: -900
     LowGainOverflow: 65535
+
+    ### ROOT::TF1 expression for calibrations
+    #HighGainXA: "1.0*x"
+    #HighGainXB: "1.0*x"
+    #HighGainYA: "1.0*x"
+    #HighGainYB: "1.0*x"
+    #LowGainXA: "1.0*x"
+    #LowGainXB: "1.0*x"
+    #LowGainYA: "1.0*x"
+    #LowGainYB: "1.0*x"
+    #HighGainPosX: "1.0*x"
+    #HighGainPosY: "1.0*x"
+    #LowGainPosX: "1.0*x"
+    #LowGainPosY: "1.0*x"

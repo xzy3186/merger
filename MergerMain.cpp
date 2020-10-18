@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
 	         /** runs merger **/
             E19044BetaTreeMerger beta_imp_merger(&implant_ts_scannor,&beta_ts_scannor);
-            beta_imp_merger.Configure("BetaImplantMerger");
+            beta_imp_merger.Configure("E19044BetaTreeMerger");
             beta_imp_merger.Merge();
             beta_imp_merger.Write();
 

@@ -21,6 +21,7 @@ void E19044BetaTSScanor::SetReader()
 
 Bool_t E19044BetaTSScanor::IsInGate()
 {
+
     auto high = tree_data_->Get()->high_gain_;
 
 
@@ -34,13 +35,12 @@ Bool_t E19044BetaTSScanor::IsInGate()
     {   /* energy gates on pspmt */
         auto pspmt_high = tree_data_->Get()->high_gain_;
         auto pspmt_low = tree_data_->Get()->low_gain_;
-        //if(pspmt_high.energy_<400 || pspmt_high.energy_>4050 )
-        //if(pspmt_high.energy_>4050 )
-        //    return false;
-        //if(pspmt_low.energy_>2000)
-        //    return false;
+        if (pspmt_high.energy_<high_gain_min_ || pspmt_high.energy_>high_gain_max_)
+           return false;
+        if (pspmt_low.energy_<low_gain_min_ || pspmt_low.energy_>low_gain_max_)
+           return false;
         if(pspmt_high.valid_ == 0 )
-            return false;
+           return false;
     }
 
     return true;

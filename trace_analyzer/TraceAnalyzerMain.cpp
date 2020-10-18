@@ -36,7 +36,7 @@ int main(int argc, char **argv){
    /* Open config file */
    YamlParameter::Create(argv[3]);
    YamlReader yaml_reader("RunSetting");
-   const bool chain_flag = yaml_reader.GetBoolean("TChainFlag",false,0); /*use TChain or not*/
+   const bool chain_flag = yaml_reader.GetBoolean("TChainFlag",false,false); /*use TChain or not*/
    const ULong64_t print_freq = yaml_reader.GetULong64("PrintFrequency",false,10000); /*cout frequency*/
 
    /* create TChain and add input files */
