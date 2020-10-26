@@ -8,12 +8,14 @@
 #include "TreeDataLinkDef.h"
 #include "YamlParameter.hpp"
 #include "E19044BetaTSScanor.hpp"
-#include "ImplantTSScannor.hpp"
+#include "E19044ImplantTSScanor.hpp"
 #include "PaassRootStruct.hpp"
 #include "OutputTreeData.hpp"
 #include "TreeMerger.hpp"
 #include "E19044BetaTreeMerger.hpp"
 #include "PspmtAnalyzerData.hpp"
+#include <TCutG.h>
+#include <TFile.h>
 
 /** prints usage **/
 void usage(char *argv0)
@@ -54,36 +56,92 @@ int main(int argc, char **argv)
     }
    
     try {
-	 /** creates YamlParameter instance **/
+	    /** creates YamlParameter instance **/
         YamlParameter::Create(config_file_name);
+        YamlReader yaml_reader("MergerMain");
 
-        /** merges implant events to beta events **/
-        {
+        
+        std::string file_name = yaml_reader.GetString("TCutGFileName",false,"__no_pid_gate__");
+        TFile* cut_file = nullptr;
+        std::vector<TCutG*> pid_cuts;
+        if (file_name != "__no_pid_gate__") {
+            cut_file = new TFile(file_name.c_str());
+            auto pid_vec = yaml_reader.GetStringVec("PIDCuts");
+            for (const auto& pid : pid_vec) {
+                auto cut = (TCutG*)cut_file->Get(pid.c_str());
+                if (!cut) {
+                    std::cout << "[MergerMain]: Cannot load TCutG named: " << pid << std::endl;
+                    continue;
+                }
+                pid_cuts.emplace_back(cut);
+            }
+        }
+
+        /* Scan beta events */
+        E19044BetaTSScanor beta_ts_scannor;
+	    /** configures timestamp scannors with the yaml file **/
+        beta_ts_scannor.Configure("E19044BetaTSScannor");
+	    /** sets TTreeReaderValue objects **/
+        beta_ts_scannor.SetReader();
+	     /** scans timestamps through the tree **/
+        std::cout << "[MergerMain]: scanning Beta events..." << std::endl;
+        beta_ts_scannor.Scan();
+
+        std::cout << "[MergerMain]: Beta map size: " << beta_ts_scannor.GetIEntryMap().size() << std::endl;
+
+        /** If no pid cuts specified, merge all events **/
+        if (pid_cuts.empty()) {
             std::cout << "[MergerMain]: merging implant events to beta events..." << std::endl;
 
             /** timestamp scanors **/
-            E19044BetaTSScanor beta_ts_scannor;
-            ImplantTSScannor implant_ts_scannor;
+            E19044ImplantTSScanor implant_ts_scanor;
 
 	         /** configures timestamp scannors with the yaml file **/
-            beta_ts_scannor.Configure("E19044BetaTSScannor");
-            implant_ts_scannor.Configure("ImplantTSScannor");
+            implant_ts_scanor.Configure("ImplantTSScannor");
 
 	         /** sets TTreeReaderValue objects **/
-            beta_ts_scannor.SetReader();
-            implant_ts_scannor.SetReader();
+            implant_ts_scanor.SetReader();
 
 	         /** scans timestamps through the tree **/
-            std::cout << "[MergerMain]: scanning Beta events..." << std::endl;
-            beta_ts_scannor.Scan();
             std::cout << "[MergerMain]: scanning Implant events..." << std::endl;
-            implant_ts_scannor.Scan();
+            implant_ts_scanor.Scan();
 
-            std::cout << "[MergerMain]: Beta map size: " << beta_ts_scannor.GetIEntryMap().size() << std::endl;
-            std::cout << "[MergerMain]: Implant map size: " << implant_ts_scannor.GetIEntryMap().size() << std::endl;
+            std::cout << "[MergerMain]: Implant map size: " << implant_ts_scanor.GetIEntryMap().size() << std::endl;
 
 	         /** runs merger **/
-            E19044BetaTreeMerger beta_imp_merger(&implant_ts_scannor,&beta_ts_scannor);
+            E19044BetaTreeMerger beta_imp_merger(&beta_ts_scannor,&implant_ts_scanor);
+            beta_imp_merger.Configure("E19044BetaTreeMerger");
+            beta_imp_merger.Merge();
+            beta_imp_merger.Write();
+
+            std::cout << std::endl;
+            std::cout << std::endl;
+
+            return 0;
+        }
+        /* Loop over the vector of pid gate and merge for each cuts */
+        for (auto pid : pid_cuts) {
+            std::cout << "[MergerMain]: merging implant events for " << pid->GetName() << " to beta events..." << std::endl;
+
+            /** timestamp scanors **/
+            E19044ImplantTSScanor implant_ts_scanor;
+            implant_ts_scanor.SetPidCut(pid);
+
+	         /** configures timestamp scannors with the yaml file **/
+            implant_ts_scanor.Configure("ImplantTSScannor");
+
+	         /** sets TTreeReaderValue objects **/
+            implant_ts_scanor.SetReader();
+
+	         /** scans timestamps through the tree **/
+            std::cout << "[MergerMain]: scanning Implant events..." << std::endl;
+            implant_ts_scanor.Scan();
+
+            std::cout << "[MergerMain]: Implant map size: " << implant_ts_scanor.GetIEntryMap().size() << std::endl;
+
+	         /** runs merger **/
+            E19044BetaTreeMerger beta_imp_merger(&beta_ts_scannor,&implant_ts_scanor);
+            beta_imp_merger.SetFileSuffix(pid->GetName());
             beta_imp_merger.Configure("E19044BetaTreeMerger");
             beta_imp_merger.Merge();
             beta_imp_merger.Write();

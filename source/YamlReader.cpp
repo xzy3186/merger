@@ -154,7 +154,9 @@ std::vector<double> YamlReader::GetDoubleVec(const std::string& attr, const bool
                return default_val;
            }
        }
-       std::cout << kMsgPrefix << "Loaded " << attr << " = " << yaml_[attr].as<double>() << std::endl;
+       for (const auto& item : yaml_[attr].as<std::vector<double>>()) {
+           std::cout << kMsgPrefix << "Loaded " << attr << " - " << item << std::endl;
+       }
     }
     catch (YAML::Exception& e) {
       std::cout << kMsgPrefix << "exception " << e.what() << std::endl;
@@ -166,4 +168,31 @@ std::vector<double> YamlReader::GetDoubleVec(const std::string& attr, const bool
     }
     return yaml_[attr].as<std::vector<double>>();
 }
+
+std::vector<std::string> YamlReader::GetStringVec(const std::string& attr, const bool& throw_error, const std::vector<std::string>& default_val) const
+{
+    try {
+       if( !yaml_[attr] ) {
+           if(throw_error) {
+               throw kMsgPrefix + "No node named \"" + attr + "\" found in the config file.";
+           } else {
+               std::cout << kMsgPrefix << "Loaded default value" << std::endl;
+               return default_val;
+           }
+       }
+       for (const auto& item : yaml_[attr].as<std::vector<std::string>>()) {
+           std::cout << kMsgPrefix << "Loaded " << attr << " - " << item << std::endl;
+       }
+    }
+    catch (YAML::Exception& e) {
+      std::cout << kMsgPrefix << "exception " << e.what() << std::endl;
+      throw;
+    }
+    catch (std::string msg){
+      std::cout << msg << std::endl;
+      throw;
+    }
+    return yaml_[attr].as<std::vector<std::string>>();
+}
+
 

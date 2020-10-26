@@ -19,6 +19,7 @@ public:
     double GetDouble(const std::string &attr, const bool &throw_error=true, const double &default_val=0) const;
     double GetBoolean(const std::string &attr, const bool &throw_error=true, const bool &default_val=false) const;
     std::vector<double> GetDoubleVec(const std::string& attr, const bool& throw_error = true, const std::vector<double>& default_val = { 0,0,0 }) const;
+    std::vector<std::string> GetStringVec(const std::string& attr, const bool& throw_error = true, const std::vector<std::string>& default_val = { "","","" }) const;
 
 private:
     const static std::string kMsgPrefix;

@@ -12,6 +12,7 @@ add_library(MergerLib SHARED
   E19044NEXTTSScanor.cpp
   BigRIPSTSScannor.cpp
   ImplantTSScannor.cpp
+  E19044ImplantTSScanor.cpp
   E19044BetaTreeMerger.cpp
 #  G__TreeData.cxx
 )

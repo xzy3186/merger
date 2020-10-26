@@ -9,7 +9,7 @@
 
 class E19044BetaTreeMerger : public BetaTreeMerger<E19044Output, PspmtData, PspmtData> {
 public:
-	E19044BetaTreeMerger(ImplantTSScannor* in1, E19044BetaTSScanor* in2) : BetaTreeMerger<E19044Output,PspmtData,PspmtData>(in1, in2) {};
+	E19044BetaTreeMerger(E19044BetaTSScanor* in1,ImplantTSScannor* in2) : BetaTreeMerger<E19044Output,PspmtData,PspmtData>(in1, in2) {};
 	virtual ~E19044BetaTreeMerger() {};
 
 	bool IsInGate(const PspmtData& in1, const PspmtData& in2) override;

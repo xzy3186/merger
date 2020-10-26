@@ -26,6 +26,7 @@ public:
     void Merge(); // merge events from input2 to input1
     void Write(); // writes tree to the file
     virtual bool IsInGate(const TIN1 &in1, const TIN2 &in2);
+    void SetFileSuffix(const std::string suffix) { file_suffix_ = suffix; }
 
 protected:
     TFile *tree_file_; // Output tree TFile
@@ -38,6 +39,7 @@ protected:
     Double_t ts_scale_; // timestamp scale
     ULong64_t print_freq_; // frequency to print scan progress
     TOUT output_object_; // output class object
+    std::string file_suffix_ = ""; // suffix to the output TFile
 
     /** timestamp scannors of input trees **/
     TSScannorBase<TIN1> *input_scannor_1_; 
@@ -95,6 +97,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
 
     /** opens output root file **/
     std::string output_file_name = yaml_reader_->GetString("OutputFileName");
+    output_file_name.replace(output_file_name.begin()+output_file_name.find_last_of("."), output_file_name.end(), file_suffix_ + ".root");
     std::string file_option = yaml_reader_->GetString("FileOption",false,"RECREATE");
     if(tree_file_){
         delete tree_file_;
