@@ -23,6 +23,7 @@ protected:
     /** PID gate **/
     TCutG* pid_cut_ = nullptr;
     TTreeReaderValue<std::vector<processor_struct::PID>>* pid_data_;
+    Double_t rit_threshold_;
 
     Bool_t IsInGate() override; // gate conditions
 };

@@ -6,6 +6,8 @@ const std::string E19044ImplantTSScanor::kMsgPrefix("[E19044ImplantTSScanor]:");
 void E19044ImplantTSScanor::Configure(const std::string& yaml_node_name) {
     TSScannorBase<PspmtData>::Configure(yaml_node_name);
     pid_data_ = new TTreeReaderValue<std::vector<processor_struct::PID>>(*tree_reader_,"pid_vec_");
+    YamlReader yaml_reader(yaml_node_name);
+    rit_threshold_ = yaml_reader_->GetDouble("RITThreshold",false,0);
     return;
 }
 
@@ -14,6 +16,13 @@ Bool_t E19044ImplantTSScanor::IsInGate()
     if(!ImplantTSScannor::IsInGate())
         return false;
     
+    {   /* checks if there is a coincidence with veto detector */
+        const Double_t energy_first = tree_data_->Get()->rit_b1_.energy_;
+        const Double_t energy_second = tree_data_->Get()->rit_b2_.energy_;
+        if( energy_first > rit_threshold_ || energy_second > rit_threshold_ )
+            return false;
+    }
+
     if (!pid_cut_)
         return true;
 

@@ -30,16 +30,10 @@ public:
       external_ts_low_ = obj.external_ts_low_;
       high_gain_ = obj.high_gain_;
       low_gain_ = obj.low_gain_;
-      desi_top_ = obj.desi_top_;
-      desi_bottom_ = obj.desi_bottom_;
-      veto_first_ = obj.veto_first_;
-      veto_second_ = obj.veto_second_;
-      ion_white_ = obj.ion_white_;
-      ion_green_ = obj.ion_green_;
-      ion_blue_ = obj.ion_blue_;
-      ion_black_ = obj.ion_black_;
-      f11_left_ = obj.f11_left_;
-      f11_right_ = obj.f11_right_;
+      rit_b1_ = obj.rit_b1_;
+      rit_b2_ = obj.rit_b2_;
+      fit_b1_ = obj.fit_b1_;
+      fit_b2_ = obj.fit_b2_;
    }
 
    void Clear(){
@@ -47,33 +41,21 @@ public:
       external_ts_low_ = 0;
       high_gain_ = DEFAULT_PSPMT_DATA_STRUC;
       low_gain_ = DEFAULT_PSPMT_DATA_STRUC;
-		desi_top_.Clear();
-		desi_bottom_.Clear();
-		veto_first_.Clear();
-		veto_second_.Clear();
-		ion_white_.Clear();
-		ion_green_.Clear();
-		ion_blue_.Clear();
-		ion_black_.Clear();
-		f11_left_.Clear();
-		f11_right_.Clear();
+		rit_b1_.Clear();
+		rit_b2_.Clear();
+		fit_b1_.Clear();
+		fit_b2_.Clear();
    }
 
    ULong64_t external_ts_high_;
    ULong64_t external_ts_low_;
    pspmt_data_struc high_gain_;
    pspmt_data_struc low_gain_;
-   TraceAnalyzerData desi_top_;
-   TraceAnalyzerData desi_bottom_;
-   TraceAnalyzerData veto_first_;
-   TraceAnalyzerData veto_second_;
-   TraceAnalyzerData ion_white_;
-   TraceAnalyzerData ion_green_;
-   TraceAnalyzerData ion_blue_;
-   TraceAnalyzerData ion_black_;
-   TraceAnalyzerData f11_left_;
-   TraceAnalyzerData f11_right_;
-   ClassDef(PspmtAnalyzerData,1)
+   TraceAnalyzerData rit_b1_;
+   TraceAnalyzerData rit_b2_;
+   TraceAnalyzerData fit_b1_;
+   TraceAnalyzerData fit_b2_;
+   ClassDef(PspmtAnalyzerData,2)
 };
 
 

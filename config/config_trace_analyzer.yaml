@@ -94,10 +94,10 @@ PspmtAnalyzer:
 
     TimeWindow: 160 # in ns
     TimeOffset: 0
-    TimeWindowIon: 50
-    TimeOffsetIon: -840
-    TimeWindowVeto: 50
-    TimeOffsetVeto: -840
+    TimeWindowIon: 150
+    TimeOffsetIon: -50
+    TimeWindowVeto: 150
+    TimeOffsetVeto: -50
     HighGainThreshold: -100
     HighGainOverflow:  65535
     LowGainThreshold: -900

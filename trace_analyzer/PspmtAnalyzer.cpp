@@ -220,35 +220,25 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 				if(pspmt_gate(channel))
 					data_.high_gain_.yb_.pspmt_ = channel;
          }
-         else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("white")){
+         else if(!channel.subtype.CompareTo("FIT")&&!channel.tag.CompareTo("b1")){
             /* front plastic white */
 				if(ion_gate(channel))
-					data_.ion_white_.pspmt_ = channel;
+					data_.fit_b1_.pspmt_ = channel;
          }
-         else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("green")){
+         else if(!channel.subtype.CompareTo("FIT")&&!channel.tag.CompareTo("b2")){
             /* front plastic green */
 				if(ion_gate(channel))
-					data_.ion_green_.pspmt_ = channel;
+					data_.fit_b2_.pspmt_ = channel;
          }
-         else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("blue")){
-            /* front plastic blue */
-				if(ion_gate(channel))
-					data_.ion_blue_.pspmt_ = channel;
-         }
-         else if(!channel.subtype.CompareTo("ion")&&!channel.tag.CompareTo("black")){
-            /* front plastic black */
-				if(ion_gate(channel))
-					data_.ion_black_.pspmt_ = channel;
-         }
-         else if(!channel.subtype.CompareTo("veto")&&!channel.tag.CompareTo("1")){
+         else if(!channel.subtype.CompareTo("RIT")&&!channel.tag.CompareTo("b1")){
             /* veto plastic first */
 				if(veto_gate(channel))
-					data_.veto_first_.pspmt_ = channel;
+					data_.rit_b1_.pspmt_ = channel;
          }
-         else if(!channel.subtype.CompareTo("veto")&&!channel.tag.CompareTo("2")){
+         else if(!channel.subtype.CompareTo("RIT")&&!channel.tag.CompareTo("b2")){
             /* veto plastic second */
 				if(veto_gate(channel))
-					data_.veto_second_.pspmt_ = channel;
+					data_.rit_b2_.pspmt_ = channel;
          }
       }
 
@@ -301,21 +291,17 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
       }
       {
 			/* VETO */
-         pspmt_data_.veto_first_.energy_ = data_.veto_first_.pspmt_.energy;
-         pspmt_data_.veto_second_.energy_ = data_.veto_second_.pspmt_.energy;
-         pspmt_data_.veto_first_.time_ = data_.veto_first_.pspmt_.time;
-         pspmt_data_.veto_second_.time_ = data_.veto_second_.pspmt_.time;
+         pspmt_data_.rit_b1_.energy_ = data_.rit_b1_.pspmt_.energy;
+         pspmt_data_.rit_b2_.energy_ = data_.rit_b2_.pspmt_.energy;
+         pspmt_data_.rit_b1_.time_ = data_.rit_b1_.pspmt_.time;
+         pspmt_data_.rit_b2_.time_ = data_.rit_b2_.pspmt_.time;
       }
       {
 			/* ION (front plastic) */
-         pspmt_data_.ion_white_.energy_ = data_.ion_white_.pspmt_.energy;
-         pspmt_data_.ion_green_.energy_ = data_.ion_green_.pspmt_.energy;
-         pspmt_data_.ion_blue_.energy_ = data_.ion_blue_.pspmt_.energy;
-         pspmt_data_.ion_black_.energy_ = data_.ion_black_.pspmt_.energy;
-         pspmt_data_.ion_white_.time_ = data_.ion_white_.pspmt_.time;
-         pspmt_data_.ion_green_.time_ = data_.ion_green_.pspmt_.time;
-         pspmt_data_.ion_blue_.time_ = data_.ion_blue_.pspmt_.time;
-         pspmt_data_.ion_black_.time_ = data_.ion_black_.pspmt_.time;
+         pspmt_data_.fit_b1_.energy_ = data_.fit_b1_.pspmt_.energy;
+         pspmt_data_.fit_b2_.energy_ = data_.fit_b2_.pspmt_.energy;
+         pspmt_data_.fit_b1_.time_ = data_.fit_b1_.pspmt_.time;
+         pspmt_data_.fit_b2_.time_ = data_.fit_b2_.pspmt_.time;
       }
 		
       output_tree_->Fill();

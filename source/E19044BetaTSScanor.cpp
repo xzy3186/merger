@@ -16,6 +16,7 @@ void E19044BetaTSScanor::SetReader()
     low_gain_min_ = yaml_reader_->GetDouble("MinLowGainDynEnergy");
     low_gain_max_ = yaml_reader_->GetDouble("MaxLowGainDynEnergy");
     std::cout << kMsgPrefix << "Beta range on dynode low gain: " << low_gain_min_ << " - " << low_gain_max_ << std::endl;
+    fit_threshold_ = yaml_reader_->GetDouble("FITThreshold");
     return;
 }
 
@@ -25,10 +26,11 @@ Bool_t E19044BetaTSScanor::IsInGate()
     auto high = tree_data_->Get()->high_gain_;
 
 
-    {   /* checks if there is a coincidence with veto detector */
-        const Double_t energy_first = tree_data_->Get()->veto_first_.energy_;
-        const Double_t energy_second = tree_data_->Get()->veto_second_.energy_;
-        if( energy_first > 10. && energy_second > 10. )
+
+    {   /* checks if there is a coincidence with front plastic detector */
+        const Double_t energy_first = tree_data_->Get()->fit_b1_.energy_;
+        const Double_t energy_second = tree_data_->Get()->fit_b2_.energy_;
+        if( energy_first > fit_threshold_ || energy_second > fit_threshold_ )
             return false;
     }
 

@@ -46,12 +46,10 @@ public:
 		file_name_ = obj.file_name_;
       external_ts_high_ = obj.external_ts_high_;
       external_ts_low_ = obj.external_ts_low_;
-      veto_first_ = obj.veto_first_;
-      veto_second_ = obj.veto_second_;
-      ion_white_ = obj.ion_white_;
-      ion_green_ = obj.ion_green_;
-      ion_blue_ = obj.ion_blue_;
-      ion_black_ = obj.ion_black_;
+      rit_b1_ = obj.rit_b1_;
+      rit_b2_ = obj.rit_b2_;
+      fit_b1_ = obj.fit_b1_;
+      fit_b2_ = obj.fit_b2_;
       high_gain_ = obj.high_gain_;
       low_gain_ = obj.low_gain_;
       dyn_single_ = obj.dyn_single_;
@@ -62,12 +60,10 @@ public:
 		file_name_ = "";
       external_ts_high_ = 0;
       external_ts_low_ = 0;
-      veto_first_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
-      veto_second_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
-      ion_white_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
-      ion_green_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
-      ion_blue_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
-      ion_black_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
+      rit_b1_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
+      rit_b2_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
+      fit_b1_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
+      fit_b2_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
       dyn_single_ = DEFAULT_BEAMLINE_DETECTOR_STRUC;
 
       high_gain_ = DEFAULT_PSPMT_STRUC;
@@ -78,17 +74,15 @@ public:
 	std::string file_name_;
    ULong64_t external_ts_high_;
    ULong64_t external_ts_low_;
-   beamline_detector_struc veto_first_;
-   beamline_detector_struc veto_second_;
-   beamline_detector_struc ion_white_;
-   beamline_detector_struc ion_green_;
-   beamline_detector_struc ion_blue_;
-   beamline_detector_struc ion_black_;
+   beamline_detector_struc rit_b1_;
+   beamline_detector_struc rit_b2_;
+   beamline_detector_struc fit_b1_;
+   beamline_detector_struc fit_b2_;
    beamline_detector_struc dyn_single_;
    pspmt_struc high_gain_;
    pspmt_struc low_gain_;
   
-   ClassDef(PspmtData,5)
+   ClassDef(PspmtData,6)
 };
 
 
