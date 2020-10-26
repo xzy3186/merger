@@ -29,7 +29,7 @@ Bool_t E19044ImplantTSScanor::IsInGate()
     auto pid_vec = pid_data_->Get();
     if (pid_vec->empty())
         return false;
-    if (pid_cut_->IsInside(pid_vec->at(0).pin_1_energy, pid_vec->at(0).pin_0_energy))
+    if (pid_cut_->IsInside(pid_vec->at(0).pin_0_energy, pid_vec->at(0).tof1))
         return true;
     else
         return false;
