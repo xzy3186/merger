@@ -7,7 +7,7 @@ struct pspmt_struc{
    Double_t pos_x_ = -999;
    Double_t pos_y_ = -999;
    Int_t valid_ = 0;
-   Double_t trace_energy_ = 0;
+   Double_t qdc_ = 0;
    Double_t energy_ = 0;
    Double_t time_ = 0;
    Double_t energy_sum_ = 0;
@@ -16,10 +16,10 @@ struct pspmt_struc{
 	Double_t xb_energy_ = -999;
 	Double_t ya_energy_ = -999;
 	Double_t yb_energy_ = -999;
-	Double_t xa_trace_energy_ = -999;
-	Double_t xb_trace_energy_ = -999;
-	Double_t ya_trace_energy_ = -999;
-	Double_t yb_trace_energy_ = -999;
+	Double_t xa_qdc_ = -999;
+	Double_t xb_qdc_ = -999;
+	Double_t ya_qdc_ = -999;
+	Double_t yb_qdc_ = -999;
 };
 static pspmt_struc DEFAULT_PSPMT_STRUC;
 

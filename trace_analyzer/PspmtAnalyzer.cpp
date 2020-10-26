@@ -246,12 +246,12 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 		{
          /* high gain */
          pspmt_data_.external_ts_high_ = ts;
-         pspmt_data_.high_gain_.trace_energy_ = data_.high_gain_.dynode_.pspmt_.traceMaxVal;
+         pspmt_data_.high_gain_.qdc_ = data_.high_gain_.dynode_.pspmt_.qdc;
          pspmt_data_.high_gain_.energy_ = data_.high_gain_.dynode_.pspmt_.energy;
          pspmt_data_.high_gain_.time_ = data_.high_gain_.dynode_.pspmt_.time;
-         pspmt_data_.high_gain_.energy_sum_ = data_.high_gain_.xa_.pspmt_.traceMaxVal
-            + data_.high_gain_.xb_.pspmt_.traceMaxVal + data_.high_gain_.ya_.pspmt_.traceMaxVal
-            + data_.high_gain_.yb_.pspmt_.traceMaxVal;
+         pspmt_data_.high_gain_.energy_sum_ = data_.high_gain_.xa_.pspmt_.qdc
+            + data_.high_gain_.xb_.pspmt_.qdc + data_.high_gain_.ya_.pspmt_.qdc
+            + data_.high_gain_.yb_.pspmt_.qdc;
 
          CalculatePositionH(data_.high_gain_);
          pspmt_data_.high_gain_.pos_x_= data_.high_gain_.pos_x_;
@@ -262,32 +262,36 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 			pspmt_data_.high_gain_.xb_energy_ = data_.high_gain_.xb_.pspmt_.energy;
 			pspmt_data_.high_gain_.ya_energy_ = data_.high_gain_.ya_.pspmt_.energy;
 			pspmt_data_.high_gain_.yb_energy_ = data_.high_gain_.yb_.pspmt_.energy;
-			pspmt_data_.high_gain_.xa_trace_energy_ = data_.high_gain_.xa_.pspmt_.traceMaxVal;
-			pspmt_data_.high_gain_.xb_trace_energy_ = data_.high_gain_.xb_.pspmt_.traceMaxVal;
-			pspmt_data_.high_gain_.ya_trace_energy_ = data_.high_gain_.ya_.pspmt_.traceMaxVal;
-			pspmt_data_.high_gain_.yb_trace_energy_ = data_.high_gain_.yb_.pspmt_.traceMaxVal;
+			pspmt_data_.high_gain_.xa_qdc_ = data_.high_gain_.xa_.pspmt_.qdc;
+			pspmt_data_.high_gain_.xb_qdc_ = data_.high_gain_.xb_.pspmt_.qdc;
+			pspmt_data_.high_gain_.ya_qdc_ = data_.high_gain_.ya_.pspmt_.qdc;
+			pspmt_data_.high_gain_.yb_qdc_ = data_.high_gain_.yb_.pspmt_.qdc;
 
       }
 		{
          /* low gain */
          data_.external_ts_low_ = ts;
          pspmt_data_.external_ts_low_ = ts;
-         pspmt_data_.low_gain_.trace_energy_ = data_.low_gain_.dynode_.pspmt_.traceMaxVal;
+         pspmt_data_.low_gain_.qdc_ = data_.low_gain_.dynode_.pspmt_.qdc;
          pspmt_data_.low_gain_.energy_ = data_.low_gain_.dynode_.pspmt_.energy;
          pspmt_data_.low_gain_.time_ = data_.low_gain_.dynode_.pspmt_.time;
-         pspmt_data_.low_gain_.energy_sum_ = data_.low_gain_.xa_.pspmt_.traceMaxVal
-            + data_.low_gain_.xb_.pspmt_.traceMaxVal + data_.low_gain_.ya_.pspmt_.traceMaxVal
-            + data_.low_gain_.yb_.pspmt_.traceMaxVal;
+         pspmt_data_.low_gain_.energy_sum_ = data_.low_gain_.xa_.pspmt_.qdc
+            + data_.low_gain_.xb_.pspmt_.qdc + data_.low_gain_.ya_.pspmt_.qdc
+            + data_.low_gain_.yb_.pspmt_.qdc;
 
          CalculatePositionL(data_.low_gain_);
          pspmt_data_.low_gain_.pos_x_= data_.low_gain_.pos_x_;
          pspmt_data_.low_gain_.pos_y_= data_.low_gain_.pos_y_;
          pspmt_data_.low_gain_.valid_= data_.low_gain_.valid_;
 
-			pspmt_data_.low_gain_.xa_energy_ = data_.low_gain_.xa_.pspmt_.energy;
-			pspmt_data_.low_gain_.xb_energy_ = data_.low_gain_.xb_.pspmt_.energy;
-			pspmt_data_.low_gain_.ya_energy_ = data_.low_gain_.ya_.pspmt_.energy;
-			pspmt_data_.low_gain_.yb_energy_ = data_.low_gain_.yb_.pspmt_.energy;
+		pspmt_data_.low_gain_.xa_energy_ = data_.low_gain_.xa_.pspmt_.energy;
+		pspmt_data_.low_gain_.xb_energy_ = data_.low_gain_.xb_.pspmt_.energy;
+		pspmt_data_.low_gain_.ya_energy_ = data_.low_gain_.ya_.pspmt_.energy;
+		pspmt_data_.low_gain_.yb_energy_ = data_.low_gain_.yb_.pspmt_.energy;
+		pspmt_data_.low_gain_.xa_qdc_ = data_.low_gain_.xa_.pspmt_.qdc;
+		pspmt_data_.low_gain_.xb_qdc_ = data_.low_gain_.xb_.pspmt_.qdc;
+		pspmt_data_.low_gain_.ya_qdc_ = data_.low_gain_.ya_.pspmt_.qdc;
+		pspmt_data_.low_gain_.yb_qdc_ = data_.low_gain_.yb_.pspmt_.qdc;
       }
       {
 			/* VETO */
@@ -327,15 +331,15 @@ void PspmtAnalyzer::Correct(double& val, TF1* func) {
 void PspmtAnalyzer::CalculatePositionH(pspmt_data_struc &data)
 {
    /* pspmt position calculation */
-   Correct(data.xa_.pspmt_.traceMaxVal,fCorrectionHighGainXA);
-   Correct(data.xb_.pspmt_.traceMaxVal,fCorrectionHighGainXB);
-   Correct(data.ya_.pspmt_.traceMaxVal,fCorrectionHighGainYA);
-   Correct(data.yb_.pspmt_.traceMaxVal,fCorrectionHighGainYB);
+   Correct(data.xa_.pspmt_.qdc,fCorrectionHighGainXA);
+   Correct(data.xb_.pspmt_.qdc,fCorrectionHighGainXB);
+   Correct(data.ya_.pspmt_.qdc,fCorrectionHighGainYA);
+   Correct(data.yb_.pspmt_.qdc,fCorrectionHighGainYB);
 
-   const double xa = data.xa_.pspmt_.traceMaxVal;
-   const double xb = data.xb_.pspmt_.traceMaxVal;
-   const double ya = data.ya_.pspmt_.traceMaxVal;
-   const double yb = data.yb_.pspmt_.traceMaxVal;
+   const double xa = data.xa_.pspmt_.qdc;
+   const double xb = data.xb_.pspmt_.qdc;
+   const double ya = data.ya_.pspmt_.qdc;
+   const double yb = data.yb_.pspmt_.qdc;
 
    /** check if all four anode signals are good **/
    if(
@@ -381,15 +385,15 @@ void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
    //const double yb = CorrectedTraceEnergy(data.yb_.pspmt_,kTRACEMAX_QDC_RATIO_YB) + kLOW_GAIN_OFFSET_YB;
 
    /* pspmt position calculation */
-   Correct(data.xa_.pspmt_.traceMaxVal,fCorrectionLowGainXA);
-   Correct(data.xb_.pspmt_.traceMaxVal,fCorrectionLowGainXB);
-   Correct(data.ya_.pspmt_.traceMaxVal,fCorrectionLowGainYA);
-   Correct(data.yb_.pspmt_.traceMaxVal,fCorrectionLowGainYB);
+   Correct(data.xa_.pspmt_.qdc,fCorrectionLowGainXA);
+   Correct(data.xb_.pspmt_.qdc,fCorrectionLowGainXB);
+   Correct(data.ya_.pspmt_.qdc,fCorrectionLowGainYA);
+   Correct(data.yb_.pspmt_.qdc,fCorrectionLowGainYB);
 
-   const double xa = data.xa_.pspmt_.traceMaxVal;
-   const double xb = data.xb_.pspmt_.traceMaxVal;
-   const double ya = data.ya_.pspmt_.traceMaxVal;
-   const double yb = data.yb_.pspmt_.traceMaxVal;
+   const double xa = data.xa_.pspmt_.qdc;
+   const double xb = data.xb_.pspmt_.qdc;
+   const double ya = data.ya_.pspmt_.qdc;
+   const double yb = data.yb_.pspmt_.qdc;
 
 	//pspmt_data_.low_gain_.xa_trace_energy_ = xa;
 	//pspmt_data_.low_gain_.xb_trace_energy_ = xb;
