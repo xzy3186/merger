@@ -2,6 +2,9 @@
 *.json
 out/
 build/
+build/*
+install/
+install/*
 
 # Prerequisites
 *.d
