@@ -17,3 +17,4 @@ add_library(MergerLib SHARED
 target_link_libraries(MergerLib merger_data_dic PaassRootStruct ${ROOT_LIBRARIES})
 
 install(TARGETS MergerLib DESTINATION lib)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../include/ DESTINATION include)
