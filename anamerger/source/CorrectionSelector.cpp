@@ -45,7 +45,8 @@ void CorrectionSelector::Begin(TTree* mergedData) {
             delete fOutputTree;
             fOutputTree = nullptr;
         }
-        fOutputFile = new TFile(file_name_.c_str(), "RECREATE", "", ROOT::CompressionSettings(ROOT::kLZMA, 8));
+        //fOutputFile = new TFile(file_name_.c_str(), "RECREATE", "", ROOT::CompressionSettings(ROOT::kLZMA, 8));
+        fOutputFile = new TFile(file_name_.c_str(), "RECREATE", "");
         fOutputTree = new TTree("mergedCorrectedBeta", "mergedCorrectedBeta");
         fOutputTree->Branch("corrected_vandle_vec", "std::vector<CorrectedVANDLEData>", &corrected_vandle_vec_);
         fOutputTree->SetDirectory(fOutputFile);
@@ -86,6 +87,12 @@ void CorrectionSelector::SlaveBegin(TTree* mergedData) {
                 vandle_corrector_config_ = named->GetTitle();
             else
                 vandle_corrector_config_ = "config_vandle_corrector.yaml";
+        }
+        {
+            // read output branch names
+            auto param = (TParameter<std::vector<std::string>>*)fInput->FindObject("output_branches");
+            if (param)
+                output_branches_ = param->GetVal();
         }
     }
 
@@ -148,25 +155,29 @@ void CorrectionSelector::Init(TTree* mergedData) {
 }
 
 void CorrectionSelector::SetBranch() {
+
     auto list = tree_reader_.GetTree()->GetListOfBranches();
-    TIter next(list);
-    /* loops over the branches in the input file */
-    int count = -1;
-    while (TBranch* br = (TBranch*)next()) {
-        count++;
-        if (!count)
-            continue;
-		  if (count == 3)
-				continue;
-        TClass* tclass = (TClass*)gROOT->GetListOfClasses()->FindObject(br->GetClassName());
-        auto addr = tclass->New();                                     //new instance of the class object filled in the branch
-        br->SetAddress(addr);                                          // SetBranchAddress to the input tree
-        fOutputTree->Branch(br->GetName(), br->GetClassName(), addr);  // Branch to the output tree
-        std::cout << "SetBranchAddress(" << br->GetName() << "," << br->GetClassName() << "," << addr << ")" << std::endl;
+    for (const auto& br_name : output_branches_) {
+        auto br = (TBranch*)list->FindObject(br_name.c_str());
+        // Create a branch named br_name if it does not exist
+        if (!fOutputTree->FindBranch(br->GetName())) {
+            TClass* tclass = (TClass*)gROOT->GetListOfClasses()->FindObject(br->GetClassName());
+            auto addr = tclass->New();                                     //new instance of the class object filled in the branch
+            br->SetAddress(addr);                                          // SetBranchAddress to the input tree
+            fOutputTree->Branch(br->GetName(), br->GetClassName(), addr);  // Branch to the output tree
+            std::cout << "SetBranchAddress(" << br->GetName() << "," << br->GetClassName() << "," << addr << ")" << std::endl;
+        }
+        else {
+            // If the branch already exists, SetAddress to the new input tree
+            br->SetAddress(fOutputTree->FindBranch(br_name.c_str())->GetAddress());
+        }
+
     }
+
     // Somehow, tclass->New() doesn't work for OutputTreeData
-    // temporaly set branch to the output tree for the mergedBeta branch.
-    fBetaBranch = fOutputTree->Branch("mergedBeta", "OutputTreeData<PspmtData,PutputTreeData<PspmtData,TreeData>>", &beta_data_);
+    // temporaly set branch to the output tree for the mergedBeta branch
+    if (!fBetaBranch)
+        fBetaBranch = fOutputTree->Branch("mergedBeta", "OutputTreeData<PspmtData,PutputTreeData<PspmtData,TreeData>>", &beta_data_);
     return;
 }
 

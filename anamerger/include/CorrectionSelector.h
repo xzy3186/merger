@@ -48,6 +48,7 @@ public:
 
 	void SetFileName(const std::string& name) { file_name_ = name; }
 	void SetCorrectorConfigName(const std::string& name) { vandle_corrector_config_ = name; }
+	void SetOutputBranches(const std::vector<std::string>& output_branches) { output_branches_ = output_branches; }
 
 protected:
 
@@ -64,13 +65,14 @@ protected:
 	TProofOutputFile* fProofFile = nullptr;
 	TTree* fOutputTree = nullptr;
 	OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>> beta_data_;
-	TBranch* fBetaBranch;
-	TBranch* fCloverBranch;
-	TBranch* fVandleBranch;
+	TBranch* fBetaBranch = nullptr;
+	TBranch* fCloverBranch = nullptr;
+	TBranch* fVandleBranch = nullptr;
 	Long64_t n_events = 0;
 	std::string file_name_;
 	std::string proof_output_location_;
 	std::string vandle_corrector_config_;
+	std::vector<std::string> output_branches_;
 	Bool_t use_proof_;
 	VANDLEToFCorrector* corrector_ = nullptr;
 	const Double_t kSpeedOfLight = 299792458.;

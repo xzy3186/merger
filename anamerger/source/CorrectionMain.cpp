@@ -91,6 +91,7 @@ int main(int argc, char** argv)
 		const unsigned long long n_entries = yaml_reader_->GetULong64("NumEntries", false, chain->GetEntries());
 		const unsigned long long first_entry = yaml_reader_->GetULong64("FirstEntry", false, 0);
 		const std::string proof_output_location = yaml_reader_->GetString("ProofOutputLocation", false, "./");
+		std::vector<std::string> output_branches = yaml_reader_->GetStringVec("OutputBranches", false, *(new std::vector<std::string>));
 
 		/** destroys YamlParameter instance **/
 		YamlParameter::Destroy();
@@ -102,6 +103,7 @@ int main(int argc, char** argv)
 			pr->AddInput(new TNamed("output_file_prefix", output_file_name.c_str()));
 			pr->AddInput(new TNamed("proof_output_location", proof_output_location.c_str()));
 			pr->AddInput(new TNamed("vandle_corrector_config", vandle_corrector_config.c_str()));
+			pr->AddInput(new TParameter<std::vector<std::string>>("output_branches", output_branches));
 			chain->Process("CorrectionSelector", "", n_entries, first_entry);
 		}
 		else {
@@ -109,6 +111,7 @@ int main(int argc, char** argv)
 			CorrectionSelector* selector = new CorrectionSelector(chain);
 			selector->SetFileName(output_file_name);
 			selector->SetCorrectorConfigName(vandle_corrector_config);
+			selector->SetOutputBranches(output_branches);
 			chain->Process(selector, "", n_entries, first_entry);
 		}
 
