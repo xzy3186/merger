@@ -90,9 +90,14 @@ void CorrectionSelector::SlaveBegin(TTree* mergedData) {
         }
         {
             // read output branch names
-            auto param = (TParameter<std::vector<std::string>>*)fInput->FindObject("output_branches");
-            if (param)
-                output_branches_ = param->GetVal();
+            auto list = (TList*)fInput->FindObject("output_branches");
+            if (list) {
+                output_branches_.clear();
+                TIter next(list);
+                while (auto obj = next()) {
+                    output_branches_.emplace_back(((TObjString*)obj)->GetString());
+                }
+            }
         }
     }
 

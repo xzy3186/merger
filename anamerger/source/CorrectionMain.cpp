@@ -103,7 +103,11 @@ int main(int argc, char** argv)
 			pr->AddInput(new TNamed("output_file_prefix", output_file_name.c_str()));
 			pr->AddInput(new TNamed("proof_output_location", proof_output_location.c_str()));
 			pr->AddInput(new TNamed("vandle_corrector_config", vandle_corrector_config.c_str()));
-			pr->AddInput(new TParameter<std::vector<std::string>>("output_branches", output_branches));
+			auto list = new TList();
+			for (const auto& br_name : output_branches) {
+				list->Add(new TObjString(br_name.c_str()));
+			}
+			pr->AddInput(list);
 			chain->Process("CorrectionSelector", "", n_entries, first_entry);
 		}
 		else {
