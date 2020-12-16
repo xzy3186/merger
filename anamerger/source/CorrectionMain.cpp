@@ -104,6 +104,7 @@ int main(int argc, char** argv)
 			pr->AddInput(new TNamed("proof_output_location", proof_output_location.c_str()));
 			pr->AddInput(new TNamed("vandle_corrector_config", vandle_corrector_config.c_str()));
 			auto list = new TList();
+			list->SetName("output_branches");
 			for (const auto& br_name : output_branches) {
 				list->Add(new TObjString(br_name.c_str()));
 			}

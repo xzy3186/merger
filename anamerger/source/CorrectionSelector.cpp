@@ -162,6 +162,7 @@ void CorrectionSelector::Init(TTree* mergedData) {
 void CorrectionSelector::SetBranch() {
 
     auto list = tree_reader_.GetTree()->GetListOfBranches();
+    std::cout << "SetBranch() output_branches_.size(): " << output_branches_.size() << std::endl;
     for (const auto& br_name : output_branches_) {
         auto br = (TBranch*)list->FindObject(br_name.c_str());
         // Create a branch named br_name if it does not exist
