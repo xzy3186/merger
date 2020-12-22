@@ -13,7 +13,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     input_file = open(args.input_file)
-    yaml_data = yaml.load(input_file)
+    yaml_data = yaml.safe_load(input_file)
     input_file.close()
     
     yaml_data[args.block_to_replace][args.key_to_replace] = args.value_to_replace
