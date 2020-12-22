@@ -92,7 +92,7 @@ HighGainXA: "2.0*x+1.0" for example.
 
 There are several merger executables in this branch
 * __merger_pid__ merges BigRIPS events to PSPMT implant events
-* __merger_betea__ merges merger_pid outputs and PSPMT beta events
+* __merger_beta__ merges merger_pid outputs and PSPMT beta events
 * __merger_main__ does both of the above at a time
 
 all the programs above take one argument.
@@ -105,7 +105,7 @@ Example yaml file is found at config/config.yaml
 	* MinHighGainDynEnergy and MaxHighGainDynEnergy defines the energy range to identify the pspmt event as a beta event
 	* MinLowGainDynEnergy and MaxLowGainDynEnergy defines the energy range in low gain channel. Both the low gain and high gain ranges have to be satisfied to be filled.
 	* OtherBranches is a list of branches to output to the merged root file. If there is no event in the branch, it will be ignored.
-* ImplantTSScannor is a timestamp scannor for the implant events. It takes the same rootfile as E19044BetaTSScannor
+* ImplantTSScannor is a timestamp scannor for the implant events. It takes the BigRIPS root files.
 	* MinLowGainDynEnergy and MaxLowGainDynEnergy defines the energy range to identify the pspmt event as an implant event
 	* OtherBranches is a list of branches to output to the merged root file. If there is no event in the branch, it will be ignored.
 * BetaTreeMerger is a TreeMerger class for beta-ion correlation
