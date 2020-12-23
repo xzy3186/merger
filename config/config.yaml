@@ -77,6 +77,6 @@ BetaImplantMerger:
   TimeWindowUp: 5000000000
 
 BetaTreeMerger:
-  YSOMapFile: "./yso_pixel_map_july19.txt"
+  YSOMapFile: "./config/yso_pixel_map_july19.txt"
   NumberOfDivisions: 10
   CorrelationRadius: 0.2
