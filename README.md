@@ -34,12 +34,37 @@ Following files will be generated under the install directory.
 * anamergerLists/
 
 Copy these directories into your working directory.
-Then run following scripts to generate config files
+Then run following scripts to generate config files after changing tmplate yaml files if necessary.
 * config/configallnuclides.sh
-* config/corrector/configallnuclides.sh
-* config/anamerger/configallnuclides.sh
+This script generates run-by-run yaml files for the merger for all the nuclides.
+```
+cd config
+chmod a+x config_gen.sh
+sh configallnuclides [correlation_radius]
+```
+config.yaml is the template file. When you want to change any common parameters, edit this file before you run configallnuclides.sh
+It will take a while to run this script. The outputs will be generated in the configs/ directory.
 
-after changing tmplate yaml files if necessary.
+* config/corrector/configallnuclides.sh
+This script generates config yaml files for the corrector for each nuclide. 
+```
+cd corrector
+sh configallnuclides.sh
+```
+Edit correction_config.yaml before you run.
+
+* config/anamerger/configallnuclides.sh
+This script generates config files for the anamerger.
+```
+cd ../anamerger
+sh configallnuclides.h
+```
+configallnuclides.sh is a list of config_gen.sh commands for each isotope. 
+```
+sh config_gen.sh Ge87 0.1 &
+...
+```
+The last argument is the time window for the beta-ion correlation. You can specify which time window to use for each isotope.
 
 Create symbolic links to the data directories in your working directory.
 * pixie_rootfiles_lrqdc
@@ -53,12 +78,19 @@ Generate mergerList and anamergerList files by running following scripts.
 * mergerLists/gen_mergerLists.py
 * anamergerLists/gen_anamergerLists.py
 
+mergerList files are the list of input file names with the absolute paths. You can change the file names or the file paths by editing the python script.
+
 Submit jobs by:
 ```
 qsub scripts/run_trace_analyzer.pbs
 qsub scripts/run_merger.pbs
 qsub scripts/run_corrector.pbs
 ```
+If you want to hold the job for the corrector until the merger job is done, submit the job with a "depend" argument.
+```
+qsub scripts/run_corrector.pbs -W depend=afterany:[job_id of run_merger.pbs]
+```
+You can check the IDs of running jobs by qstat command.
 
 ### How to run individual excutables
 
