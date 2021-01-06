@@ -1,0 +1,15 @@
+add_subdirectory(corrector)
+add_subdirectory(bar_config)
+add_subdirectory(anamerger)
+
+configure_file( config_gen.sh.in ${CMAKE_CURRENT_BINARY_DIR}/generated/config_gen.sh @ONLY)
+configure_file( configall.sh.in ${CMAKE_CURRENT_BINARY_DIR}/generated/configall.sh @ONLY)
+
+install(FILES config.yaml DESTINATION config)
+install(FILES config_gen.py DESTINATION config)
+install(FILES configallnuclides.sh DESTINATION config)
+install(FILES config_trace_analyzer.yaml DESTINATION config)
+install(FILES yso_pixel_map_july19.txt DESTINATION config)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/generated/config_gen.sh DESTINATION config)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/generated/configall.sh DESTINATION config)
+install(DIRECTORY configs DESTINATION config)

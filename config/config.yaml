@@ -1,3 +1,8 @@
+MergerMain:
+  TCutGFileName: referenceCuts.root
+  PIDCuts:
+   - "17N"
+
 E19044BetaTSScannor:
   InputFileName: output.root
   TreeName: pspmt
@@ -24,19 +29,19 @@ ImplantTSScannor:
 #  FirstEntry: 0
 #  LastEntry: 10000
 
-#E19044NEXTTSScannor:
-#  InputFileName: 252cf_test_DD.root
-#  TreeName: PixTree
-#  PixieBranchName: PixTreeEvent
-##  FirstEntry: 0
-##  LastEntry: 1000
-#
-#E19044VANDLETSScannor:
-#  InputFileName: mergedBeta.root
-#  TreeName: mergedBeta
-#  PixieBranchName: mergedBeta
-##  FirstEntry: 0
-##  LastEntry: 1000
+E19044NEXTTSScannor:
+  InputFileName: 252cf_test_DD.root
+  TreeName: PixTree
+  PixieBranchName: PixTreeEvent
+#  FirstEntry: 0
+#  LastEntry: 1000
+
+E19044VANDLETSScannor:
+  InputFileName: mergedBeta.root
+  TreeName: mergedBeta
+  PixieBranchName: mergedBeta
+#  FirstEntry: 0
+#  LastEntry: 1000
 
 E19044BetaTreeMerger:
   OutputFileName: mergedBeta.root
@@ -49,14 +54,14 @@ E19044BetaTreeMerger:
   TimeWindowLow: 100000000
   TimeWindowUp: 100000000
 
-#NEXTMerger:
-#  OutputFileName: mergedNEXTBeta.root
-#  TreeName: mergedNEXTBeta
-#  BranchName: mergedNEXTBeta
-#  ClassName: NEXTOutput
-#  PrintFrequency: 1000
+NEXTMerger:
+  OutputFileName: mergedNEXTBeta.root
+  TreeName: mergedNEXTBeta
+  BranchName: mergedNEXTBeta
+  ClassName: NEXTOutput
+  PrintFrequency: 1000
 
-BetaTreeMerger:
+E19044BetaTreeMerger:
   #YSOMapFile: "./yso_map.txt"
   #NumberOfDivisions: 10
   CorrelationRadius: 0.2

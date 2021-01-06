@@ -1,0 +1,82 @@
+BigRIPSTSScannor:
+  InputFileName: rootfiles_bigrips/run3068ga83_84_ni_86_gated.root
+  TreeName: Ga83Tree
+  BranchName: bigrips
+#  FirstEntry: 0
+#  LastEntry: 10000
+
+ImplantTSScannor:
+  InputFileName: processed_rootfiles/production_42_trace.root
+  TreeName: pspmt
+  PixieBranchName: pspmt_compressed
+  MinLowGainDynEnergy: 0
+  MaxLowGainDynEnergy: 65535
+  PrintFrequency: 100000
+  OtherBranches:
+    - "clover_vec_"
+    #- "event_info_"
+    #- "file_name"
+    #- "pixie_event_num"
+#  FirstEntry: 0
+#  LastEntry: 1000000
+
+BigRIPSImplantMerger:
+  OutputFileName: yso_trace/mergedImp42_ga83_tmp.root
+  TreeName: mergedImp
+  BranchName: mergedImp
+  ClassName: OutputTreeData<PspmtData, TreeData>
+  TimeWindowLow: -200
+  TimeWindowUp: 600
+  TimeStampScale: 40
+  ScanWindow: 1E+9
+
+MergedImplantTSScannor:
+  InputFileName: yso_trace/mergedImp42_ga83.root
+  TreeName: mergedImp
+  PixieBranchName: mergedImp
+#  FirstEntry: 10000
+#  LastEntry: 20000
+
+BetaTSScannor:
+  InputFileName: processed_rootfiles/production_42_trace.root
+  TreeName: pspmt
+  PixieBranchName: pspmt_compressed
+  MinHighGainDynEnergy: 10
+  MaxHighGainDynEnergy: 30000
+  MinLowGainDynEnergy: -2000
+  MaxLowGainDynEnergy: 2000
+  PrintFrequency: 100000
+  OtherBranches:
+    - "clover_vec_"
+    - "vandle_vec_"
+    - "gamma_scint_vec_"
+    #- "event_info_"
+    #- "file_name"
+    #- "pixie_event_num"
+  #FirstEntry: 1000000
+  #LastEntry: 1200000
+  #LastEntry: 2000000
+
+ImplantBetaMerger:
+  OutputFileName: yso_trace/mergedBeta42_ga83_tmp.root
+  TreeName: mergedBeta
+  BranchName: mergedBeta
+  ClassName: OutputTreeData<PspmtData,OutputTreeData<PspmtData, TreeData>>
+  PrintFrequency: 10000
+  TimeWindowLow: 5000000000
+  TimeWindowUp: 5000000000
+  ScanWindow: 10
+
+BetaImplantMerger:
+  OutputFileName: yso_trace/mergedImpBeta42_tmp.root
+  TreeName: mergedImpBeta
+  BranchName: mergedImpBeta
+  ClassName: OutputTreeData<OutputTreeData<PspmtData, TreeData>,PspmtData>
+  PrintFrequency: 10000
+  TimeWindowLow: 5000000000
+  TimeWindowUp: 5000000000
+
+BetaTreeMerger:
+  YSOMapFile: "./config/yso_pixel_map_july19.txt"
+  NumberOfDivisions: 10
+  CorrelationRadius: 0.2

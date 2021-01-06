@@ -1,0 +1,13 @@
+AnamergerMain:
+    TreeName: mergedBeta
+    MergerListName: "./mergerLists/mergerListNi78.txt"
+    NumWorkers: 38
+    PrintFrequency: 10000
+    UseProof: True
+    #FirstEntry: 0
+    #NumEntries: 40000000
+    ProofOutputLocation: "@MERGER_WORK_DIR@/corrected_rootfiles_lrqdc/"
+    VANDLECorrectorConfig: "@MERGER_WORK_DIR@/config/bar_config/config_vandle_corrector.yaml"
+    OutputBranches:
+     - clover_vec_
+     - gamma_scint_vec_

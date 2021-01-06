@@ -1,0 +1,7 @@
+AnamergerMain:
+  MergerListName: /nics/b/home/ryokoyam/vandle_work/anamergerLists/anamergerListAs90.txt
+  NumWorkers: 38
+  PrintFrequency: 10000
+  TimeWindow: '0.1'
+  TreeName: mergedCorrectedBeta
+  UseProof: true

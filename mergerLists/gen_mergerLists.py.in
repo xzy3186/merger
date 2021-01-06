@@ -1,0 +1,10 @@
+import sys
+work_dir = '@MERGER_WORK_DIR@'
+if __name__=="__main__":
+	dist = sys.argv[1]
+	nuclei = ["Ni78","Cu82","Cu81","Cu80","Cu77","Cu78","Cu79","Ni75","Ni76","Ni77","Ni79","Ga87","Ga86","Ga85","Ga84","Ga83","Zn80","Zn81","Zn82","Zn83","Zn84","Ge85","Ge86","Ge87","Ge88","Ge89","As88","As89","As90","As91","Co73","Co74","Co75"]
+	for nucl in nuclei:
+		f = open(work_dir+'mergerLists/mergerList'+nucl+'.txt','w')
+		for i in range(14,113):
+			f.write(work_dir+'scratch/mergedVANDLE'+str(i)+'_'+nucl+'_r'+dist+'.root\n')
+		f.close()
