@@ -4,9 +4,9 @@ from multiprocessing import Pool
 
 
 def scan(i):
-    inputname = "./pixie_rootfiles/production_"+str(i)
-    fname = "production_"+str(i)+".root"
-    tmpoutput = "./vandle_rootfiles/"
+    inputname = "./rootfiles_vandle/17N_"+str(i)
+    fname = "17N_pspmt_"+str(i)+".root"
+    tmpoutput = "./outfiles/"
     logfile = "./logs/trace_analyzer_main_"+str(i)
     conf = "./config/config_trace_analyzer.yaml"
     cmd="trace_analyzer_main "+ inputname + " " + tmpoutput + fname + " " + conf + " >> " + logfile + ".log 2>> " + logfile + ".errlog"
@@ -24,3 +24,4 @@ if __name__ == "__main__":
 	
 	p.map(scan, scan_data)
 	p.join()
+

@@ -1,7 +1,0 @@
-AnamergerMain:
-    TreeName: mergedCorrectedBeta
-    MergerListName: "/home/ryokoyam/vandle/trace_yso/work/mergerList/anamergerListNi78.txt"
-    NumWorkers: 38
-    PrintFrequency: 10000
-    UseProof: True
-    TimeWindow: 0.3

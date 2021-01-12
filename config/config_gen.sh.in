@@ -2,23 +2,19 @@
 DISTANCE=${4}
 WORKDIR=@MERGER_WORK_DIR@
 CONFIGDIR=@MERGER_LIB_DIR@../config
+
 INPUT=${WORKDIR}/config/config.yaml
 OUTPUT=${WORKDIR}/config/configs/config${1}.yaml
-VANDLE_ROOT=${WORKDIR}/vandle_rootfiles/production_${1}.root
+VANDLE_ROOT=${WORKDIR}/outfiles/test_pspmt.root
 VANDLE_MERGED=${WORKDIR}/merged_rootfiles/mergedVANDLE${1}_r${DISTANCE}.root
-NEXT_ROOT=${WORKDIR}/next_rootfiles/production_${2}.root
+NEXT_ROOT=${WORKDIR}/rootfiles_next/17N_run_${2}_DD.root
 NEXT_MERGED=${WORKDIR}/merged_rootfiles/mergedNEXT${1}_${2}_r${DISTANCE}.root
 TREE=${3}
 
-python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b ImplantTSScannor -k TreeName -v ${TREE}
-python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b ImplantTSScannor -k InputFileName -v ${VANDLE_ROOT}
-python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b ImplantTSScannor -k ParticleName -v ${3}
-python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044BetaTSScannor -k TreeName -v ${TREE}
+python ${CONFIGDIR}/config_gen.py -i ${INPUT} -o ${OUTPUT} -b ImplantTSScannor -k InputFileName -v ${VANDLE_ROOT}
 python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044BetaTSScannor -k InputFileName -v ${VANDLE_ROOT}
 python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044BetaTreeMerger -k OutputFileName -v ${VANDLE_MERGED}
-python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044VANDLETSScannor -k OutputFileName -v ${VANDLE_MERGED}
-python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044VANDLETSScannor -k TreeName -v ${TREE}
-python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044NEXTTSScannor -k OutputFileName -v ${NEXT_ROOT}
-python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044NEXTTSScannor -k TreeName -v ${TREE}
-python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044NEXTMerger -k OutputFileName -v ${NEXT_MERGED}
+python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044VANDLETSScannor -k InputFileName -v ${VANDLE_MERGED}
+python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b E19044NEXTTSScannor -k InputFileName -v ${NEXT_ROOT}
+python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b NEXTMerger -k OutputFileName -v ${NEXT_MERGED}
 python ${CONFIGDIR}/config_gen.py -i ${OUTPUT} -o ${OUTPUT} -b BetaTreeMerger -k CorrelationRadius -v ${DISTANCE}

@@ -1,9 +1,0 @@
-AnamergerMain:
-    TreeName: mergedCorrectedBeta
-    MergerListName: "./mergerList/anamergerListNi78.txt"
-    NumWorkers: 20
-    PrintFrequency: 10000
-    UseProof: True
-    TimeWindow: 0.3
-    #NumEntries: 100000
-    #FirstEntry: 0

@@ -1,8 +1,0 @@
-#!bin/bash
-WORKDIR=@MERGER_WORK_DIR@config/bar_config
-CONFIGDIR=@MERGER_LIB_DIR@config
-INPUT=${WORKDIR}/config_vandle_corrector_source.yaml
-OUTPUT=${WORKDIR}/config_vandle_corrector.yaml
-
-python ${CONFIGDIR}/config_gen.py -i ${INPUT} -o ${OUTPUT} -b VANDLEBars -k ToFOffset -v ${1}
-

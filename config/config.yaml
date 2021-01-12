@@ -1,7 +1,7 @@
 MergerMain:
-  TCutGFileName: referenceCuts.root
-  PIDCuts:
-   - "17N"
+  # TCutGFileName: referenceCuts.root
+  # PIDCuts:
+  #  - "17N"
 
 E19044BetaTSScannor:
   InputFileName: output.root
@@ -11,6 +11,8 @@ E19044BetaTSScannor:
   MaxHighGainDynEnergy: 30000
   MinLowGainDynEnergy: -2000
   MaxLowGainDynEnergy: 2000
+  FITThreshold: 0
+
   OtherBranches:
     - "vandle_vec_"
     - "clover_vec_"
@@ -61,7 +63,7 @@ NEXTMerger:
   ClassName: NEXTOutput
   PrintFrequency: 1000
 
-E19044BetaTreeMerger:
+BetaTreeMerger:
   #YSOMapFile: "./yso_map.txt"
   #NumberOfDivisions: 10
   CorrelationRadius: 0.2
