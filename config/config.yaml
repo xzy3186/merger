@@ -63,6 +63,11 @@ NEXTMerger:
   ClassName: NEXTOutput
   PrintFrequency: 1000
 
+  # +-100 ets clock ticks
+  TimeWindowLow: 100
+  TimeWindowUp: 100
+  #TimeOffset: 1000
+
 BetaTreeMerger:
   #YSOMapFile: "./yso_map.txt"
   #NumberOfDivisions: 10

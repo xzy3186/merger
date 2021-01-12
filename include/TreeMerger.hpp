@@ -35,6 +35,7 @@ protected:
     RemainTime *remain_time_; // estimates remaining time
     Double_t time_window_low_; // lower limit of the time window to merge events (T1-T2)
     Double_t time_window_up_; // upper limit of the time window to merge events (T1-T2)
+    Double_t time_offset_; // offset of the time window to merge events Tlow + Toffset < T1 - T2 < Tup + Toffset
     Double_t scan_window_; // scan window factor to load entries to meory. (see def. in Configure())
     Double_t ts_scale_; // timestamp scale
     ULong64_t print_freq_; // frequency to print scan progress
@@ -125,6 +126,9 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
     /** time window **/
     time_window_low_ = yaml_reader_->GetDouble("TimeWindowLow");
     time_window_up_ = yaml_reader_->GetDouble("TimeWindowUp");
+    time_offset_ = yaml_reader_->GetDouble("TimeStampOffset",false,0);
+    time_window_up_ = time_window_up_ + time_offset_;
+    time_window_low_ = time_window_low_ + time_offset_;
     ts_scale_ = yaml_reader_->GetDouble("TimeStampScale",false,1);
     /** How many times the time window to load entries to memory at a time  **/
     /** events in a scan_window_*(time_window_low_+time_window_up_) window will be load at a time **/
