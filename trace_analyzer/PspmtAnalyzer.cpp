@@ -48,7 +48,8 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
       if (formula == "no_correction")
          return nullptr;
       auto tmp = new TF1(name.c_str(), formula.c_str(), -65535, 65535);
-      tmp->SetParameters(yaml_reader.GetDoubleVec(name + "Parameters").data());
+      if(tmp->GetNpar())
+         tmp->SetParameters(yaml_reader.GetDoubleVec(name + "Parameters").data());
       return tmp;
    };
 
