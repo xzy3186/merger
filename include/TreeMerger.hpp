@@ -128,7 +128,7 @@ void TreeMerger<TOUT,TIN1,TIN2>::Configure(const std::string &yaml_node_name)
     time_window_up_ = yaml_reader_->GetDouble("TimeWindowUp");
     time_offset_ = yaml_reader_->GetDouble("TimeStampOffset",false,0);
     time_window_up_ = time_window_up_ + time_offset_;
-    time_window_low_ = time_window_low_ + time_offset_;
+    time_window_low_ = time_window_low_ - time_offset_;
     ts_scale_ = yaml_reader_->GetDouble("TimeStampScale",false,1);
     /** How many times the time window to load entries to memory at a time  **/
     /** events in a scan_window_*(time_window_low_+time_window_up_) window will be load at a time **/
