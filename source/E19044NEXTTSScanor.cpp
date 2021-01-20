@@ -12,6 +12,10 @@ void E19044NEXTTSScanor::SetReader() {
 }
 
 Bool_t E19044NEXTTSScanor::IsInGate() {
+    auto next = tree_data_->Get()->next_vec_;
+    if(next.empty())
+        return false;
+    else
 	return true;
 }
 
