@@ -12,12 +12,11 @@ void YSOMap::LoadPositionParameters(std::string fname){
     return;
   }
   while( !ifile.eof() ){
-    Double_t bx, by, ix, iy, distance;
+    Double_t bx, by, ix, iy;
     ifile >> bx;
     ifile >> by;
     ifile >> ix;
     ifile >> iy;
-    ifile >> distance;
     YSOPositionData *pos = new YSOPositionData();
     pos->SetPositions(bx,by,ix,iy);
     fVectorOfYSOPositions.push_back(pos);
