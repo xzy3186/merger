@@ -7,6 +7,7 @@ add_library(MergerLib SHARED
   YamlParameter.cpp
   YamlReader.cpp
   YSOMap.cxx
+  YSOPixelatedMap.cpp
   BetaTSScannor.cpp
   BigRIPSTSScannor.cpp
   ImplantTSScannor.cpp

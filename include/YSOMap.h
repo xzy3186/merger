@@ -20,6 +20,8 @@ public:
   Double_t Distance(const Double_t &beta_x,const Double_t &beta_y) const;
   Double_t GetBetaX() const {return fBetaX;}
   Double_t GetBetaY() const {return fBetaY;}
+  Double_t GetIonX() const {return fIonX;}
+  Double_t GetIonY() const {return fIonY;}
 
 protected:
   Double_t fBetaX;
@@ -36,12 +38,12 @@ public:
   YSOMap(std::string fname);
   virtual ~YSOMap(){};
 
-  void LoadPositionParameters(std::string fname);
-  Bool_t IsInside(const Double_t &beta_x,const Double_t &beta_y,const Double_t &ion_x,const Double_t &ion_y,const Double_t &ion_r=-1);
+  virtual void LoadPositionParameters(std::string fname);
+  virtual Bool_t IsInside(const Double_t &beta_x,const Double_t &beta_y,const Double_t &ion_x,const Double_t &ion_y,const Double_t &ion_r=-1);
   Int_t GenerateMap(const Int_t &num_div=10);
 protected:
-  std::vector<YSOPositionData> fVectorOfYSOPositions;
-  std::map<Int_t, std::vector<YSOPositionData>> fMap;
+  std::vector<YSOPositionData*> fVectorOfYSOPositions;
+  std::map<Int_t, std::vector<YSOPositionData*>> fMap;
   Int_t fNumDiv = 0;
   Double_t fRangeX = 0;
   Double_t fRangeY = 0;

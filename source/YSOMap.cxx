@@ -12,14 +12,15 @@ void YSOMap::LoadPositionParameters(std::string fname){
     return;
   }
   while( !ifile.eof() ){
-    Double_t bx, by, ix, iy;
+    Double_t bx, by, ix, iy, distance;
     ifile >> bx;
     ifile >> by;
     ifile >> ix;
     ifile >> iy;
+    ifile >> distance;
     YSOPositionData *pos = new YSOPositionData();
     pos->SetPositions(bx,by,ix,iy);
-    fVectorOfYSOPositions.push_back(*pos);
+    fVectorOfYSOPositions.push_back(pos);
   }
   std::cout << "[YSOMap]: loaded " << fVectorOfYSOPositions.size() << " pixiels from " << fname << std::endl;
 }
@@ -29,28 +30,28 @@ Int_t YSOMap::GenerateMap(const Int_t &num_div){
   /* in order to make searching a closest pixel faster. */
   fNumDiv = num_div;
   {
-    auto lambda = [] (const YSOPositionData &a, const YSOPositionData &b){return a.GetBetaX() < b.GetBetaX();};
-    const Double_t max = std::max_element(fVectorOfYSOPositions.begin(),fVectorOfYSOPositions.end(), lambda)->GetBetaX();
-    const Double_t min = std::min_element(fVectorOfYSOPositions.begin(),fVectorOfYSOPositions.end(), lambda)->GetBetaX();
+    auto lambda = [] (const YSOPositionData *a, const YSOPositionData *b){return a->GetBetaX() < b->GetBetaX();};
+    const Double_t max = (*std::max_element(fVectorOfYSOPositions.begin(),fVectorOfYSOPositions.end(), lambda))->GetBetaX();
+    const Double_t min = (*std::min_element(fVectorOfYSOPositions.begin(),fVectorOfYSOPositions.end(), lambda))->GetBetaX();
     fRangeX = max - min;
     fMinX = min;
     std::cout << "[YSOMap]: x_range: " << min << ", " << max << std::endl;
   }
   {
-    auto lambda = [] (const YSOPositionData &a, const YSOPositionData &b){return a.GetBetaY() < b.GetBetaY();};
-    const Double_t max = std::max_element(fVectorOfYSOPositions.begin(),fVectorOfYSOPositions.end(), lambda)->GetBetaY();
-    const Double_t min = std::min_element(fVectorOfYSOPositions.begin(),fVectorOfYSOPositions.end(), lambda)->GetBetaY();
+    auto lambda = [] (const YSOPositionData *a, const YSOPositionData *b){return a->GetBetaY() < b->GetBetaY();};
+    const Double_t max = (*std::max_element(fVectorOfYSOPositions.begin(),fVectorOfYSOPositions.end(), lambda))->GetBetaY();
+    const Double_t min = (*std::min_element(fVectorOfYSOPositions.begin(),fVectorOfYSOPositions.end(), lambda))->GetBetaY();
     fRangeY = max - min;
     fMinY = min;
     std::cout << "[YSOMap]: y_range: " << min << ", " << max << std::endl;
   }
   for(int i1=0; i1<num_div+1; ++i1){
     for(int i2=0; i2<num_div+1; ++i2){
-      fMap.emplace(std::make_pair(i1+num_div*i2, std::vector<YSOPositionData>()));
+      fMap.emplace(std::make_pair(i1+num_div*i2, std::vector<YSOPositionData*>()));
     }
   }
-  for(const auto &pos: fVectorOfYSOPositions){
-    const Int_t key = GetId(pos.GetBetaX(),pos.GetBetaY());
+  for(const auto pos: fVectorOfYSOPositions){
+    const Int_t key = GetId(pos->GetBetaX(),pos->GetBetaY());
     //std::cout << "[YSOMap]: x, y, key: " << pos.GetBetaX() << ", " << pos.GetBetaY() << ", " << key << std::endl;
     fMap[key].push_back(pos);
   }
@@ -68,13 +69,13 @@ Bool_t YSOMap::IsInside(const Double_t &beta_x,const Double_t &beta_y,
 
   const YSOPositionData* p_closest = nullptr;
   Double_t distance_min = 1E+6;
-  auto lambda = [&d_min = distance_min, &bx = beta_x, &by = beta_y] (const std::vector<YSOPositionData> &pos_vec) {
+  auto lambda = [&d_min = distance_min, &bx = beta_x, &by = beta_y] (const std::vector<YSOPositionData*> &pos_vec) {
     const YSOPositionData* p;
-    for( auto &pos : pos_vec ){
-      const Double_t dist = pos.Distance(bx,by);
+    for( auto pos : pos_vec ){
+      const Double_t dist = pos->Distance(bx,by);
       if(dist<d_min) {
         d_min = dist;
-        p = &pos;
+        p = pos;
       }
     }
     return p;
@@ -87,20 +88,20 @@ Bool_t YSOMap::IsInside(const Double_t &beta_x,const Double_t &beta_y,
       for(int i2=-1; i2<2; ++i2){
         if(i2<0||i2>fNumDiv)
           continue;
-        for( auto &pos : fMap[GetId(beta_x+i,beta_y+i2)] ){
-          if(pos.Distance(beta_x,beta_y)<distance_min){
-            p_closest = &pos;
-            distance_min = pos.Distance(beta_x,beta_y);
+        for( auto pos : fMap[GetId(beta_x+i,beta_y+i2)] ){
+          if(pos->Distance(beta_x,beta_y)<distance_min){
+            p_closest = pos;
+            distance_min = pos->Distance(beta_x,beta_y);
           }
         }
       }
     }
   }
   else{ /*searches the closest pixel to the given beta position from the entire map */
-    for( auto &pos : fVectorOfYSOPositions ){
-      if(pos.Distance(beta_x,beta_y)<distance_min) {
-        p_closest = &pos;
-        distance_min = pos.Distance(beta_x,beta_y);
+    for( auto pos : fVectorOfYSOPositions ){
+      if(pos->Distance(beta_x,beta_y)<distance_min) {
+        p_closest = pos;
+        distance_min = pos->Distance(beta_x,beta_y);
       }
     }
   }
