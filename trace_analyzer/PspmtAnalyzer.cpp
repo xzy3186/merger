@@ -45,6 +45,10 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
 	kTRACEMAX_QDC_RATIO_YA = yaml_reader.GetDouble("TraceMaxQDCRatioYA", false, 0);
 	kTRACEMAX_QDC_RATIO_YB = yaml_reader.GetDouble("TraceMaxQDCRatioYB", false, 0);
 
+   yso_map_ = new YSOPixelatedMap(yaml_reader.GetString("YSOMapFile"));
+   yso_map_->GenerateMap(yaml_reader.GetULong64("NumberOfDivisions",false,10));
+   yso_map_->GenerateIonMap(yaml_reader.GetULong64("NumberOfDivisions",false,10));
+
    return 0;
 }
 
@@ -271,6 +275,11 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 			pspmt_data_.high_gain_.ya_trace_energy_ = data_.high_gain_.ya_.pspmt_.traceMaxVal;
 			pspmt_data_.high_gain_.yb_trace_energy_ = data_.high_gain_.yb_.pspmt_.traceMaxVal;
 
+         auto p_closest = yso_map_->FindClosestPixelBeta(pspmt_data_.high_gain_.pos_x_, pspmt_data_.high_gain_.pos_y_);
+         if(p_closest) {
+            pspmt_data_.high_gain_.id_x_ = p_closest->GetIndexX();
+            pspmt_data_.high_gain_.id_y_ = p_closest->GetIndexY();
+         }
       }
 		{
          /* low gain */
@@ -292,6 +301,12 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 			pspmt_data_.low_gain_.xb_energy_ = data_.low_gain_.xb_.pspmt_.energy;
 			pspmt_data_.low_gain_.ya_energy_ = data_.low_gain_.ya_.pspmt_.energy;
 			pspmt_data_.low_gain_.yb_energy_ = data_.low_gain_.yb_.pspmt_.energy;
+
+         auto p_closest = yso_map_->FindClosestPixelIon(pspmt_data_.low_gain_.pos_x_, pspmt_data_.low_gain_.pos_y_);
+         if(p_closest) {
+            pspmt_data_.low_gain_.id_x_ = p_closest->GetIndexX();
+            pspmt_data_.low_gain_.id_y_ = p_closest->GetIndexY();
+         }
       }
       {
 			/* dE Si */

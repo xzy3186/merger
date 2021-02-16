@@ -7,6 +7,7 @@
 #include "PspmtData.hpp"
 #include "TraceAnalyzer.hpp"
 #include "YamlReader.hpp"
+#include "YSOPixelatedMap.hpp"
 #include <TH1.h>
 
 
@@ -18,7 +19,10 @@ public:
    PspmtAnalyzer(const std::string &yaml_node_name){
       Configure(yaml_node_name);
    }
-   virtual ~PspmtAnalyzer(){};
+   virtual ~PspmtAnalyzer(){
+      if(yso_map_)
+         delete yso_map_;
+   };
 
    virtual int Configure(const std::string &yaml_node_name);
    virtual int Begin();
@@ -38,6 +42,7 @@ protected:
    std::vector<processor_struct::VANDLES> vandle_data_;
    std::vector<processor_struct::GAMMASCINT> gamma_scint_data_;
    std::vector<processor_struct::DOUBLEBETA> double_beta_data_;
+   YSOPixelatedMap* yso_map_ = nullptr;
 
    /* time window parameters relative to the high gain dynode signal */
    /* in clock ticks (8ns) */

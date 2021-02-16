@@ -36,7 +36,12 @@ class YSOMap {
 public:
   YSOMap(){};
   YSOMap(std::string fname);
-  virtual ~YSOMap(){};
+  virtual ~YSOMap(){
+    for(auto data: fVectorOfYSOPositions){
+      if(data)
+        delete data;
+    }
+  };
 
   virtual void LoadPositionParameters(std::string fname);
   virtual Bool_t IsInside(const Double_t &beta_x,const Double_t &beta_y,const Double_t &ion_x,const Double_t &ion_y,const Double_t &ion_r=-1);
@@ -50,8 +55,9 @@ protected:
   Double_t fMinX = 0;
   Double_t fMinY = 0;
   Int_t GetId(const Double_t &x, const Double_t &y) const {
-    //std::cout << "GetId(): " << x << ", " << ((double)x-fMinX)/fRangeX <<", " << ((Int_t)(((double)x-fMinX)/fRangeX*fNumDiv)) << std::endl;
-    return (Int_t)(((double)x-fMinX)/fRangeX*fNumDiv) + (fNumDiv)*((Int_t)(((double)y-fMinY)/fRangeY*fNumDiv));
+    const auto idx = (Int_t)(((double)x-fMinX)/fRangeX*fNumDiv);
+    const auto idy = (Int_t)(((double)y-fMinY)/fRangeY*fNumDiv);
+    return idx + fNumDiv * idy;
   }
 };
 

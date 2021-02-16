@@ -31,6 +31,8 @@ public:
     void LoadPositionParameters(std::string fname) override;
     Bool_t IsInside(const Double_t &beta_x,const Double_t &beta_y,const Double_t &ion_x,const Double_t &ion_y,const Double_t &ion_r=-1) override;
     Int_t GenerateIonMap(const Int_t &num_div);
+    const YSOPixelatedPositionData* FindClosestPixelBeta(const Double_t &beta_x, const Double_t &beta_y);
+    const YSOPixelatedPositionData* FindClosestPixelIon(const Double_t &ion_x, const Double_t &ion_y);
 
 protected:
     std::map<Int_t, std::vector<YSOPositionData*>> fIonMap;
@@ -40,7 +42,9 @@ protected:
     Double_t fIonMinX = 0;
     Double_t fIonMinY = 0;
     Int_t GetIonId(const Double_t &x, const Double_t &y) const {
-        return (Int_t)(((double)x-fIonMinX)/fIonRangeX*fIonNumDiv) + (fIonNumDiv)*((Int_t)(((double)y-fIonMinY)/fIonRangeY*fIonNumDiv));
+        const auto idx = (Int_t)(((double)x-fIonMinX)/fIonRangeX*fIonNumDiv);
+        const auto idy = (Int_t)(((double)y-fIonMinY)/fIonRangeY*fIonNumDiv);
+        return idx + fIonNumDiv * idy;
     }
 };
 #endif

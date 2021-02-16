@@ -27,10 +27,10 @@ Bool_t ImplantTSScannor::IsInGate()
         return false;
 
     // Anti-gating on veto
-    //{
-    //    if(tree_data_->Get()->veto_first_.energy_>10. && tree_data_->Get()->veto_second_.energy_>10.)
-    //        return false;
-    //}
+    {
+        if(tree_data_->Get()->veto_first_.energy_>10. && tree_data_->Get()->veto_second_.energy_>10.)
+            return false;
+    }
 
     // Gating on dE Si
     //{

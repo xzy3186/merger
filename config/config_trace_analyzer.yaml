@@ -20,6 +20,8 @@ PspmtAnalyzer:
   TreeName: pspmt
   VANDLEVec: true
   GammaScintVec: true
+  YSOMapFile: "./config/YSO_2D_map.txt"
+  NumberOfDivisions: 10
 RunSetting:
   InitalEvent: 0
   PrintFrequency: 100000
