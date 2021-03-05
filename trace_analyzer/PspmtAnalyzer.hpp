@@ -9,7 +9,7 @@
 #include "YamlReader.hpp"
 #include <TH1.h>
 #include <TF1.h>
-
+#include "YSOPixelatedMap.hpp"
 
 class PspmtAnalyzer {
 public:
@@ -19,7 +19,11 @@ public:
    PspmtAnalyzer(const std::string &yaml_node_name){
       Configure(yaml_node_name);
    }
-   virtual ~PspmtAnalyzer() {};
+   virtual ~PspmtAnalyzer() {
+      if(yso_map_)
+         delete yso_map_;
+      yso_map_ = nullptr;
+   };
 
    virtual int Configure(const std::string &yaml_node_name);
    virtual int ResetConfig();
@@ -74,6 +78,8 @@ protected:
    TF1* fCorrectionHighGainPosY = nullptr;
    TF1* fCorrectionLowGainPosX = nullptr;
    TF1* fCorrectionLowGainPosY = nullptr;
+
+   YSOPixelatedMap* yso_map_ = nullptr;
 
 };
 

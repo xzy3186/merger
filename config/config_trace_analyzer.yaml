@@ -103,6 +103,9 @@ PspmtAnalyzer:
     LowGainThreshold: -900
     LowGainOverflow: 65535
 
+    YSOMapFile: "./config/YSO_2D_map.txt"
+    NumberOfDivisions: 10
+
     ### ROOT::TF1 expression for calibrations
     #HighGainXAFormula: "1.0*x"
     #HighGainXBFormula: "1.0*x"

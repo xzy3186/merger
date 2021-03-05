@@ -1,8 +1,10 @@
 include(${ROOT_USE_FILE})
 
-ROOT_GENERATE_DICTIONARY(G__TraceAnalyzerData TraceAnalyzerData.hpp PspmtAnalyzerData.hpp PspmtData.hpp LINKDEF TraceAnalyzerDataLinkDef.hpp)
+ROOT_GENERATE_DICTIONARY(G__TraceAnalyzerData TraceAnalyzerData.hpp PspmtAnalyzerData.hpp PspmtData.hpp YSOMap.h YSOPixelatedMap.hpp LINKDEF TraceAnalyzerDataLinkDef.hpp)
 add_library(TraceAnalyzerLib SHARED
 PspmtAnalyzer.cpp
+YSOMap.cxx
+YSOPixelatedMap.cpp
 #TraceAnalyzer.cpp
 G__TraceAnalyzerData.cxx
 )

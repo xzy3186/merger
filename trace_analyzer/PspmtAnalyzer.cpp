@@ -65,6 +65,11 @@ int PspmtAnalyzer::Configure(const std::string &yaml_node_name){
    fCorrectionHighGainPosY = get_correction("HighGainPosY");
    fCorrectionLowGainPosX = get_correction("LowGainPosX");
    fCorrectionLowGainPosY = get_correction("LowGainPosY");
+   
+   yso_map_ = new YSOPixelatedMap(yaml_reader.GetString("YSOMapFile"));
+   yso_map_->GenerateMap(yaml_reader.GetULong64("NumberOfDivisions",false,10));
+   yso_map_->GenerateIonMap(yaml_reader.GetULong64("NumberOfDivisions",false,10));
+
 
    return 0;
 }
@@ -268,6 +273,11 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 			pspmt_data_.high_gain_.ya_qdc_ = data_.high_gain_.ya_.pspmt_.qdc;
 			pspmt_data_.high_gain_.yb_qdc_ = data_.high_gain_.yb_.pspmt_.qdc;
 
+         auto p_closest = yso_map_->FindClosestPixelBeta(pspmt_data_.high_gain_.pos_x_, pspmt_data_.high_gain_.pos_y_);
+         if(p_closest) {
+            pspmt_data_.high_gain_.id_x_ = p_closest->GetIndexX();
+            pspmt_data_.high_gain_.id_y_ = p_closest->GetIndexY();
+         }
       }
 		{
          /* low gain */
@@ -285,14 +295,20 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
          pspmt_data_.low_gain_.pos_y_= data_.low_gain_.pos_y_;
          pspmt_data_.low_gain_.valid_= data_.low_gain_.valid_;
 
-		pspmt_data_.low_gain_.xa_energy_ = data_.low_gain_.xa_.pspmt_.energy;
-		pspmt_data_.low_gain_.xb_energy_ = data_.low_gain_.xb_.pspmt_.energy;
-		pspmt_data_.low_gain_.ya_energy_ = data_.low_gain_.ya_.pspmt_.energy;
-		pspmt_data_.low_gain_.yb_energy_ = data_.low_gain_.yb_.pspmt_.energy;
-		pspmt_data_.low_gain_.xa_qdc_ = data_.low_gain_.xa_.pspmt_.qdc;
-		pspmt_data_.low_gain_.xb_qdc_ = data_.low_gain_.xb_.pspmt_.qdc;
-		pspmt_data_.low_gain_.ya_qdc_ = data_.low_gain_.ya_.pspmt_.qdc;
-		pspmt_data_.low_gain_.yb_qdc_ = data_.low_gain_.yb_.pspmt_.qdc;
+		   pspmt_data_.low_gain_.xa_energy_ = data_.low_gain_.xa_.pspmt_.energy;
+		   pspmt_data_.low_gain_.xb_energy_ = data_.low_gain_.xb_.pspmt_.energy;
+		   pspmt_data_.low_gain_.ya_energy_ = data_.low_gain_.ya_.pspmt_.energy;
+		   pspmt_data_.low_gain_.yb_energy_ = data_.low_gain_.yb_.pspmt_.energy;
+		   pspmt_data_.low_gain_.xa_qdc_ = data_.low_gain_.xa_.pspmt_.qdc;
+		   pspmt_data_.low_gain_.xb_qdc_ = data_.low_gain_.xb_.pspmt_.qdc;
+		   pspmt_data_.low_gain_.ya_qdc_ = data_.low_gain_.ya_.pspmt_.qdc;
+		   pspmt_data_.low_gain_.yb_qdc_ = data_.low_gain_.yb_.pspmt_.qdc;
+
+         auto p_closest = yso_map_->FindClosestPixelIon(pspmt_data_.low_gain_.pos_x_, pspmt_data_.low_gain_.pos_y_);
+         if(p_closest) {
+            pspmt_data_.low_gain_.id_x_ = p_closest->GetIndexX();
+            pspmt_data_.low_gain_.id_y_ = p_closest->GetIndexY();
+         }
       }
       {
 			/* VETO */

@@ -6,7 +6,7 @@ add_library(MergerLib SHARED
   RemainTime.cpp
   YamlParameter.cpp
   YamlReader.cpp
-  YSOMap.cxx
+  #YSOMap.cxx
   #BetaTSScannor.cpp
   E19044BetaTSScanor.cpp
   E19044NEXTTSScanor.cpp

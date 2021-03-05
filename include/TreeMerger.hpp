@@ -188,22 +188,22 @@ void TreeMerger<TOUT,TIN1,TIN2>::Merge()
 
         auto it = map2->lower_bound(t_low);
         auto last = map2->upper_bound(t_up);
-        if( it == map2->end() || it == last ) // Skips if there is no correlated event.
-            continue;
 
         const TIN1 *input1 = input_scannor_1_->GetEntry(entry.second);
         TOUT o_obj(*input1); // initializes output object with input1 entry
 
+        if( !(it == map2->end() || it == last) ) {// Skips if there is no correlated event.
         while ( it != last )
         {
             if(IsInGate(*input1,it->second))
                 o_obj.output_vec_.emplace_back(it->second);
             ++it; 
         }
+	}
         output_object_ = o_obj;
         input_scannor_1_->GetTree()->GetEntry(entry.second);
-		  if(!output_object_.output_vec_.empty())
-				tree_->Fill();
+        //if(!output_object_.output_vec_.empty())
+            tree_->Fill();
     }
 
     return;

@@ -6,6 +6,8 @@
 struct pspmt_struc{
    Double_t pos_x_ = -999;
    Double_t pos_y_ = -999;
+   Int_t id_x_ = -999;
+   Int_t id_y_ = -999;
    Int_t valid_ = 0;
    Double_t qdc_ = 0;
    Double_t energy_ = 0;
