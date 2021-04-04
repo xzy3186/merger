@@ -68,38 +68,25 @@ void PspmtAnalyzer::SetEventData(PixTreeEvent* pixie_event){
 
 int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const ULong64_t ts){
 
-	/* bad trace rejection */
-	auto itr = pspmt_vec.begin();
-	//while (itr!=pspmt_vec.end()){
-	//	itr = std::find_if(++itr, pspmt_vec.end(),
-	//		[](const processor_struct::PSPMT & x) {
-	//			return (x.traceMaxPos > 70 || x.traceMaxPos < 40); //|| x.invalidTrace);
-	//		});
-	//	if (itr != pspmt_vec.end())
-	//		(*itr).invalidTrace = true;
-	//}
-
-   /* Get a vector of dynode_high singles events */
-   std::vector<processor_struct::PSPMT> dynode_high_vec;
+   /* Get a vector of anode_high_xa events */
+   std::vector<processor_struct::PSPMT> anode_high_xa_vec;
 	std::string subtype = "";
 	std::string tag = "";
    for(const auto &channel: pspmt_vec){
-		//if (channel.invalidTrace)
-		//	continue;
 		subtype = channel.subtype.Data();
 		tag = channel.tag.Data();
-      if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("singles")){
-		   dynode_high_vec.push_back(channel);
+      if(!channel.subtype.CompareTo("anode_high")&&!channel.tag.CompareTo("xa")){
+		   anode_high_xa_vec.push_back(channel);
       }
    }
 
-   /* loop through dynode high events and fill events to a tree */
-   for(const auto &dyn_high: dynode_high_vec){
+   /* loop through anode high xa events and fill events to a tree */
+   for(const auto &xa: anode_high_xa_vec){
       data_.Clear();
       pspmt_data_.Clear();
-      const Double_t t0 = dyn_high.time; // reference time
-      pspmt_data_.dyn_single_.time_ = t0;
-      pspmt_data_.dyn_single_.energy_ = dyn_high.energy;
+      const Double_t t0 = xa.time; // reference time
+      pspmt_data_.high_gain_.time_ = t0;
+      pspmt_data_.high_gain_.energy_ = xa.energy;
 		pspmt_data_.event_number_ = event_info_.pixie_event_num_;
 		pspmt_data_.file_name_ = event_info_.file_name_;
 
@@ -148,6 +135,11 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
 
 		/* filling output data_ */
       for(const auto &channel: pspmt_vec){
+         if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("singles")){
+            /* dynode high gain (singles) */
+				if (pspmt_gate(channel))
+					data_.singles_.pspmt_ = channel;
+         }
          if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("ignore")){
             /* dynode high gain (triple) */
 				if (pspmt_gate(channel))
@@ -307,6 +299,11 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
             pspmt_data_.low_gain_.id_x_ = p_closest->GetIndexX();
             pspmt_data_.low_gain_.id_y_ = p_closest->GetIndexY();
          }
+      }
+      {
+         /* dynode singles */
+         pspmt_data_.dyn_single_.energy_ = data_.singles_.pspmt_.energy;
+         pspmt_data_.dyn_single_.time_ = data_.singles_.pspmt_.time;
       }
       {
 			/* dE Si */

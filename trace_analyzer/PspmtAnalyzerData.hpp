@@ -63,6 +63,7 @@ public:
    ULong64_t external_ts_low_;
    pspmt_data_struc high_gain_;
    pspmt_data_struc low_gain_;
+   TraceAnalyzerData singles_;
    TraceAnalyzerData desi_top_;
    TraceAnalyzerData desi_bottom_;
    TraceAnalyzerData veto_first_;
