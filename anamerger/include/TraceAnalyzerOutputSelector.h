@@ -1,7 +1,7 @@
-// AnamergerSelector for PROOF created by Rin Yokoyama on 7/21/2017
+// TraceAnalyzerOutputSelector for PROOF created by Rin Yokoyama on 7/21/2017
 
-#ifndef ANAMERGER_SELECTOR_H
-#define ANAMERGER_SELECTOR_H
+#ifndef TRACEANALYZEROUTPUT_SELECTOR_H
+#define TRACEANALYZEROUTPUT_SELECTOR_H
 
 #include <iostream>
 #include <vector>
@@ -13,7 +13,6 @@
 #include "TFile.h"
 #include "TH1.h"
 #include "TH2.h"
-#include "TH3.h"
 #include "TF1.h"
 #include "TTree.h"
 #include "TTreeReader.h"
@@ -28,16 +27,16 @@
 #include "TParameter.h"
 #include "CorrectedVANDLEData.h"
 
-class AnamergerSelector : public TSelector {
+class TraceAnalyzerOutputSelector : public TSelector {
 public:
 
-	AnamergerSelector(TTree* = 0);
-	virtual ~AnamergerSelector();
+	TraceAnalyzerOutputSelector(TTree* = 0);
+	virtual ~TraceAnalyzerOutputSelector();
 
 	virtual Int_t   Version() const { return 2; }
-	virtual void    Init(TTree* mergedData);
-	virtual void    Begin(TTree* mergedData);
-	virtual void    SlaveBegin(TTree* mergedData);
+	virtual void    Init(TTree* pspmt);
+	virtual void    Begin(TTree* pspmt);
+	virtual void    SlaveBegin(TTree* pspmt);
 	virtual Bool_t  Notify() { return kTRUE; }
 	virtual Bool_t  Process(Long64_t entry);
 	virtual void    SetOption(const char* option) { fOption = option; }
@@ -56,10 +55,7 @@ public:
 protected:
 
 	TTreeReader tree_reader_;
-	TTreeReaderValue <OutputTreeData<PspmtData, OutputTreeData<PspmtData, TreeData>>> beta_;
-	TTreeReaderValue <std::vector<processor_struct::CLOVERS>> clover_vec_;
-	TTreeReaderValue <std::vector<CorrectedVANDLEData>> vandle_vec_;
-	TTreeReaderValue <std::vector<processor_struct::GAMMASCINT>> gamma_scint_vec_;
+	TTreeReaderValue <PspmtData> pspmt_;
 	ULong64_t total_entry_;
 
 	// array for histograms
@@ -67,14 +63,8 @@ protected:
 	// output file
 	TFile* fOutputFile = nullptr;
 	std::string output_file_name_;
-	TF1* n_correction = nullptr;
-	Double_t time_window_;
 
-	TF1* n_banana_up = nullptr;
-	TF1* n_banana_low = nullptr;
-	ULong64_t t_entry_;
-
-	ClassDef(AnamergerSelector, 1)
+	ClassDef(TraceAnalyzerOutputSelector, 1)
 };
 
 #endif
