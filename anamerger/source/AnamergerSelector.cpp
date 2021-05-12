@@ -42,6 +42,7 @@ void AnamergerSelector::SlaveBegin(TTree* mergedData)
 	}
 	fHistArray = new TObjArray();
 
+	fHistArray->Add(new TH2F("Correlation", "Correlation", 10, -5, 5, 10, -5, 5));
 	fHistArray->Add(new TH2F("Tib_ClvE", "ClvE_Tib", 4000, 0, 4000, 1000, -3, 3));
 	fHistArray->Add(new TH2F("Tib_HagDynE", "HagDynE_Tib", 4000, 0, 4000, 1000, -3, 3));
 	fHistArray->Add(new TH2F("Tib_HagAnE", "HagAnE_Tib", 4000, 0, 4000, 1000, -3, 3));
@@ -128,55 +129,11 @@ void AnamergerSelector::Init(TTree* mergedData) {
 
 Bool_t AnamergerSelector::Process(Long64_t entry) {
 	t_entry_++;
-	//if (!(t_entry_ == 1333 || t_entry_ == 461365 || t_entry_ == 773098 || t_entry_ == 458544 || t_entry_ == 1400992))
-	//	return kTRUE;
-	//if (t_entry_ == 458544)
-	//	return kTRUE;
 	tree_reader_.SetLocalEntry(entry);
 	{
 		auto beta = beta_.Get();
 		if (!beta)
 			return kTRUE;
-
-		//bool if_continue = false;
-		//if (beta->event_number_ == 3969128 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_71-6")
-		//	if_continue = true;
-		//if (beta->event_number_ == 204940 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_97-6")
-		//	if_continue = true;
-		//if (beta->event_number_ == 2352919 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_23-0")
-		//	if_continue = true;
-		//if (beta->event_number_ == 2054082 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_96-5")
-		//	if_continue = true;
-		//if (beta->event_number_ == 1776659 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_83-0")
-		//	if_continue = true;
-		//if (beta->event_number_ == 3961499 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_69-0")
-		//	if_continue = true;
-		//if (beta->event_number_ == 3639162 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_47-2")
-		//	if_continue = true;
-		//if (beta->event_number_ == 2085814 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_106-2")
-		//	if_continue = true;
-		//if (beta->event_number_ == 3218590 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_90-6")
-		//	if_continue = true;
-		//if (beta->event_number_ == 2300296 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_109-4")
-		//	if_continue = true;
-		//if (beta->event_number_ == 21927 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_53-0")
-		//	if_continue = true;
-		//if (beta->event_number_ == 332588 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_70-4")
-		//	if_continue = true;
-		//if (beta->event_number_ == 4729968 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_33-1")
-		//	if_continue = true;
-		//if (beta->event_number_ == 4119072 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_72-2")
-		//	if_continue = true;
-		//if (beta->event_number_ == 3091616 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_64-6")
-		//	if_continue = true;
-		//if (beta->event_number_ == 2259751 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_85-8")
-		//	if_continue = true;
-		//if (beta->event_number_ == 1199119 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_32-1")
-		//	if_continue = true;
-		//if (beta->event_number_ == 3998164 && beta->file_name_ == "/SCRATCH/DRunScratch2/ry/production_109-4")
-		//	if_continue = true;
-		//if (!if_continue)
-		//	return kTRUE;
 
 		auto clover_vec = clover_vec_.Get();
 		if (!clover_vec)
@@ -200,6 +157,12 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 				continue;
 			if( imp.output_vec_.at(0).sts != 6 )
 				continue;
+			const Double_t diff_x = beta->high_gain_.id_x_-imp.low_gain_.id_x_;
+			const Double_t diff_y = beta->high_gain_.id_y_-imp.low_gain_.id_y_;
+			//if (pow(diff_x,2)+pow(diff_y,2)>1.5)
+			//	continue;
+
+			((TH2F*)fHistArray->FindObject("Correlation"))->Fill(diff_x, diff_y);
 			const Double_t tib = (((double)beta->dyn_single_.time_ - (double)imp.dyn_single_.time_)) / 1.E+9;
 			((TH1F*)fHistArray->FindObject("Tib"))->Fill(tib);
 			((TH2F*)fHistArray->FindObject("Tib_HighE"))->Fill(beta->high_gain_.energy_sum_, tib);
@@ -251,6 +214,8 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 				auto hist = (TH1F*)fHistArray->FindObject("nMult");
 				hist->Fill(vandle_vec->size());
 			}
+			if (vandle_vec_->size()>3)
+				continue;
 			for (auto& vandle : *vandle_vec) {
 				const double tdiff_vb = (double)vandle.GetVandleData()->sTime - (double)beta->dyn_single_.time_;
 				if (tdiff_vb < 200 || tdiff_vb > 250)
@@ -260,14 +225,9 @@ Bool_t AnamergerSelector::Process(Long64_t entry) {
 				if ( vandle.GetVandleData()->qdc < 15000. && n_banana_up->Eval(vandle.GetCorrectedToF()) > vandle.GetVandleData()->qdc) {
 					banana = true;
 				}
-				if ( (*vandle_vec).size()<3 ){
+				if (n_banana_low->Eval(vandle.GetCorrectedToF())>vandle.GetVandleData()->qdc) {
 					banana = false;
-				}	
-				/*	
-				if (vandle.GetCorrectedToF() > 25 && vandle.GetCorrectedToF() < 800 && vandle.GetVandleData()->qdc < 300) {
-					banana = true;
 				}
-				*/
 				{
 					auto hist = (TH2F*)fHistArray->FindObject("Tib_nToF");
 					hist->Fill(vandle.GetCorrectedToF(),tib);
