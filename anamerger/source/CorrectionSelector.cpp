@@ -198,8 +198,6 @@ Bool_t CorrectionSelector::Process(Long64_t entry) {
         auto vandle_vec = vandle_vec_.Get();
         for (auto const& vandle : *vandle_vec) {
             CorrectedVANDLEData data(vandle);
-            // set vandle.qdc + 1000 as a test
-            data.SetTestData(vandle.qdc + 1000);
             // set corrected tof
 				const Double_t cortof = corrector_->CorrectToF(*beta, vandle, data);
             data.SetCorrectedTof(cortof);
@@ -209,6 +207,11 @@ Bool_t CorrectionSelector::Process(Long64_t entry) {
 				const Double_t g = 1. / sqrt(1. - b);
 				const Double_t E = kNeutronMassMeV * (g - 1.);
 				data.SetNeutronEnergy(E);
+		auto pos = corrector_->GetVandlePosition(vandle);
+		data.SetPosX(pos->X());
+		data.SetPosY(pos->Y());
+		data.SetPosZ(pos->Z());
+		delete pos;
             corrected_vandle_vec_.push_back(data);
         }
         beta_data_ = *beta;

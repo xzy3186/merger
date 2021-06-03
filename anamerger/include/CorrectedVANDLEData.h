@@ -13,7 +13,6 @@ class CorrectedVANDLEData : public TObject {
         vandle_data_ = vandle_data;
     }
     virtual ~CorrectedVANDLEData(){};
-    void SetTestData(const double& test_data) { test_data_ = test_data; }
     void SetCorrectedTof(const double& tof) { corrected_tof_ = tof; }
     void SetNeutronEnergy(const double& energy) { neutron_energy_ = energy; }
 	 void SetTranformedX(const double& X) { transformed_X = X; }
@@ -25,15 +24,21 @@ class CorrectedVANDLEData : public TObject {
 	 double GetNeutronEnergy() const { return neutron_energy_; }
     double GetTransformedX() const {return transformed_X; }
     double GetTransformedY() const {return transformed_Y; }
+	void SetPosX(const double& x) {pos_x_ = x; }
+	void SetPosY(const double& y) {pos_y_ = y; }
+	void SetPosZ(const double& z) {pos_z_ = z; }
 
 
    protected:
     processor_struct::VANDLES vandle_data_;
-    double test_data_;
     double corrected_tof_;
-	 double neutron_energy_;
+    double neutron_energy_;
     double transformed_X;
     double transformed_Y;
+    double pos_x_;
+    double pos_y_;
+    double pos_z_;
+
 
     ClassDef(CorrectedVANDLEData, 1)
 };

@@ -47,6 +47,8 @@ public:
 	void Configure(const std::string& config_file);
 	double CorrectToF(const PspmtData& pspmt_data, const processor_struct::VANDLES& vandle, CorrectedVANDLEData& correctedData) const;
 	double GetIdealFL() const { return ideal_flight_path_; }
+	const TVector3* GetBetaPosition(const PspmtData& pspmt_data) const;
+	const TVector3* GetVandlePosition(const processor_struct::VANDLES& vandle) const;
 
 protected:
 	std::map<int, VANDLEBar> vandle_bar_map_;
@@ -58,8 +60,6 @@ protected:
 	double ideal_flight_path_;
 	double tof_offset_;
 
-	const TVector3* GetBetaPosition(const PspmtData& pspmt_data) const;
-	const TVector3* GetVandlePosition(const processor_struct::VANDLES& vandle) const;
 };
 
 #endif

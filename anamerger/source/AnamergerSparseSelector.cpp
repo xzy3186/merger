@@ -41,6 +41,15 @@ void AnamergerSparseSelector::SlaveBegin(TTree* mergedData) {
 
     fHistArray->Add(new THnSparseF("nQDC_nToF", "nQDC_nToF_Tib_clv_addback", 4, new Int_t[4]{3200, 1000, 1000, 8000},
                                    new Double_t[4]{-100, 0, -3, 0}, new Double_t[4]{1000, 32000, 3, 4000}));
+    fHistArray->Add(new THnSparseF("YSO_pixels0_5", "YSO_pixels0_5", 5, new Int_t[5]{2000, 200, 200, 200, 200}, new Double_t[5]{-3, 0, 0, 0, 0}, new Double_t[5]{3, 50, 50, 50, 50}));
+    fHistArray->Add(new THnSparseF("YSO_pixels1_25", "YSO_pixels1_25", 5, new Int_t[5]{2000, 200, 200, 200, 200}, new Double_t[5]{-3, 0, 0, 0, 0}, new Double_t[5]{3, 50, 50, 50, 50}));
+    fHistArray->Add(new THnSparseF("YSO_pixels1_5", "YSO_pixels1_5", 5, new Int_t[5]{2000, 200, 200, 200, 200}, new Double_t[5]{-3, 0, 0, 0, 0}, new Double_t[5]{3, 50, 50, 50, 50}));
+    fHistArray->Add(new THnSparseF("YSO_pixels1_75", "YSO_pixels1_75", 5, new Int_t[5]{2000, 200, 200, 200, 200}, new Double_t[5]{-3, 0, 0, 0, 0}, new Double_t[5]{3, 50, 50, 50, 50}));
+    fHistArray->Add(new THnSparseF("YSO_pixels2", "YSO_pixels2", 5, new Int_t[5]{2000, 200, 200, 200, 200}, new Double_t[5]{-3, 0, 0, 0, 0}, new Double_t[5]{3, 50, 50, 50, 50}));
+    fHistArray->Add(new THnSparseF("YSO_pixels2_5", "YSO_pixels2_5", 5, new Int_t[5]{2000, 200, 200, 200, 200}, new Double_t[5]{-3, 0, 0, 0, 0}, new Double_t[5]{3, 50, 50, 50, 50}));
+    fHistArray->Add(new THnSparseF("YSO_pixels3", "YSO_pixels3", 5, new Int_t[5]{2000, 200, 200, 200, 200}, new Double_t[5]{-3, 0, 0, 0, 0}, new Double_t[5]{3, 50, 50, 50, 50}));
+    fHistArray->Add(new THnSparseF("YSO_pixels3_5", "YSO_pixels3_5", 5, new Int_t[5]{2000, 200, 200, 200, 200}, new Double_t[5]{-3, 0, 0, 0, 0}, new Double_t[5]{3, 50, 50, 50, 50}));
+    fHistArray->Add(new THnSparseF("YSO_pixels4", "YSO_pixels4", 5, new Int_t[5]{2000, 200, 200, 200, 200}, new Double_t[5]{-3, 0, 0, 0, 0}, new Double_t[5]{3, 50, 50, 50, 50}));
     fHistArray->Add(new THnSparseF("Clover_Addback_Tib_TGammaBeta", "Clover_Addback_Tib_TGammaBeta", 3, new Int_t[3]{1000, 8000, 100}, new Double_t[3]{-3, 0, -1000}, new Double_t[3]{3, 4000, 500}));
 
     //adding histograms to output list
@@ -85,8 +94,8 @@ Bool_t AnamergerSparseSelector::Process(Long64_t entry) {
         auto vandle_vec = vandle_vec_.Get();
         if (!vandle_vec)
             return kTRUE;
-        if (beta->high_gain_.energy_sum_ < 200)
-            return kTRUE;
+        //if (beta->high_gain_.energy_sum_ < 200)
+           // return kTRUE;
         for (const auto& imp : beta->output_vec_) {
             if (imp.output_vec_.empty())
                 continue;
@@ -101,6 +110,63 @@ Bool_t AnamergerSparseSelector::Process(Long64_t entry) {
 
             std::sort((*clover_vec_).begin(), (*clover_vec_).end(), [](const processor_struct::CLOVERS& a, const processor_struct::CLOVERS& b) -> bool { return a.energy < b.energy; });
 
+
+          if (sqrt(TMath::Power((beta->high_gain_.id_x_-imp.low_gain_.id_x_),2) + TMath::Power((beta->high_gain_.id_y_-imp.low_gain_.id_y_),2))<0.5)
+           {
+                 auto hist = (THnSparse *)fHistArray->FindObject("YSO_pixels0_5");
+                 hist->Fill(new Double_t[5]{tib, beta->high_gain_.id_x_, beta->high_gain_.id_y_, imp.low_gain_.id_x_, imp.low_gain_.id_y_});
+           }
+
+          if (sqrt(TMath::Power((beta->high_gain_.id_x_-imp.low_gain_.id_x_),2) + TMath::Power((beta->high_gain_.id_y_-imp.low_gain_.id_y_),2))<1.25)
+           {
+                 auto hist = (THnSparse *)fHistArray->FindObject("YSO_pixels1_25");
+                 hist->Fill(new Double_t[5]{tib, beta->high_gain_.id_x_, beta->high_gain_.id_y_, imp.low_gain_.id_x_, imp.low_gain_.id_y_});
+           }
+
+
+          if (sqrt(TMath::Power((beta->high_gain_.id_x_-imp.low_gain_.id_x_),2) + TMath::Power((beta->high_gain_.id_y_-imp.low_gain_.id_y_),2))<1.5)
+           {
+                 auto hist = (THnSparse *)fHistArray->FindObject("YSO_pixels1_5");
+                 hist->Fill(new Double_t[5]{tib, beta->high_gain_.id_x_, beta->high_gain_.id_y_, imp.low_gain_.id_x_, imp.low_gain_.id_y_});
+           }
+
+          if (sqrt(TMath::Power((beta->high_gain_.id_x_-imp.low_gain_.id_x_),2) + TMath::Power((beta->high_gain_.id_y_-imp.low_gain_.id_y_),2))<1.75)
+           {
+                 auto hist = (THnSparse *)fHistArray->FindObject("YSO_pixels1_75");
+                 hist->Fill(new Double_t[5]{tib, beta->high_gain_.id_x_, beta->high_gain_.id_y_, imp.low_gain_.id_x_, imp.low_gain_.id_y_});
+           }
+
+
+          if (sqrt(TMath::Power((beta->high_gain_.id_x_-imp.low_gain_.id_x_),2) + TMath::Power((beta->high_gain_.id_y_-imp.low_gain_.id_y_),2))<2.0)
+           {
+                 auto hist = (THnSparse *)fHistArray->FindObject("YSO_pixels2");
+                 hist->Fill(new Double_t[5]{tib, beta->high_gain_.id_x_, beta->high_gain_.id_y_, imp.low_gain_.id_x_, imp.low_gain_.id_y_});
+           }
+
+
+          if (sqrt(TMath::Power((beta->high_gain_.id_x_-imp.low_gain_.id_x_),2) + TMath::Power((beta->high_gain_.id_y_-imp.low_gain_.id_y_),2))<2.5)
+           {
+                 auto hist = (THnSparse *)fHistArray->FindObject("YSO_pixels2_5");
+                 hist->Fill(new Double_t[5]{tib, beta->high_gain_.id_x_, beta->high_gain_.id_y_, imp.low_gain_.id_x_, imp.low_gain_.id_y_});
+           }
+
+          if (sqrt(TMath::Power((beta->high_gain_.id_x_-imp.low_gain_.id_x_),2) + TMath::Power((beta->high_gain_.id_y_-imp.low_gain_.id_y_),2))<3.0)
+           {
+                 auto hist = (THnSparse *)fHistArray->FindObject("YSO_pixels3");
+                 hist->Fill(new Double_t[5]{tib, beta->high_gain_.id_x_, beta->high_gain_.id_y_, imp.low_gain_.id_x_, imp.low_gain_.id_y_});
+           }
+
+          if (sqrt(TMath::Power((beta->high_gain_.id_x_-imp.low_gain_.id_x_),2) + TMath::Power((beta->high_gain_.id_y_-imp.low_gain_.id_y_),2))<3.5)
+           {
+                 auto hist = (THnSparse *)fHistArray->FindObject("YSO_pixels3_5");
+                 hist->Fill(new Double_t[5]{tib, beta->high_gain_.id_x_, beta->high_gain_.id_y_, imp.low_gain_.id_x_, imp.low_gain_.id_y_});
+           }
+
+          if (sqrt(TMath::Power((beta->high_gain_.id_x_-imp.low_gain_.id_x_),2) + TMath::Power((beta->high_gain_.id_y_-imp.low_gain_.id_y_),2))<=4.0)
+           {
+                 auto hist = (THnSparse *)fHistArray->FindObject("YSO_pixels4");
+                 hist->Fill(new Double_t[5]{tib, beta->high_gain_.id_x_, beta->high_gain_.id_y_, imp.low_gain_.id_x_, imp.low_gain_.id_y_});
+           }
             for (const auto& clv : *clover_vec) {
                 if (clv.time - beta->dyn_single_.time_ > -850 && clv.time - beta->dyn_single_.time_ < -500) {
                     if (clv.detNum == 0 || clv.detNum == 1 || clv.detNum == 2 || clv.detNum == 3) {
