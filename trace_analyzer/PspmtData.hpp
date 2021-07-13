@@ -53,6 +53,10 @@ public:
       high_gain_ = obj.high_gain_;
       low_gain_ = obj.low_gain_;
       dyn_single_ = obj.dyn_single_;
+      //to copy data in merger
+      pid_pin0_ = obj.pid_pin0_;
+      pid_tac1_ = obj.pid_tac1_;
+      pid_tof1_ = obj.pid_tof1_;
    }
 
    void Clear(){
@@ -68,6 +72,9 @@ public:
 
       high_gain_ = DEFAULT_PSPMT_STRUC;
       low_gain_ = DEFAULT_PSPMT_STRUC;
+      pid_pin0_ = -999;
+      pid_tac1_ = -999;
+      pid_tof1_ = -999;
    }
 
 	ULong64_t event_number_;
@@ -81,6 +88,10 @@ public:
    beamline_detector_struc dyn_single_;
    pspmt_struc high_gain_;
    pspmt_struc low_gain_;
+   //add pid information to PspmtData
+   double pid_pin0_;
+   double pid_tac1_;
+   double pid_tof1_;
   
    ClassDef(PspmtData,6)
 };
