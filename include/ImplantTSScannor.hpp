@@ -46,7 +46,7 @@ public:
 protected:
 
     //ULong64_t GetTS() const {return tree_data_->Get()->external_ts_low_;}
-    ULong64_t GetTS() const {return tree_data_->Get()->dyn_single_.time_;}
+    ULong64_t GetTS() const {return tree_data_->Get()->input_.dyn_single_.time_;}
     Bool_t IsInGate();
 };
 

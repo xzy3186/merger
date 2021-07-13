@@ -13,7 +13,7 @@ public:
     std::vector<U> output_vec_;
 
 	 OutputTreeData() {}
-    OutputTreeData( const T &input_event ){input_ = input_event}
+    OutputTreeData( const T &input_event ){input_ = input_event;}
 	 OutputTreeData(const OutputTreeData<T, U>& obj) {
 		 output_vec_ = obj.output_vec_;
          input_ = obj.input_;
