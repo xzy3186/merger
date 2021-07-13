@@ -24,6 +24,8 @@ protected:
     TCutG* pid_cut_ = nullptr;
     TTreeReaderValue<std::vector<processor_struct::PID>>* pid_data_;
     Double_t rit_threshold_;
+    Double_t pin0_threshold_;
+    Double_t tac1_threshold_;
 
     Bool_t IsInGate() override; // gate conditions
 };

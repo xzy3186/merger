@@ -18,6 +18,9 @@ public:
 
 protected:
     /** energy gates on PSPMT dynode**/
+    //add by Xu
+    Double_t high_gain_qmin_;
+    ///////////////////
     Double_t high_gain_min_;
     Double_t high_gain_max_;
     Double_t low_gain_min_;
