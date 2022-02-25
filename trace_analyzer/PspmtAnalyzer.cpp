@@ -101,6 +101,7 @@ void PspmtAnalyzer::SetEventData(PixTreeEvent* pixie_event){
    event_info_.file_name_ = pixie_event->fileName;
    event_info_.pixie_event_num_ = pixie_event->eventNum;
 
+   //std::cout<<"come here"<<std::endl;
    bato_data_ = pixie_event->bato_vec_;
    clover_data_ = pixie_event->clover_vec_;
    doublebeta_data_ = pixie_event->doublebeta_vec_;
@@ -127,8 +128,10 @@ int PspmtAnalyzer::Process(std::vector<processor_struct::PSPMT> &pspmt_vec,const
    for(const auto &channel: pspmt_vec){
       subtype = channel.subtype.Data();
       tag = channel.tag.Data();
-      if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("ignore")){
+      //if(!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("ignore")){
+      if((!channel.subtype.CompareTo("dynode_high")&&!channel.tag.CompareTo("ignore"))||(!channel.subtype.CompareTo("dynode_low")&&!channel.tag.CompareTo("ignore"))){
          dynode_high_vec.emplace_back(channel);
+         break;
       }
    }
 
@@ -436,11 +439,11 @@ void PspmtAnalyzer::CalculatePositionL(pspmt_data_struc &data)
 
    /** position calculation **/
    const double sum = xa + xb + ya + yb;
-   //data.pos_x_ = 0.5*(yb + xa)/sum;
-   //data.pos_y_ = 0.5*(xa + xb)/sum;
+   data.pos_x_ = 0.5*(yb + xa)/sum;
+   data.pos_y_ = 0.5*(xa + xb)/sum;
    //the new position equation by Xu
-   data.pos_x_ = (yb + xa - ya - xb)/sum/(1-0.1*dy/1e6);
-   data.pos_y_ = (xa + xb - ya - yb)/sum/((1+0.2*sum/1e6)*(1-0.6*dy/1e6));
+   //data.pos_x_ = (yb + xa - ya - xb)/sum/(1-0.1*dy/1e6);
+   //data.pos_y_ = (xa + xb - ya - yb)/sum/((1+0.2*sum/1e6)*(1-0.6*dy/1e6));
 
    Correct(data.pos_x_,fCorrectionLowGainPosX);
    Correct(data.pos_y_,fCorrectionLowGainPosY);

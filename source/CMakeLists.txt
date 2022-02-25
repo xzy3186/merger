@@ -8,12 +8,16 @@ add_library(MergerLib SHARED
   YamlReader.cpp
   YSOMap.cxx
   #BetaTSScannor.cpp
-  E19044BetaTSScanor.cpp
-  E19044NEXTTSScanor.cpp
   BigRIPSTSScannor.cpp
   ImplantTSScannor.cpp
+  E19044BetaTSScanor.cpp
+  E19044NEXTTSScanor.cpp
   E19044ImplantTSScanor.cpp
   E19044BetaTreeMerger.cpp
+  FDSiBetaTSScanor.cpp
+  FDSiVANDLETSScanor.cpp
+  FDSiImplantTSScanor.cpp
+  FDSiBetaTreeMerger.cpp
 #  G__TreeData.cxx
 )
 

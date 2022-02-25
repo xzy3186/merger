@@ -47,7 +47,7 @@ if(BUILD_EVENTSELECTOR)
     link_directories(${PWD}/event_selector/source)
 endif()
 link_directories(${ROOTSYS}/lib)
-ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp include/E19044Data.hpp
+ROOT_GENERATE_DICTIONARY(G__MergerData include/BigRIPSTreeData.h include/OutputTreeData.hpp include/E19044Data.hpp include/FDSiData.hpp
         trace_analyzer/PspmtAnalyzerData.hpp trace_analyzer/PspmtData.hpp LINKDEF include/TreeDataLinkDef.h)
 
 #---Create a shared library with geneated dictionary
@@ -69,6 +69,7 @@ add_subdirectory(mergerLists)
 add_subdirectory(anamergerLists)
 add_executable(merger_main MergerMain.cpp)
 add_executable(next_merger_main NextMergerMain.cpp)
+add_executable(fdsi_test_merger_main FDSiTestMergerMain.cpp)
 if(BUILD_ANAMERGER)
     add_executable(anamerger_main anamerger/source/AnamergerMain.cpp)
     add_executable(anamerger_sparse_main anamerger/source/AnamergerSparseMain.cpp)
@@ -79,6 +80,8 @@ add_executable(trace_analyzer_main trace_analyzer/TraceAnalyzerMain.cpp)
 target_link_libraries(merger_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
    TraceAnalyzerLib merger_data_dic)
 target_link_libraries(next_merger_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
+   TraceAnalyzerLib merger_data_dic)
+target_link_libraries(fdsi_test_merger_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib
    TraceAnalyzerLib merger_data_dic)
 if(BUILD_ANAMERGER)
     target_link_libraries(correction_main ${ROOT_LIBRARIES} ${YAML_CPP_LIBRARIES} MergerLib merger_data_dic
@@ -113,6 +116,10 @@ install(TARGETS merger_main
         LIBRARY DESTINATION lib
         )
 install(TARGETS next_merger_main
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        )
+install(TARGETS fdsi_test_merger_main
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib
         )

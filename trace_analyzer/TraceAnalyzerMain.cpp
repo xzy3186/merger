@@ -110,7 +110,10 @@ int main(int argc, char **argv){
       if(pixie_event->pspmt_vec_.empty()) 
          continue;
       pspmt_analyzer.SetEventData(pixie_event);
-      pspmt_analyzer.Process(pixie_event->pspmt_vec_, pixie_event->externalTS1);
+      //std::cout<<"come here"<<std::endl;
+      //modify from external TS to internal TS for FDSi data
+      //pspmt_analyzer.Process(pixie_event->pspmt_vec_, pixie_event->externalTS1);
+      pspmt_analyzer.Process(pixie_event->pspmt_vec_, pixie_event->internalTS);
    } // end main loop
 
    pspmt_analyzer.Terminate();

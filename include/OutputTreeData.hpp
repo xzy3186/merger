@@ -8,24 +8,24 @@
 template <class T, class U>
 class OutputTreeData
 {
-public:
-    T input_;
-    std::vector<U> output_vec_;
+   public:
+      T input_;
+      std::vector<U> output_vec_;
 
-	 OutputTreeData() {}
-    OutputTreeData( const T &input_event ){input_ = input_event;}
-	 OutputTreeData(const OutputTreeData<T, U>& obj) {
-		 output_vec_ = obj.output_vec_;
+      OutputTreeData() {}
+      OutputTreeData( const T &input_event ){input_ = input_event;}
+      OutputTreeData(const OutputTreeData<T, U>& obj) {
+         output_vec_ = obj.output_vec_;
          input_ = obj.input_;
-	 }
-    virtual ~OutputTreeData(){}
+      }
+      virtual ~OutputTreeData(){}
 
-    void Clear()
-    {
-        output_vec_.clear();
-        input_.Clear();
-    }
-    ClassDef(OutputTreeData,4)
+      void Clear()
+      {
+         output_vec_.clear();
+         input_.Clear();
+      }
+      ClassDef(OutputTreeData,4)
 };
 
 // template <class T, class U>

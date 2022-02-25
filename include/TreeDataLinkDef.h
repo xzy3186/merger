@@ -19,5 +19,13 @@
 #pragma link C++ class NEXTOutput+;
 #pragma link C++ class std::vector<NEXTOutput>+;
 
-#endif
+//added by Xu
+#pragma link C++ class FDSiOutput+;
+#pragma link C++ class std::vector<FDSiOutput>+;
+#pragma link C++ class VandleOutput+;
+#pragma link C++ class std::vector<VandleOutput>+;
+#pragma link C++ class FDSiTestOutput+;
+#pragma link C++ class std::vector<FDSiTestOutput>+;
 
+
+#endif

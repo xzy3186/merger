@@ -1,5 +1,5 @@
 ///@file MergerMain.cpp
-///@brief beta-implant merger for FDSi experiment
+///@brief beta-implant merger for E19044 experiment
 ///@author Rin Yokoyama
 ///@date October,15 2020
 
@@ -7,12 +7,12 @@
 #include "OutputTreeData.hpp"
 #include "TreeDataLinkDef.h"
 #include "YamlParameter.hpp"
-#include "FDSiBetaTSScanor.hpp"
-#include "FDSiImplantTSScanor.hpp"
+#include "E19044BetaTSScanor.hpp"
+#include "E19044ImplantTSScanor.hpp"
 #include "PaassRootStruct.hpp"
 #include "OutputTreeData.hpp"
 #include "TreeMerger.hpp"
-#include "FDSiBetaTreeMerger.hpp"
+#include "E19044BetaTreeMerger.hpp"
 #include "PspmtAnalyzerData.hpp"
 #include <TCutG.h>
 #include <TFile.h>
@@ -78,9 +78,9 @@ int main(int argc, char **argv)
         }
 
         /* Scan beta events */
-        FDSiBetaTSScanor beta_ts_scannor;
+        E19044BetaTSScanor beta_ts_scannor;
 	    /** configures timestamp scannors with the yaml file **/
-        beta_ts_scannor.Configure("FDSiBetaTSScannor");
+        beta_ts_scannor.Configure("E19044BetaTSScannor");
 	    /** sets TTreeReaderValue objects **/
         beta_ts_scannor.SetReader();
 	     /** scans timestamps through the tree **/
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: merging implant events to beta events..." << std::endl;
 
             /** timestamp scanors **/
-            FDSiImplantTSScanor implant_ts_scanor;
+            E19044ImplantTSScanor implant_ts_scanor;
 
 	         /** configures timestamp scannors with the yaml file **/
             implant_ts_scanor.Configure("ImplantTSScannor");
@@ -109,8 +109,8 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: Implant map size: " << implant_ts_scanor.GetIEntryMap().size() << std::endl;
 
 	         /** runs merger **/
-            FDSiBetaTreeMerger beta_imp_merger(&beta_ts_scannor,&implant_ts_scanor);
-            beta_imp_merger.Configure("FDSiBetaTreeMerger");
+            E19044BetaTreeMerger beta_imp_merger(&beta_ts_scannor,&implant_ts_scanor);
+            beta_imp_merger.Configure("E19044BetaTreeMerger");
             beta_imp_merger.Merge();
             beta_imp_merger.Write();
 
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: merging implant events for " << pid->GetName() << " to beta events..." << std::endl;
 
             /** timestamp scanors **/
-            FDSiImplantTSScanor implant_ts_scanor;
+            E19044ImplantTSScanor implant_ts_scanor;
             implant_ts_scanor.SetPidCut(pid);
 
 	         /** configures timestamp scannors with the yaml file **/
@@ -140,9 +140,9 @@ int main(int argc, char **argv)
             std::cout << "[MergerMain]: Implant map size: " << implant_ts_scanor.GetIEntryMap().size() << std::endl;
 
 	         /** runs merger **/
-            FDSiBetaTreeMerger beta_imp_merger(&beta_ts_scannor,&implant_ts_scanor);
+            E19044BetaTreeMerger beta_imp_merger(&beta_ts_scannor,&implant_ts_scanor);
             beta_imp_merger.SetFileSuffix(pid->GetName());
-            beta_imp_merger.Configure("FDSiBetaTreeMerger");
+            beta_imp_merger.Configure("E19044BetaTreeMerger");
             beta_imp_merger.Merge();
             beta_imp_merger.Write();
 
