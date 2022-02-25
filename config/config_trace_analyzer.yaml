@@ -1,5 +1,6 @@
 RunSetting:
-    TChainFlag: False
+    #TChainFlag: False
+    TChainFlag: True
     PrintFrequency: 100000
     InitalEvent: 0
     #NumEvents: 10000
@@ -84,7 +85,7 @@ PspmtAnalyzer:
     #BATO:       True
     #CLOVER:     True
     #DOUBLEBETA: True
-    #GAMMASCINT: True
+    GAMMASCINT: True
     #LOGIC:      True
     #NEXT:       True
     PID:        True
@@ -99,9 +100,9 @@ PspmtAnalyzer:
     TimeWindowVeto: 150
     TimeOffsetVeto: -50
     HighGainThreshold: -100
-    HighGainOverflow:  65535
+    HighGainOverflow:  6553500
     LowGainThreshold: -900
-    LowGainOverflow: 65535
+    LowGainOverflow: 6553500
 
     ### ROOT::TF1 expression for calibrations
     #HighGainXAFormula: "1.0*x"

@@ -1,18 +1,20 @@
 MergerMain:
-  # TCutGFileName: referenceCuts.root
-  # PIDCuts:
-  #  - "17N"
+  #TCutGFileName:
+  #PIDCuts:
 
 E19044BetaTSScannor:
   InputFileName: output.root
   TreeName: pspmt
   PixieBranchName: pspmt_compressed
-  MinHighGainDynEnergy: 10
-  MaxHighGainDynEnergy: 30000
+  MinHighGainDynQdc: 10
+  MinHighGainDynEnergy: -1000
+  #MaxHighGainDynEnergy: 50000
+  MaxHighGainDynEnergy: 70000
   MinLowGainDynEnergy: -2000
-  MaxLowGainDynEnergy: 2000
-  FITThreshold: 0
-
+  #MaxLowGainDynEnergy: 2000
+  #MaxLowGainDynEnergy: 650
+  MaxLowGainDynEnergy: 70000
+  FITThreshold: 99999
   OtherBranches:
     - "vandle_vec_"
     - "clover_vec_"
@@ -20,14 +22,17 @@ E19044BetaTSScannor:
 #  LastEntry: 10000
 
 ImplantTSScannor:
-  InputFileName: output.root
+  InputFileName: fdsivandle_traceAnalyzer-0109.root
   TreeName: pspmt
   PixieBranchName: pspmt_compressed
-  MinLowGainDynEnergy: 5000
-  MaxLowGainDynEnergy: 65535
+  #MinLowGainDynEnergy: 5000
+  #MaxLowGainDynEnergy: 65535
+  MinLowGainDynEnergy: -1000
+  MaxLowGainDynEnergy: 40000
+  RITThreshold: 99999
+  PIN0Threshold: -100
+  TAC1Threshold: -100
   OtherBranches:
-    - "clover_vec_"
-    - "pid_vec_"
 #  FirstEntry: 0
 #  LastEntry: 10000
 
@@ -37,6 +42,10 @@ E19044NEXTTSScannor:
   PixieBranchName: PixTreeEvent
 #  FirstEntry: 0
 #  LastEntry: 1000
+  OtherBranches:
+    - "vandle_vec_"
+    - "clover_vec_"
+
 
 E19044VANDLETSScannor:
   InputFileName: mergedBeta.root
@@ -44,31 +53,104 @@ E19044VANDLETSScannor:
   PixieBranchName: mergedBeta
 #  FirstEntry: 0
 #  LastEntry: 1000
+  OtherBranches:
+    - "vandle_vec_"
+    - "clover_vec_"
 
 E19044BetaTreeMerger:
   OutputFileName: mergedBeta.root
   TreeName: mergedBeta
   BranchName: mergedBeta
   ClassName: E19044Output
-  PrintFrequency: 1000
+  PrintFrequency: 1000000
 
   # +-1 sec
-  TimeWindowLow: 100000000
-  TimeWindowUp: 100000000
+  #TimeWindowLow: 1000000000
+  #TimeWindowUp: 1000000000
+  # +-100 msec
+  TimeWindowLow: 200000000
+  TimeWindowUp: 200000000
 
+  
 NEXTMerger:
-  OutputFileName: mergedNEXTBeta.root
-  TreeName: mergedNEXTBeta
-  BranchName: mergedNEXTBeta
-  ClassName: NEXTOutput
+  OutputFileName: mergedTwoCrates.root
+  TreeName: mergedVandleFdsi
+  BranchName: mergedVandleFdsi
+  ClassName: FDSiTestOutput
   PrintFrequency: 1000
-
-  # +-100 ets clock ticks
-  TimeWindowLow: 100
-  TimeWindowUp: 100
-  #TimeOffset: 1000
+  TimeWindowLow: 1000
+  TimeWindowUp: 1000
+  TimeStampOffset: 0
+  # TimeStampOffset: 59828836020
+  OtherBranches:
+    - clover_vec_
+    - vandle_vec_
 
 BetaTreeMerger:
   #YSOMapFile: "./yso_map.txt"
   #NumberOfDivisions: 10
-  CorrelationRadius: 0.2
+  CorrelationRadius: 0.1
+
+#for test of merging two crates at UTK
+FDSiVandleTSScannor:
+  InputFileName: vandledaq_presort-0103-0_DD.root
+  TreeName: PixTree
+  PixieBranchName: PixTreeEvent
+#  FirstEntry: 0
+#  LastEntry: 1000
+#  OtherBranches:
+#    - "gammascint_vec_"
+
+FDSiFDSiTSScannor:
+  InputFileName: fdsivandle_presort-0103-0_DD.root
+  TreeName: PixTree
+  PixieBranchName: PixTreeEvent
+#  FirstEntry: 0
+#  LastEntry: 1000
+#  OtherBranches:
+#    - "rootdev_vec_"
+
+FDSiTestMerger:
+  OutputFileName: mergedTwoCrates.root
+  TreeName: mergedVandleFdsi
+  BranchName: mergedVandleFdsi
+  ClassName: FDSiTestOutput
+  PrintFrequency: 1000000000000
+  TimeWindowLow: 100
+  TimeWindowUp: 100
+  TimeStampOffset: 0
+#  OtherBranches:
+#    - clover_vec_
+#    - vandle_vec_
+
+FDSiBetaTSScannor:
+  InputFileName: vandledaq_traceAnalyzer-0109.root
+  TreeName: pspmt
+  PixieBranchName: pspmt_compressed
+  MinHighGainDynQdc: 10
+  MinHighGainDynEnergy: -1000
+  #MaxHighGainDynEnergy: 50000
+  MaxHighGainDynEnergy: 70000
+  MinLowGainDynEnergy: -2000
+  #MaxLowGainDynEnergy: 2000
+  #MaxLowGainDynEnergy: 650
+  MaxLowGainDynEnergy: 70000
+  FITThreshold: 99999
+  OtherBranches:
+    - "vandle_vec_"
+    - "clover_vec_"
+#  FirstEntry: 0
+#  LastEntry: 10000
+
+FDSiBetaTreeMerger:
+  OutputFileName: mergedBeta.root
+  TreeName: mergedBeta
+  BranchName: mergedBeta
+  ClassName: FDSiOutput
+  PrintFrequency: 10000000000000000000
+  # +-1 sec
+  #TimeWindowLow: 1000000000
+  #TimeWindowUp: 1000000000
+  # +-100 nsec
+  TimeWindowLow: 100
+  TimeWindowUp: 100
